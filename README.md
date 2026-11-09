@@ -52,3 +52,18 @@ Optional: copy `.env.example` to `.env` and add `ANTHROPIC_API_KEY` for Claude-w
 .venv/bin/streamlit run app/streamlit_app.py                    # tick "Offline mode" to use cached data only
 ```
 CLI: `.venv/bin/python -m eqr.pipeline HON` · Tests: `.venv/bin/python -m pytest` · Benchmark check: `scripts/calibrate_hon.py`.
+
+
+## Company Valuation mode
+
+Use the switch at the top centre of the app to move between **Equity Report** and **Company Valuation**.
+
+- **SAP.DE:** the full segment model from the AIFA Assignment 2 package, in two editions.
+  - *Data*: Capital IQ + Bloomberg. Offered only when the licensed exports are present locally in `Data Assigment 2/`.
+  - *Web*: public sources.
+  - Both support editable assumptions, sensitivities, peers, the intangibles analysis, and the Excel package download.
+- **Any other ticker:** a generic FCFF DCF with the same conventions, plus comps against peers suggested from a **global universe**:
+  - 1,234 companies across the S&P 500, European indices, FTSE 100, TSX 60, ASX 50, Hang Seng, NIFTY 50, and Japan/Korea/Taiwan large caps.
+  - You can add any other Yahoo ticker by typing it.
+- **Engine:** `src/eqr/valuation/` is copied from `../SAP_Valuation/valuation`, which is the single source of truth. To refresh it, run `scripts/sync_valuation_engine.py`.
+- **Global universe:** `data/global_universe.parquet`. To rebuild it, run `scripts/build_global_universe.py`; add `--resume` after rate limits.

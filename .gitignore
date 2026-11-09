@@ -12,3 +12,6 @@ data/market_events_done.txt
 data/cache/*_sec_*.pkl
 data/cache/sec_tickers.pkl
 data/peer_features_build.log
+data/valuation_cache/
+data/global_universe_build.log
+src/eqr/valuation/loaders/bloomberg.yaml

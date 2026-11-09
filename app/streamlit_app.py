@@ -28,6 +28,25 @@ from eqr import sources  # noqa: E402  (loads .env)
 eqr._code_stamp = _stamp
 
 st.set_page_config(page_title="AIFA Group 5 · Equity Scorecard", page_icon=":material/monitoring:", layout="wide")
+
+# Mode switch (top centre): the equity scorecard and the company valuation app share one deployment.
+_, _mid, _ = st.columns([1, 2, 1])
+with _mid:
+    mode = st.segmented_control("Mode", ["Equity Report", "Company Valuation"], default="Equity Report", key="mode",
+                                label_visibility="collapsed", width="stretch")
+if mode == "Company Valuation":
+    import importlib
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import valuation_view  # noqa: E402
+
+    _vstamp = Path(valuation_view.__file__).stat().st_mtime
+    if getattr(valuation_view, "_stamp", None) not in (None, _vstamp):
+        valuation_view = importlib.reload(valuation_view)
+    valuation_view._stamp = _vstamp
+    valuation_view.render(ROOT)
+    st.stop()
+
 st.title("Equity scorecard")
 st.caption("AIFA Group 5 · Goethe University Frankfurt · detailed stock report modelled on LSEG Stock Reports Plus (academic project)")
 

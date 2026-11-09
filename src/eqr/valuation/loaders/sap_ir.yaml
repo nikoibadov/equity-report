@@ -1,0 +1,122 @@
+# SAP's own disclosures (company-published, public). EUR millions.
+# Used by BOTH editions: in the Data edition only to fill gaps the CIQ/Bloomberg
+# exports do not contain (flagged "SAP IR" in the Sources sheet).
+
+q3_2026_statement:
+  source: "SAP Quarterly Statement Q3 2026, 21 Oct 2026 (Form 6-K Ex.99.1)"
+  url: "https://www.sec.gov/Archives/edgar/data/0001000184/000110465926118617/tm2628113d1_ex99-1.htm"
+  current_cloud_backlog: 24144
+  current_cloud_backlog_prior_year: 18839
+  ccb_growth_pct: 28
+  q3:
+    cloud_erp_suite: 5924
+    extension_suite: 688
+    iaas: 56
+    cloud: 6668
+    licenses: 147
+    support: 2434
+    services: 1021
+    revenue: 10270
+    cost_of_cloud: 1738
+    op_ifrs: 2930
+    op_nonifrs: 3030
+    sbc: 474
+    ocf: 1920
+    fcf: 1718
+  q3_prior:
+    cloud_erp_suite: 4586
+    cloud: 5290
+    licenses: 161
+    support: 2565
+    services: 1060
+    revenue: 9076
+  ytd9m:
+    cloud_erp_suite: 16662
+    extension_suite: 2062
+    cloud: 18911
+    licenses: 395
+    support: 7342
+    services: 3055
+    revenue: 29703
+    cost_of_cloud: 4867
+    op_ifrs: 8313
+    op_nonifrs: 8639
+    sbc: 1227
+    acquisition_related: 281
+    restructuring: 16
+    ocf: 8586
+    capex: 521
+    lease_payments: 182
+    fcf: 7968
+    buyback_cash: 4124
+    dividends_paid: 2883
+  ytd9m_prior:
+    cloud_erp_suite: 13258
+    cloud: 15413
+    licenses: 538
+    support: 7969
+    services: 3196
+    revenue: 27116
+    op_nonifrs: 7590
+  balance_sheet_30sep2026:
+    cash: 9364
+    other_fin_assets_current: 1633
+    other_fin_assets_noncurrent: 8300
+    fin_liabilities_current: 2053
+    fin_liabilities_noncurrent: 8535
+    contract_liabilities_current: 8158
+    contract_liabilities_noncurrent: 213
+    equity_parent: 45948
+    nci: 513
+  shares:
+    wavg_basic_q3_m: 1150
+    wavg_diluted_q3_m: 1157
+  outlook_2026:
+    cloud_revenue_cc_low: 25800
+    cloud_revenue_cc_high: 26200
+    cloud_and_software_cc_low: 36300
+    cloud_and_software_cc_high: 36800
+    op_nonifrs_low: 11800
+    op_nonifrs_high: 12200
+    fcf: 10000
+    tax_rate_nonifrs: 29
+    fx_impact_cloud_pp: -1.5
+    fx_impact_op_pp: -2.0
+    acquisition_related_low: 340
+    acquisition_related_high: 420
+    restructuring_low: 0
+    restructuring_high: 20
+  ambition_2027: "Total revenue growth to accelerate (cc); non-IFRS opex to grow at 80-90% of revenue growth; support decline to accelerate"
+  headcount: 113076
+
+fy2025_statement:
+  source: "SAP Quarterly Statement Q4 2025, 29 Jan 2026 (Form 6-K)"
+  url: "https://www.sec.gov/Archives/edgar/data/1000184/000110465926009465/tm264433d1_6k.htm"
+  fy2025:
+    cloud_erp_suite: 18119
+    cloud: 21023
+    licenses: 990
+    support: 10525
+    services: 4262
+    revenue: 36800
+    cost_of_cloud: 5480    # IFRS, as reported (CIQ as-reported sheet)
+    op_ifrs: 9617          # SEC XBRL ProfitLossFromOperatingActivities CY2025 (page summary said 9,830 - superseded)
+    op_nonifrs: 10419
+    sbc: 1695
+    ocf: 9156
+    capex: 739
+    fcf: 8239
+    current_cloud_backlog: 21052
+    contract_liabilities: 6725
+  fy2024:
+    cloud_erp_suite: 14165
+    cloud: 17141
+    licenses: 1399
+    support: 11290
+    services: 4346
+    revenue: 34176
+    cost_of_cloud: 4660
+    op_ifrs: 4665
+    op_nonifrs: 8153
+    sbc: 2385
+    current_cloud_backlog: 18078
