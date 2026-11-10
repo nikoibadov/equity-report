@@ -112,8 +112,35 @@ def _suggest_cached(ticker: str):
 
 
 # ------------------------------------------------------------------ view
+@st.cache_resource(show_spinner=False)
+def _cache_state() -> dict:
+    return {}
+
+
+def _drop_stale_results(root: Path):
+    """Cached valuations must not outlive the code or the day they were computed with.
+    Streamlit keeps st.cache_data entries after a code update (git pull), which served results
+    without the newer fields; prices also change daily."""
+    import datetime as dt
+    files = list((root / "src" / "eqr" / "valuation").rglob("*.py")) + [Path(__file__)]
+    stamp = (max(f.stat().st_mtime for f in files), dt.date.today().isoformat())
+    if _cache_state().get("stamp") != stamp:
+        st.cache_data.clear()
+        st.cache_resource.clear()
+        _cache_state()["stamp"] = stamp
+        # The loaders fix "today" when first imported; a server that runs past midnight would keep
+        # reading yesterday's downloads, so move them to the current date.
+        import sys
+        for name in ("eqr.valuation.loaders.web", "eqr.valuation.generic"):
+            if name in sys.modules:
+                sys.modules[name].TODAY = stamp[1]
+        if "eqr.valuation.loaders.public_refs" in sys.modules:
+            sys.modules["eqr.valuation.loaders.public_refs"]._MEMO.clear()
+
+
 def render(root: Path):
     os.environ.setdefault("VALUATION_CACHE", str(root / "data" / "valuation_cache"))
+    _drop_stale_results(root)
     from eqr.valuation.loaders import capiq
 
     st.title("Company valuation")
