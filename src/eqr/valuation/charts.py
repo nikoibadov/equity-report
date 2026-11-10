@@ -24,6 +24,8 @@ def football_items(res: dict) -> list[dict]:
         {"label": "DCF: bear / base / bull", "low": sc["Bear"]["price"], "high": sc["Bull"]["price"], "mid": sc["Weighted"]["price"], "kind": "dcf"},
         *([{"label": "DCF: zero-growth terminal value (WACC ±0.5pp)", "low": x["tv"]["zero"]["low"], "high": x["tv"]["zero"]["high"], "mid": x["tv"]["zero"]["price"], "kind": "dcf"},
            {"label": "DCF: exit EV/EBITDA terminal value (peer IQR)", "low": x["tv"]["exit"]["low"], "high": x["tv"]["exit"]["high"], "mid": x["tv"]["exit"]["price"], "kind": "dcf"}] if x else []),
+        *([{"label": f"DCF: Monte Carlo, 5th-95th percentile (n={x['mc']['n']:,})", "low": x["mc"]["pct"][5], "high": x["mc"]["pct"][95], "mid": x["mc"]["pct"][50], "kind": "dcf"},
+           {"label": "Dividend discount model (Ke ±0.5pp)", "low": x["ddm"]["low"], "high": x["ddm"]["high"], "mid": x["ddm"]["price"], "kind": "dcf"}] if x and "mc" in x else []),
         {"label": "EV / NTM sales (peer IQR)", "low": st["ev_sales_ntm"]["p_q1"], "high": st["ev_sales_ntm"]["p_q3"], "mid": st["ev_sales_ntm"]["p_med"], "kind": "comps"},
         {"label": ("EV / NTM EBIT (peer IQR)" if "ev_ebit_ntm_xsbc" in st else "EV / NTM EBIT, GAAP (peer IQR)"), "low": st["ev_ebit_ntm"]["p_q1"], "high": st["ev_ebit_ntm"]["p_q3"], "mid": st["ev_ebit_ntm"]["p_med"], "kind": "comps"},
         *([{"label": "EV / NTM EBIT ex-SBC (like-for-like)", "low": st["ev_ebit_ntm_xsbc"]["p_q1"], "high": st["ev_ebit_ntm_xsbc"]["p_q3"], "mid": st["ev_ebit_ntm_xsbc"]["p_med"], "kind": "comps"}] if "ev_ebit_ntm_xsbc" in st else []),
@@ -39,7 +41,7 @@ def football(res: dict, path, title: str | None = None, items: list[dict] | None
     items = items or football_items(res)
     price = res["market"]["price"]
     colors = {"market": SLATE, "dcf": TEAL, "comps": AMBER}
-    fig, ax = plt.subplots(figsize=(11, 6.6), dpi=150)
+    fig, ax = plt.subplots(figsize=(11, 7.4), dpi=150)
     for i, it in enumerate(reversed(items)):
         ax.barh(i, it["high"] - it["low"], left=it["low"], height=0.55, color=colors[it["kind"]], alpha=0.9)
         pad = (max(x["high"] for x in items) - min(x["low"] for x in items)) * 0.012
@@ -59,7 +61,7 @@ def football(res: dict, path, title: str | None = None, items: list[dict] | None
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     from matplotlib.patches import Patch
-    ax.legend(handles=[Patch(color=SLATE, label="Market reference"), Patch(color=TEAL, label="DCF (FCFF)"),
+    ax.legend(handles=[Patch(color=SLATE, label="Market reference"), Patch(color=TEAL, label="Cash-flow based (DCF, DDM)"),
                        Patch(color=AMBER, label="Relative valuation")], loc="lower right", fontsize=8, frameon=False)
     ax.set_title(title or "SAP SE: valuation football field (€/share, 13 Nov 2026)", fontsize=11, color=INK, loc="left")
     fig.tight_layout()
@@ -109,5 +111,23 @@ def tornado(res: dict, path: Path) -> Path:
     ax.set_title(f"DCF sensitivity to single inputs (base €{base:.0f})", fontsize=11, color=INK, loc="left")
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
+    fig.tight_layout(); fig.savefig(path); plt.close(fig)
+    return path
+
+
+def monte_carlo(res: dict, path: Path) -> Path:
+    mc = res["ext"]["mc"]
+    price = res["market"]["price"]
+    fig, ax = plt.subplots(figsize=(9, 4.2), dpi=150)
+    ax.hist(mc["draws"]["price"], bins=50, color=TEAL, alpha=0.85)
+    for p, ls in ((5, ":"), (50, "-"), (95, ":")):
+        ax.axvline(mc["pct"][p], color=INK, ls=ls, lw=1.2)
+        ax.text(mc["pct"][p], ax.get_ylim()[1] * 0.96, f" P{p} €{mc['pct'][p]:.0f}", fontsize=8, color=INK, va="top")
+    ax.axvline(price, color=CORAL, ls="--", lw=1.4)
+    ax.text(price, ax.get_ylim()[1] * 0.84, f" Price €{price:.0f}", fontsize=8, color=CORAL, va="top")
+    ax.set_xlabel("DCF value per share (€)"); ax.set_ylabel("Simulations")
+    ax.set_title(f"Monte Carlo: {mc['n']:,} simulations, {mc['p_above_price']*100:.0f}% above the share price", fontsize=11, color=INK, loc="left")
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
     fig.tight_layout(); fig.savefig(path); plt.close(fig)
     return path

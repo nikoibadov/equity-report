@@ -342,6 +342,25 @@ def _sap_crosschecks(res):
         st.metric("Exit-multiple terminal value", f"€{t['exit']['price']:.0f}", f"{t['exit']['mult_med']:.1f}x EBITDA", delta_color="off", border=True)
         st.metric("WACC after iteration", f"{w['wacc']*100:.2f}%", f"€{w['price']:.2f}", delta_color="off", border=True)
 
+    dd, mc = x["ddm"], x["mc"]
+    c1, c2 = st.columns([3, 2])
+    with c1:
+        st.subheader("Monte Carlo simulation")
+        from eqr.valuation import charts
+        st.image(_chart(charts.monte_carlo, res))
+        st.caption(f"{mc['n']:,} runs with independent shocks to WACC, terminal growth, terminal margin, cloud growth and operating margin. "
+                   f"Median €{mc['pct'][50]:.0f}; 90% of runs fall between €{mc['pct'][5]:.0f} and €{mc['pct'][95]:.0f}; "
+                   f"{mc['p_above_price']*100:.0f}% are above the share price.")
+    with c2:
+        st.subheader("Dividend discount model")
+        st.dataframe(pd.DataFrame({"€ per share": {
+            "Dividends only (base)": dd["price"], "Cost of equity +0.5pp": dd["low"], "Cost of equity −0.5pp": dd["high"],
+            "All free cash flow paid out": dd["total_payout_price"], "DCF (for comparison)": d["price"]}}).style.format("€{:.0f}"))
+        divs = dd["table"]
+        st.caption(f"Payout {dd['payout']*100:.0f}% of profit to 2030, rising to {dd['payout_terminal']*100:.0f}% by 2035; dividend per share "
+                   f"€{divs['dps'].iloc[0]:.2f} for 2026 to €{divs['dps'].iloc[-1]:.2f} for 2035. Dividends alone undervalue SAP because "
+                   "much of its cash goes back through buybacks.")
+
     st.subheader("Sum of the parts by revenue line")
     parts = pd.DataFrame(s["parts"])[["part", "rev_ntm", "peers", "q1", "median", "q3", "ev_med"]]
     st.dataframe(parts, hide_index=True, column_config={
@@ -405,13 +424,15 @@ def _sap_downloads(res, edition):
                 charts.football(res, out / f"football_{edition}.png")
                 charts.revenue_mix(res, out / f"revenue_mix_{edition}.png")
                 charts.tornado(res, out / f"tornado_{edition}.png")
+                charts.monte_carlo(res, out / f"monte_carlo_{edition}.png")
                 x = excel_writer.write(res, out / f"SAP_Valuation_{edition}.xlsx", out)
                 st.session_state[f"xlsx_{edition}"] = x.read_bytes()
     if st.session_state.get(f"xlsx_{edition}"):
         st.download_button("Download SAP_Valuation.xlsx", st.session_state[f"xlsx_{edition}"],
                            file_name=f"SAP_Valuation_{edition}.xlsx", icon=":material/download:",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    st.caption("Formula-driven workbook (Assumptions → WACC → Forecast → DCF), sensitivity grids, comps, intangibles, sources.")
+    st.caption("Formula-driven workbook (Assumptions → WACC → Forecast → DCF) with a live bear/base/bull selector, a dividend discount "
+               "model, Monte Carlo, an integrity-checks sheet, sensitivity grids, comps, intangibles and sources.")
 
 
 # ------------------------------------------------------------------ peer finder (global universe)

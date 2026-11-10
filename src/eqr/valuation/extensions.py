@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 
 from . import model
+from .assumptions import FADE, YEARS
 
 BETA_SNAPSHOT = Path(__file__).parent / "loaders" / "peer_betas.json"
 
@@ -160,6 +161,69 @@ def pe_leverage(peers: pd.DataFrame, eps_ntm: float, threshold: float = 0.25) ->
             "table": core[["ticker", "net_debt_mcap", "pe_ntm"]].sort_values("net_debt_mcap", ascending=False)}
 
 
+# ---------------------------------------------------------------- 9. dividend discount model
+DDM_PAYOUT = 0.40        # SAP dividend policy: at least 40% of non-IFRS profit after tax
+DDM_ROE_TERMINAL = 0.15  # return on new equity in perpetuity -> sustainable payout = 1 - g / ROE
+DDM_FIRST_T = 0.62       # years from 30 Sep 2026 to the mid-May 2027 dividend (for FY2026)
+
+
+def ddm(a, base: dict, payout: float = DDM_PAYOUT, roe_terminal: float = DDM_ROE_TERMINAL) -> dict:
+    """Three-stage dividend discount model on the model's own earnings path, discounted at the cost of equity.
+    Stage 1 (2026-30): policy payout. Stage 2 (2031-35): payout fades to the sustainable level. Stage 3: Gordon growth.
+    Earnings per share = NOPAT / diluted shares (SAP is roughly net-cash, so net interest is ignored)."""
+    f, sh, g = base["forecast"], a["shares"], a["g"]
+    pay_t = 1 - g / roe_terminal
+
+    def value(ke):
+        rows, pv = [], 0.0
+        for y in YEARS:
+            k = FADE.index(y) + 1 if y in FADE else 0
+            p = payout + (pay_t - payout) * k / len(FADE)
+            eps = f.loc[y, "nopat"] / sh
+            t = DDM_FIRST_T + (y - 2026)
+            rows.append({"year": y, "eps": eps, "payout": p, "dps": p * eps, "t": t, "pv": p * eps / (1 + ke) ** t})
+            pv += rows[-1]["pv"]
+        dps_t1 = pay_t * base["ebit_t1"] * (1 - a["tax_terminal"]) / sh
+        tv = dps_t1 / (ke - g)                       # value right after the FY2035 dividend
+        pv_tv = tv / (1 + ke) ** rows[-1]["t"]
+        return rows, dps_t1, tv, pv_tv, (pv + pv_tv) * (1 + ke) ** (a["roll_days"] / 365)
+
+    ke = base["ke"]
+    rows, dps_t1, tv, pv_tv, price = value(ke)
+    total = model.dcf(a, wacc_override=ke)["price"]   # all free cash flow paid out (dividends + buybacks)
+    return {"table": pd.DataFrame(rows), "payout": payout, "payout_terminal": pay_t, "roe_terminal": roe_terminal, "ke": ke,
+            "dps_t1": dps_t1, "tv": tv, "pv_tv": pv_tv, "pv_div": sum(r["pv"] for r in rows), "price": price,
+            "low": value(ke + 0.005)[4], "high": value(ke - 0.005)[4], "total_payout_price": total,
+            "tv_share": pv_tv / (pv_tv + sum(r["pv"] for r in rows))}
+
+
+# ---------------------------------------------------------------- 10. Monte Carlo
+MC_DRIVERS = [  # key, label, standard deviation, unit
+    ("d_wacc", "WACC", 0.005, "pp"), ("d_g", "Terminal growth", 0.0025, "pp"), ("d_mt", "Terminal margin", 0.02, "pp"),
+    ("d_cloud", "Cloud growth 2027-30 (per year)", 0.02, "pp"), ("d_margin", "Operating margin 2027-30", 0.01, "pp"),
+]
+
+
+def monte_carlo(a, base: dict, n: int = 3000, seed: int = 42) -> dict:
+    """Independent normal shocks (cut off at ±2.5 standard deviations) on five drivers; fixed seed, so reruns agree."""
+    rng = np.random.default_rng(seed)
+    draws = {k: np.clip(rng.normal(0, sd, n), -2.5 * sd, 2.5 * sd) for k, _, sd, _ in MC_DRIVERS}
+    w0, prices = base["wacc"], np.empty(n)
+    for i in range(n):
+        b = a.copy()
+        w = w0 + draws["d_wacc"][i]
+        b.set("g", min(a["g"] + draws["d_g"][i], w - 0.03))          # keep WACC - g at 3pp or more
+        b.set("m_terminal", a["m_terminal"] + draws["d_mt"][i])
+        b.set("g_cloud", [x + draws["d_cloud"][i] for x in a["g_cloud"]])
+        b.set("m_nonifrs", [a["m_nonifrs"][0]] + [x + draws["d_margin"][i] for x in a["m_nonifrs"][1:]])
+        prices[i] = model.dcf(b, w)["price"]
+    pct = {p: float(np.percentile(prices, p)) for p in (5, 10, 25, 50, 75, 90, 95)}
+    df = pd.DataFrame(draws); df["price"] = prices
+    corr = {k: float(np.corrcoef(draws[k], prices)[0, 1]) for k in draws}
+    return {"n": n, "seed": seed, "drivers": MC_DRIVERS, "draws": df, "pct": pct, "mean": float(prices.mean()), "sd": float(prices.std()),
+            "p_above_price": float((prices > a["price"]).mean()), "base": base["price"], "corr": corr}
+
+
 # ---------------------------------------------------------------- 8. external reference points
 def reference_points(a, base: dict, refs: dict | None, tv: dict) -> dict | None:
     """Official and academic reference data set against the model's own inputs."""
@@ -219,6 +283,7 @@ def run(res: dict) -> dict:
         "beta": bottom_up_beta(a, peers),
         "tv": tv,
         "refs": reference_points(a, base, ds.get("refs"), tv),
+        "ddm": ddm(a, base), "mc": monte_carlo(a, base),
         "wacc_iter": wacc_iteration(a),
         "bridge": bridge_refinements(a, base, ds["ir"]["q3_2026_statement"]["balance_sheet_30sep2026"]["equity_parent"]),
         "pe": pe_leverage(peers, res["comps"]["sap"]["eps_ntm"]),

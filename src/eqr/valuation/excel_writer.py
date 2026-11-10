@@ -110,6 +110,57 @@ def _assumptions(wb, a, res):
             ws.cell(row=r, column=11, value=rat).alignment = Alignment(wrap_text=True, vertical="top")
             r += 1
         r += 1
+    # ---- live scenario selector: the model sheets read the "active" rows below, not the base inputs above
+    from .assumptions import SCENARIOS
+    B_, U_ = SCENARIOS["Bear"], SCENARIOS["Bull"]
+    ws.cell(row=r, column=1, value="Scenario selector (drives Forecast, WACC and DCF)").font = F_B
+    for c in range(1, 12):
+        ws.cell(row=r, column=c).fill = FILL_S
+    r += 1
+    sel = f"Assumptions!$D${r}"
+    ws.cell(row=r, column=2, value="Active scenario: 1 = Bear, 2 = Base, 3 = Bull")
+    c = ws[f"D{r}"]; c.value = 2; c.font = Font(bold=True, color="0000FF", size=12); c.fill = FILL_K
+    ws.cell(row=r, column=5, value=f'=CHOOSE($D${r},"Bear","Base","Bull")').font = F_B
+    ws.cell(row=r, column=11, value="Type 1, 2 or 3. Base (2) reproduces the values on every other sheet; the Scenarios sheet lists what each case changes.")
+    r += 1
+    _hdr(ws, r, ["", "Scenario settings", "", "Bear", "Base", "Bull"])
+    r += 1
+    settings = {}
+    for key, lab, bear, base_f, bull, fmt in (
+            ("d_cloud", "Cloud growth shift 2027-30 (per year)", B_["d_cloud"], 0, U_["d_cloud"], PCT),
+            ("d_margin", "Operating margin shift 2027-30", B_["d_margin"], 0, U_["d_margin"], PCT),
+            ("m_terminal", "Terminal non-IFRS margin", B_["m_terminal"], f"={ref['m_terminal']}", U_["m_terminal"], PCT),
+            ("g", "Terminal growth", B_["g"], f"={ref['g']}", U_["g"], PCT2),
+            ("d_wacc", "WACC shift", B_["d_wacc"], 0, U_["d_wacc"], PCT2)):
+        ws.cell(row=r, column=2, value=lab)
+        for col, v in zip("DEF", (bear, base_f, bull)):
+            cc = ws[f"{col}{r}"]; cc.value = v; cc.number_format = fmt; cc.font = F_LINK if isinstance(v, str) else F_IN
+        ws[f"G{r}"] = f"=CHOOSE({sel},D{r},E{r},F{r})"; ws[f"G{r}"].number_format = fmt; ws[f"G{r}"].font = F_B
+        ws[f"H{r}"] = "← active"
+        settings[key] = f"Assumptions!$G${r}"
+        r += 1
+    _hdr(ws, r, ["", "Active inputs used by the model", "", "2026", "2027", "2028", "2029", "2030", "Terminal"])
+    r += 1
+    ws.cell(row=r, column=2, value="Cloud revenue growth (active)")
+    act_cloud = {}
+    for y in (2027, 2028, 2029, 2030):
+        col = "DEFGH"[y - 2026]
+        ws[f"{col}{r}"] = f"={ref['g_cloud'][y]}+{settings['d_cloud']}"; ws[f"{col}{r}"].number_format = PCT
+        act_cloud[y] = f"Assumptions!${col}${r}"
+    r += 1
+    ws.cell(row=r, column=2, value="Non-IFRS operating margin (active)")
+    act_m = {}
+    for y in (2026, 2027, 2028, 2029, 2030):
+        col = "DEFGH"[y - 2026]
+        ws[f"{col}{r}"] = f"={ref['m_nonifrs'][y]}" + ("" if y == 2026 else f"+{settings['d_margin']}"); ws[f"{col}{r}"].number_format = PCT
+        act_m[y] = f"Assumptions!${col}${r}"
+    ws[f"I{r}"] = f"={settings['m_terminal']}"; ws[f"I{r}"].number_format = PCT
+    act_mt = f"Assumptions!$I${r}"
+    r += 1
+    ws.cell(row=r, column=2, value="Terminal growth (active)")
+    ws[f"D{r}"] = f"={settings['g']}"; ws[f"D{r}"].number_format = PCT2
+    act_g = f"Assumptions!$D${r}"
+    ref.update(g_cloud=act_cloud, m_nonifrs=act_m, m_terminal=act_mt, g=act_g, scen_wacc=settings["d_wacc"], scen_sel=sel)
     _widths(ws, {"A": 14, "B": 38, "C": 9, "D": 11, "E": 11, "F": 11, "G": 11, "H": 11, "I": 11, "J": 42, "K": 90})
     ws.freeze_panes = "D5"
     return ref
@@ -148,6 +199,7 @@ def _wacc(wb, ref, res):
         ("After-tax cost of debt", "=B8*(1-B9)", PCT2), ("Equity (market value, €m)", f"={ref['e_mv']}", EUR),
         ("Debt incl. leases (€m)", f"={ref['d_mv']}", EUR), ("Equity weight", "=B11/(B11+B12)", PCT),
         ("Debt weight", "=B12/(B11+B12)", PCT), ("WACC", "=B13*B7+B14*B10", PCT2),
+        ("Scenario shift (Assumptions selector)", f"={ref['scen_wacc']}", PCT2), ("WACC used in the DCF", "=B15+B16", PCT2),
     ]
     _hdr(ws, 3, ["Component", "Value", "Python check"])
     d = res["dcf"]
@@ -158,9 +210,10 @@ def _wacc(wb, ref, res):
         if i in checks:
             ws.cell(row=i, column=3, value=checks[i]).number_format = fmt
     ws["A15"].font = F_B; ws["B15"].font = F_B; ws["B15"].fill = FILL_K
+    ws["A17"].font = F_B; ws["B17"].font = F_B; ws["B17"].fill = FILL_K
     # Reference points
     ds = res["ds"]
-    r = 18
+    r = 20
     ws.cell(row=r, column=1, value="Reference points and why they are not used as base").font = F_B
     _hdr(ws, r + 1, ["Source", "WACC / input", "Comment"])
     if res["edition"] == "data":
@@ -188,7 +241,7 @@ def _wacc(wb, ref, res):
             cc.number_format = PCT2 if v < 0.5 else "0.000"
         ws.cell(row=i, column=3, value=c)
     _widths(ws, {"A": 40, "B": 16, "C": 110})
-    return {"ke": "WACC!$B$7", "wacc": "WACC!$B$15"}
+    return {"ke": "WACC!$B$7", "wacc": "WACC!$B$17", "wacc_capm": "WACC!$B$15", "we": "WACC!$B$13", "wd": "WACC!$B$14"}
 
 
 # ======================================================================= Forecast
@@ -514,7 +567,8 @@ def _sensitivity(wb, res, out_dir):
 
 def _scenarios(wb, res):
     ws = wb.create_sheet("Scenarios")
-    _title(ws, "Scenario analysis (values from the Python engine)")
+    _title(ws, "Scenario analysis (values from the Python engine)",
+           "To see a scenario flow through the whole model, set the selector on the Assumptions sheet to 1, 2 or 3; the DCF value then equals the figure below.")
     _hdr(ws, 3, ["Scenario", "Weight", "Value/share €", "WACC", "Terminal g", "Terminal margin", "Revenue 2030E €m", "Narrative"])
     for i, n in enumerate(("Bear", "Base", "Bull"), start=4):
         s = res["scenarios"][n]
@@ -683,6 +737,191 @@ def _recon(wb, res):
             ws.cell(row=i, column=1).font = F_B; ws.cell(row=i, column=2).font = F_B
     ws.cell(row=17, column=1, value="Why the model FCFF is below SAP's FCF: SAP adds back non-cash SBC (we treat SBC as a cost - it dilutes, buybacks offset it with cash) and pays cash taxes below the book rate (timing). Interest is excluded from FCFF by definition.")
     _widths(ws, {"A": 60, "B": 14})
+
+
+# ======================================================================= DDM (live formulas)
+def _ddm(wb, ref, wref, R, res):
+    from .extensions import DDM_FIRST_T
+    ws = wb.create_sheet("DDM")
+    dd = res["ext"]["ddm"]
+    _title(ws, "Dividend discount model (three stages, discounted at the cost of equity)",
+           "Cross-check on the DCF. Earnings per share = NOPAT / diluted shares; dividend for a year is paid in May of the next year.")
+    ws["A4"], ws["B4"] = "Payout ratio 2026-30 (SAP policy: at least 40%)", dd["payout"]
+    ws["A5"], ws["B5"] = "Return on new equity in perpetuity", dd["roe_terminal"]
+    ws["A6"], ws["B6"] = "Sustainable payout = 1 - g / ROE", f"=1-{ref['g']}/B5"
+    ws["A7"], ws["B7"] = "Cost of equity", f"={wref['ke']}"
+    ws["A8"], ws["B8"] = "Years from 30 Sep 2026 to the first dividend (May 2027)", DDM_FIRST_T
+    for c in ("B4", "B5"):
+        ws[c].font = F_IN; ws[c].number_format = PCT
+    ws["B6"].number_format = PCT; ws["B7"].number_format = PCT2; ws["B7"].font = F_LINK; ws["B8"].font = F_IN
+    _hdr(ws, 10, ["", "Item"] + [f"{y}E" for y in YEARS])
+    labs = {11: "year", 12: "Earnings per share (NOPAT / shares)", 13: "Payout ratio", 14: "Dividend per share", 15: "Discount period (years)",
+            16: "Present value", 17: "Python check (dividend per share)"}
+    for rr, lab in labs.items():
+        ws.cell(row=rr, column=2, value=lab)
+    for i, y in enumerate(YEARS):
+        c = YCOL[y]
+        ws[f"{c}11"] = y
+        ws[f"{c}12"] = f"=Forecast!{c}{R['nopat']}/{ref['shares']}"; ws[f"{c}12"].font = F_LINK
+        k = FADE.index(y) + 1 if y in FADE else 0
+        ws[f"{c}13"] = f"=$B$4+($B$6-$B$4)*{k}/{len(FADE)}"
+        ws[f"{c}14"] = f"={c}12*{c}13"
+        ws[f"{c}15"] = f"=$B$8+({c}11-2026)"
+        ws[f"{c}16"] = f"={c}14/(1+$B$7)^{c}15"
+        ws[f"{c}17"] = float(dd["table"].loc[i, "dps"]); ws[f"{c}17"].font = Font(italic=True, color="8091A5")
+        for rr, fm in ((12, "0.00"), (13, PCT), (14, "0.00"), (15, "0.00"), (16, "0.00"), (17, "0.00")):
+            ws[f"{c}{rr}"].number_format = fm
+    M = YCOL[2035]
+    block = [
+        ("Dividend per share in the terminal year (2036)", f"=B6*DCF!B17*(1-{ref['tax_terminal']})/{ref['shares']}", "0.00", dd["dps_t1"]),
+        ("Terminal value per share (Gordon growth at Ke)", f"=B20/(B7-{ref['g']})", PX, dd["tv"]),
+        ("PV of terminal value", f"=B21/(1+B7)^{M}15", PX, dd["pv_tv"]),
+        ("PV of dividends 2026-35", f"=SUM(D16:{M}16)", PX, dd["pv_div"]),
+        ("DDM value per share at 13 Nov 2026 (dividends only)", "=(B22+B23)*DCF!B35", PX, dd["price"]),
+        ("Value if all free cash flow is paid out (dividends + buybacks)", float(dd["total_payout_price"]), PX, None),
+        ("DCF value per share (for comparison)", "=DCF!B36", PX, None),
+    ]
+    _hdr(ws, 19, ["Valuation", "Value", "Python check"])
+    for i, (lab, f_, fm, chk) in enumerate(block, start=20):
+        ws.cell(row=i, column=1, value=lab); ws.cell(row=i, column=2, value=f_).number_format = fm
+        if chk is not None:
+            cc = ws.cell(row=i, column=3, value=float(chk)); cc.number_format = fm; cc.font = Font(italic=True, color="8091A5")
+    ws["A24"].font = F_B; ws["B24"].font = F_B; ws["B24"].fill = FILL_K
+    ws["A28"] = ("Reading: dividends alone value SAP well below the DCF because SAP pays out only ~40% of profit and returns further cash through buybacks "
+                 "(€10bn programme). Discounting all free cash flow at the cost of equity (row 25, Python engine value) closes most of the gap.")
+    ws["A28"].font = Font(italic=True, color="5B6B7F")
+    _widths(ws, {"A": 58, "B": 40, "C": 14, **{YCOL[y]: 10 for y in YEARS}})
+    ws.column_dimensions["B"].width = 16
+    return {"price": "DDM!$B$24"}
+
+
+# ======================================================================= Monte Carlo
+def _monte_carlo(wb, res, out_dir):
+    ws = wb.create_sheet("Monte Carlo")
+    mc = res["ext"]["mc"]
+    n = mc["n"]
+    _title(ws, f"Monte Carlo simulation of the DCF value ({n:,} runs, fixed seed {mc['seed']})",
+           "Each run shocks five drivers independently (normal, cut off at ±2.5 standard deviations) and reruns the full DCF in the Python engine. Statistics below are live formulas over the run table.")
+    _hdr(ws, 4, ["Driver", "Standard deviation", "Correlation with value"])
+    for i, (k, lab, sd, _) in enumerate(mc["drivers"], start=5):
+        ws.cell(row=i, column=1, value=lab); ws.cell(row=i, column=2, value=sd).number_format = PCT2
+        col = "GHIJK"[i - 5]
+        ws.cell(row=i, column=3, value=f"=CORREL({col}5:{col}{n+4},L5:L{n+4})").number_format = "0.00"
+    rng = f"L5:L{n+4}"
+    _hdr(ws, 12, ["Statistic", "Value per share", "Python check"])
+    stats = [("5th percentile", f"=PERCENTILE({rng},0.05)", mc["pct"][5]), ("25th percentile", f"=PERCENTILE({rng},0.25)", mc["pct"][25]),
+             ("Median", f"=MEDIAN({rng})", mc["pct"][50]), ("Mean", f"=AVERAGE({rng})", mc["mean"]),
+             ("75th percentile", f"=PERCENTILE({rng},0.75)", mc["pct"][75]), ("95th percentile", f"=PERCENTILE({rng},0.95)", mc["pct"][95]),
+             ("Standard deviation", f"=STDEV({rng})", mc["sd"])]
+    for i, (lab, f_, chk) in enumerate(stats, start=13):
+        ws.cell(row=i, column=1, value=lab); ws.cell(row=i, column=2, value=f_).number_format = PX
+        cc = ws.cell(row=i, column=3, value=float(chk)); cc.number_format = PX; cc.font = Font(italic=True, color="8091A5")
+    ws["A20"] = "Share of runs above the reference price"; ws["B20"] = f'=COUNTIF({rng},">"&Assumptions!{_addr(res, "price")})/COUNT({rng})'
+    ws["B20"].number_format = PCT; ws["A20"].font = F_B; ws["B20"].font = F_B; ws["B20"].fill = FILL_K
+    ws["A21"] = "Base-case DCF value"; ws["B21"] = float(mc["base"]); ws["B21"].number_format = PX
+    ws["A23"] = "Shocks are independent; in reality growth and margins move together, so the true range is somewhat wider."
+    ws["A23"].font = Font(italic=True, color="5B6B7F")
+    _hdr(ws, 4, ["Run", "WACC shift", "Growth shift", "Terminal margin shift", "Cloud growth shift", "Margin shift", "Value per share"], start=6)
+    d = mc["draws"]
+    for i in range(n):
+        ws.cell(row=i + 5, column=6, value=i + 1)
+        for j, k in enumerate(("d_wacc", "d_g", "d_mt", "d_cloud", "d_margin")):
+            ws.cell(row=i + 5, column=7 + j, value=float(d[k].iloc[i])).number_format = PCT2
+        ws.cell(row=i + 5, column=12, value=float(d["price"].iloc[i])).number_format = PX
+    img = XLImage(str(out_dir / f"monte_carlo_{res['edition']}.png")); img.width, img.height = 640, 300
+    ws.add_image(img, "A25")
+    _widths(ws, {"A": 40, "B": 18, "C": 22, "D": 3, "E": 3, "F": 7, "G": 12, "H": 12, "I": 18, "J": 16, "K": 12, "L": 15})
+
+
+def _addr(res, key):
+    return res["_ref"][key].split("!")[1]
+
+
+# ======================================================================= Checks (live)
+def _checks(wb, ref, wref, R, res):
+    ws = wb.create_sheet("Checks")
+    _title(ws, "Model integrity checks (live formulas)", "Every row must read TRUE. The Python-engine comparisons apply to the Base scenario (selector = 2).")
+    _hdr(ws, 4, ["Check", "Result", "Left side", "Right side"])
+    D, M = YCOL[2026], YCOL[2035]
+    rev, fc = R["revenue"], R["fcff"]
+    base_only = f"{ref['scen_sel']}<>2"
+    checks = [
+        ("Revenue lines add up to total revenue (2026-30)", f"SUMPRODUCT(ABS(Forecast!{D}{R['cloud']}:H{R['cloud']}+Forecast!{D}{R['licenses']}:H{R['licenses']}+Forecast!{D}{R['support']}:H{R['support']}+Forecast!{D}{R['services']}:H{R['services']}-Forecast!{D}{rev}:H{rev}))", "0", "abs"),
+        ("FCFF = NOPAT + SBC add-back + D&A - capex - ΔNWC (all years)", f"SUMPRODUCT(ABS(Forecast!{D}{R['nopat']}:{M}{R['nopat']}+Forecast!{D}{R['sbc']}:{M}{R['sbc']}+Forecast!{D}{R['da']}:{M}{R['da']}-Forecast!{D}{R['capex']}:{M}{R['capex']}-Forecast!{D}{R['dnwc']}:{M}{R['dnwc']}-Forecast!{D}{fc}:{M}{fc}))", "0", "abs"),
+        ("Growth in 2035 equals terminal growth", f"Forecast!{M}{R['growth']}", ref["g"], "eq"),
+        ("Margin in 2035 equals terminal margin", f"Forecast!{M}{R['margin']}", ref["m_terminal"], "eq"),
+        ("Capital-structure weights add up to 100%", f"{wref['we']}+{wref['wd']}", "1", "eq"),
+        ("WACC used is above terminal growth by at least 3 points", f"{wref['wacc']}-{ref['g']}", "0.03", "ge"),
+        ("Terminal growth is not above the risk-free rate", ref["rf"], ref["g"], "ge"),
+        ("Enterprise value = PV of FCFF + PV of terminal value", "DCF!B23", "DCF!B21+DCF!B22", "eq"),
+        ("Equity value = enterprise value + non-operating assets - claims", "DCF!B32", f"DCF!B23+{ref['cash']}+{ref['st_inv']}+{ref['lt_inv']}+{ref['debt_benefit']}+{ref['tlcf_asset']}-{ref['debt']}-{ref['pension']}-{ref['nci']}", "eq"),
+        ("Terminal value is below 80% of enterprise value", "0.8", "DCF!B39", "ge"),
+        ("FCFF matches the Python engine in every year (Base)", f"SUMPRODUCT(ABS(Forecast!{D}{fc}:{M}{fc}-Forecast!{D}{R['py_fcff']}:{M}{R['py_fcff']}))", "0.01", "le_base"),
+        ("WACC matches the Python engine (Base)", f"ABS({wref['wacc']}-WACC!C15)", "0.000001", "le_base"),
+        ("DCF value per share matches the Python engine (Base)", "ABS(DCF!B36-DCF!C36)", "0.01", "le_base"),
+        ("DDM value per share matches the Python engine (Base)", "ABS(DDM!B24-DDM!C24)", "0.01", "le_base"),
+    ]
+    for i, (lab, left, right, kind) in enumerate(checks, start=5):
+        ws.cell(row=i, column=1, value=lab)
+        ws.cell(row=i, column=3, value=f"={left}"); ws.cell(row=i, column=4, value=f"={right}")
+        f_ = {"abs": f"=ABS(C{i}-D{i})<0.001", "eq": f"=ABS(C{i}-D{i})<0.000001", "ge": f"=C{i}>=D{i}",
+              "le_base": f"=OR({base_only},C{i}<=D{i})"}[kind]
+        c = ws.cell(row=i, column=2, value=f_); c.font = F_B
+        for col in (3, 4):
+            ws.cell(row=i, column=col).number_format = "#,##0.0000"
+    last = 4 + len(checks)
+    ws.cell(row=last + 2, column=1, value="All checks pass").font = F_B
+    c = ws.cell(row=last + 2, column=2, value=f"=AND(B5:B{last})"); c.font = Font(bold=True, size=12, color=TEAL); c.fill = FILL_K
+    _widths(ws, {"A": 66, "B": 12, "C": 18, "D": 18})
+    return {"all": f"Checks!$B${last + 2}", "n": len(checks)}
+
+
+# ======================================================================= Cover
+def _cover(wb, ref, dref, kref, res):
+    ws = wb.create_sheet("Cover", 0)
+    _title(ws, f"SAP SE: company valuation model ({res['edition'].upper()} edition)",
+           "AIFA Assignment 2, Group 5 · valuation date 13 Nov 2026 · € millions unless stated")
+    rows = [("DCF value per share", f"={dref['price']}", PX), ("Reference share price", f"={ref['price']}", PX),
+            ("Active scenario", f'=CHOOSE({ref["scen_sel"]},"Bear","Base","Bull")', None), ("All integrity checks pass", f"={kref['all']}", None)]
+    for i, (lab, f_, fm) in enumerate(rows, start=4):
+        ws.cell(row=i, column=1, value=lab).font = F_B
+        c = ws.cell(row=i, column=2, value=f_); c.font = F_B; c.fill = FILL_K
+        if fm:
+            c.number_format = fm
+    r = 9
+    ws.cell(row=r, column=1, value="How to use").font = F_B
+    for i, t in enumerate(("Change blue cells on the Assumptions sheet; everything else recalculates.",
+                           "Switch the scenario with the selector at the bottom of the Assumptions sheet (1 = Bear, 2 = Base, 3 = Bull).",
+                           "Check the Checks sheet after any change: every row must read TRUE.",
+                           "Sheets marked 'engine values' are calculated by the Python engine and do not react to input changes; rerun run_valuation.py to refresh them."), start=r + 1):
+        ws.cell(row=i, column=1, value=f"{i - r}. {t}")
+    r = 15
+    ws.cell(row=r, column=1, value="Colour legend").font = F_B
+    for i, (lab, font) in enumerate((("Blue: input you can change", F_IN), ("Black: formula", Font()), ("Green: link to another sheet", F_LINK),
+                                     ("Grey italics: Python engine check value", Font(italic=True, color="8091A5"))), start=r + 1):
+        ws.cell(row=i, column=1, value=lab).font = font
+    c = ws.cell(row=r + 5, column=1, value="Highlighted: key result"); c.fill = FILL_K
+    r = 22
+    _hdr(ws, r, ["Sheet", "Type", "Content"])
+    tabs = [("Summary", "Live", "Key outputs, football field, key assumptions"),
+            ("Assumptions", "Inputs", "Every input with source and rationale; scenario selector"),
+            ("WACC", "Live", "Cost of capital and reference points"), ("Forecast", "Live", "Revenue by line and free cash flow, 2026-35"),
+            ("DCF", "Live", "Discounting, terminal value, equity bridge, value per share"),
+            ("DDM", "Live", "Dividend discount model as a cross-check"), ("Checks", "Live", f"{kref['n']} integrity checks"),
+            ("Scenarios", "Engine values", "Bear, base and bull values and weights"),
+            ("Sensitivity", "Engine values", "WACC vs growth, margin, cloud growth; tornado"),
+            ("Monte Carlo", "Engine values, live statistics", "Distribution of the DCF value"),
+            ("Comps", "Live", "Peer multiples, implied values, growth-adjusted regression"),
+            ("Business model", "Engine values", "Cloud transformation: revenue mix and backlog"),
+            ("Intangibles", "Engine values", "R&D capitalisation, market vs book value"),
+            ("Historicals", "Data", "FY2021-25 financials and consensus"), ("FCFF bridge", "Data", "FY2025 FCFF vs SAP's reported free cash flow"),
+            ("Lecture extensions", "Engine values", "Sum of the parts, bottom-up beta, terminal-value methods, reference points"),
+            ("Sources & notes", "Text", "Data sources and how conflicts were resolved")]
+    for i, t in enumerate(tabs, start=r + 1):
+        for j, v in enumerate(t, start=1):
+            ws.cell(row=i, column=j, value=v)
+        ws.cell(row=i, column=1).font = F_B
+    _widths(ws, {"A": 34, "B": 30, "C": 90})
 
 
 # ======================================================================= Lecture extensions (values from the Python engine)
@@ -889,7 +1128,7 @@ def _summary(wb, ref, wref, dref, cref, res, out_dir):
     ]
     for i, t in enumerate(ka, start=r + 1):
         ws.cell(row=i, column=1, value="• " + t)
-    img = XLImage(str(out_dir / f"football_{res['edition']}.png")); img.width, img.height = 880, 528
+    img = XLImage(str(out_dir / f"football_{res['edition']}.png")); img.width, img.height = 880, 592
     ws.add_image(img, "D4")
     _widths(ws, {"A": 46, "B": 18, "C": 3})
 
@@ -899,11 +1138,15 @@ def write(res: dict, path: Path, out_dir: Path) -> Path:
     wb.active.title = "Summary"
     a = res["assumptions"]
     ref = _assumptions(wb, a, res)
+    res["_ref"] = ref
     wref = _wacc(wb, ref, res)
     R = _forecast(wb, ref, res)
     dref = _dcf(wb, ref, wref, R, res)
+    _ddm(wb, ref, wref, R, res)
+    kref = _checks(wb, ref, wref, R, res)
     _scenarios(wb, res)
     _sensitivity(wb, res, out_dir)
+    _monte_carlo(wb, res, out_dir)
     cref = _comps(wb, ref, res)
     _business(wb, res, out_dir)
     _intangibles(wb, res)
@@ -912,5 +1155,7 @@ def write(res: dict, path: Path, out_dir: Path) -> Path:
     _extensions(wb, res)
     _sources(wb, res)
     _summary(wb, ref, wref, dref, cref, res, out_dir)
+    _cover(wb, ref, dref, kref, res)
+    res.pop("_ref", None)
     wb.save(path)
     return path
