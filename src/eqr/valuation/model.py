@@ -74,7 +74,7 @@ def forecast(a: Assumptions) -> pd.DataFrame:
     return pd.DataFrame(rows).T
 
 
-def dcf(a: Assumptions, wacc_override: float | None = None) -> dict:
+def dcf(a: Assumptions, wacc_override: float | None = None, tv_override: float | None = None) -> dict:
     w = wacc(a)
     r = w["wacc"] if wacc_override is None else wacc_override
     f = forecast(a)
@@ -97,11 +97,11 @@ def dcf(a: Assumptions, wacc_override: float | None = None) -> dict:
                + rev_t1 * a["sbc_pct"] * a["sbc_noncash"] * a["sbc_addback"]
                + rev_t1 * (a["da_terminal"] - a["capex_terminal"])
                + a["nwc_pct"] * (rev_t1 - last["revenue"]))
-    tv = fcff_t1 / (r - a["g"])
+    tv = fcff_t1 / (r - a["g"]) if tv_override is None else tv_override
     t_tv = stub + (YEARS[-1] - 2027) + 1
     pv_tv = tv / (1 + r) ** t_tv
     ev = sum(pv.values()) + pv_tv
-    non_op = a["cash"] + a["st_inv"] + a["lt_inv"]
+    non_op = a["cash"] + a["st_inv"] + a["lt_inv"] + a["debt_benefit"] + a["tlcf_asset"]
     claims = a["debt"] + a["pension"] + a["nci"]
     equity = ev + non_op - claims
     ps_anchor = equity / a["shares"]

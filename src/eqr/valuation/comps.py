@@ -30,7 +30,7 @@ def sap_ntm(ds: dict) -> dict:
 def implied(ds: dict, a, peers: pd.DataFrame) -> dict:
     core = peers[peers["core"]].copy()
     s = sap_ntm(ds)
-    non_op = a["cash"] + a["st_inv"] + a["lt_inv"]
+    non_op = a["cash"] + a["st_inv"] + a["lt_inv"] + a["debt_benefit"] + a["tlcf_asset"]
     claims = a["debt"] + a["pension"] + a["nci"]
     shares = a["shares"]
     out = {"sap": s, "stats": {}, "rows": []}

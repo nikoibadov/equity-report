@@ -120,3 +120,22 @@ fy2025_statement:
     op_nonifrs: 8153
     sbc: 2385
     current_cloud_backlog: 18078
+
+# Bonds outstanding. Principal in EUR m, annual coupons. Month and year are known; the day is set to mid-month.
+bonds:
+  source: "SAP bonds outstanding at 30 Sep 2026 (SAP investor relations, debt overview)"
+  list:
+    - {coupon: 1.75,  maturity: "2027-02-15", principal: 1000}
+    - {coupon: 1.25,  maturity: "2028-03-15", principal: 1000}
+    - {coupon: null,  maturity: "2028-06-15", principal: 800}    # floating-rate note: reprices, no benefit
+    - {coupon: 0.375, maturity: "2029-05-15", principal: 800}
+    - {coupon: 3.0,   maturity: "2029-06-15", principal: 850}
+    - {coupon: 1.375, maturity: "2030-03-15", principal: 500}
+    - {coupon: 1.625, maturity: "2031-03-15", principal: 1250}
+    - {coupon: 3.25,  maturity: "2031-06-15", principal: 850}
+    - {coupon: 3.5,   maturity: "2033-06-15", principal: 1000}
+
+tax_loss_carryforwards:
+  total_fy2025: 921          # unused tax losses, FY2025 (SAP Integrated Report 2025, income-tax note)
+  no_expiry: 628
+  source: "SAP Integrated Report 2025, note on income taxes"

@@ -277,7 +277,7 @@ def load() -> dict:
         "beta": (beta["adjusted"], f"OLS 5y weekly SAP.DE vs DAX ({beta['start']} to {beta['end']}, n={beta['n']}): raw {beta['raw']:.2f}, Blume-adjusted, SE {beta['se']:.3f}"),
         "erp": (0.050, f"House view 5.0% = low end of IDW/FAUB 5.0-6.5%; Damodaran implied ERP {dam['erp']*100:.2f}% on {dam['erp_date']} (+{dam['us_default_spread']*100:.2f}% default-spread adj. = {(dam['erp']+dam['us_default_spread'])*100:.2f}%)"),
         "kd": (kd, f"Rf {b10['yield']:.2f}% + Damodaran A1/A+ default spread {dam['a_plus_spread']*100:.2f}% (S&P A+ / Moody's A1)"),
-        "tax": (0.29, "SAP 2026 outlook non-IFRS tax rate ~29%"),
+        "tax": (0.30, "Marginal (statutory) rate, Germany ~30% (15% corporate tax + 5.5% solidarity surcharge + ~14% trade tax; KPMG tax-rate table). Lecture: marginal home-country rate preferred over the effective rate (SAP ETR ~29%)"),
     }
     rnd_long = dict(sec["rnd"])
     pe = peers()
@@ -303,3 +303,39 @@ def load() -> dict:
             ("Peers", "Same 30-name universe as the Capital IQ screen + Intuit; yfinance multiples; NTM = fiscal-year-weighted consensus"),
         ],
     }
+
+
+# ------------------------------------------------------------------ peer betas (bottom-up beta, both editions)
+BETA_SNAPSHOT = Path(__file__).with_name("peer_betas.json")
+BETA_INDEX = {".PA": "^STOXX", ".DE": "^STOXX", ".L": "^FTSE"}   # US listings regress on the S&P 500
+
+
+def refresh_peer_betas() -> dict:
+    """5y weekly regression beta of every classified peer against its home broad index, plus gross debt / market cap.
+    Stored as a dated snapshot next to the loaders so both editions (and the hosted app) read the same numbers."""
+    import yfinance as yf
+
+    syms = {tk: s for tk, s in YF_PEERS.items()}
+    idx = sorted({"^GSPC", *BETA_INDEX.values()})
+    px = yf.download(list(syms.values()) + idx, period="5y", interval="1wk", auto_adjust=True, progress=False)["Close"]
+    rows = {}
+    for tk, s in syms.items():
+        bench = next((v for k, v in BETA_INDEX.items() if s.endswith(k)), "^GSPC")
+        r = px[[s, bench]].dropna().pct_change().dropna()
+        if len(r) < 100:
+            continue
+        x, y = r[bench].values, r[s].values
+        b = float(np.cov(y, x)[0, 1] / np.var(x, ddof=1))
+        i = yf.Ticker(s).info
+        debt, mcap = i.get("totalDebt"), i.get("marketCap")
+        rows[tk] = {"symbol": s, "index": bench, "raw": b, "adjusted": 0.67 * b + 0.33, "n": int(len(r)),
+                    "r2": float(np.corrcoef(x, y)[0, 1] ** 2),
+                    "debt_to_equity": (float(debt) / float(mcap)) if debt and mcap else None}
+    data = {"fetched": TODAY, "method": "OLS on weekly returns, 5 years, vs home broad index; Blume adjustment 0.67 x raw + 0.33; "
+            "D/E = total debt / market cap (Yahoo Finance)", "rows": rows}
+    BETA_SNAPSHOT.write_text(json.dumps(data, indent=1))
+    return data
+
+
+def peer_betas() -> dict:
+    return json.loads(BETA_SNAPSHOT.read_text()) if BETA_SNAPSHOT.exists() else refresh_peer_betas()

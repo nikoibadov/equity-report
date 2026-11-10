@@ -102,6 +102,13 @@ def build(ds: dict) -> Assumptions:
         "cash": A(b["cash"], "€m", "SAP Q3-26 statement", b.get("notes", {}).get("cash", "")),
         "st_inv": A(b["st_investments"], "€m", "SAP Q3-26 statement", "Current other financial assets (time deposits, debt securities)"),
         "lt_inv": A(b["lt_investments"], "€m", "SAP Q3-26 / CIQ", b.get("notes", {}).get("lt_investments", "")),
+        "debt_benefit": A(_bond_benefit(ds["ir"], w["kd"][0]), "€m", "Own calculation (bond list, market yields)",
+                          "Below-market debt: SAP's fixed bonds carry a 2.0% average coupon vs ~3.5-3.9% market yields, so they are worth less than "
+                          "face value (e.g. 0.375% 2029 at ~92.5%). Debt stays in the bridge at notional; the PV of the interest saving is added "
+                          "as a non-operating asset (lecture p35)"),
+        "tlcf_asset": A(round(ds["ir"]["tax_loss_carryforwards"]["total_fy2025"] * 0.30, 0), "€m", "SAP Integrated Report 2025",
+                        "Tax loss carryforwards €921m x 30% tax rate; SAP is solidly profitable, so the losses can be used (lecture p37). "
+                        "Upper bound: undiscounted and assumes full usability"),
         "debt": A(b["debt"], "€m", "SAP Q3-26 / CIQ", b.get("notes", {}).get("debt", "")),
         "pension": A(b["pension"], "€m", "CIQ Pension Details", b.get("notes", {}).get("pension", "")),
         "nci": A(b["nci"], "€m", "SAP Q3-26 statement", "Non-controlling interests at book value"),
@@ -109,6 +116,27 @@ def build(ds: dict) -> Assumptions:
         "price": A(mk["price"], "€", mk["price_source"], f"Reference market price ({mk['price_date']})"),
     }
     return Assumptions(it)
+
+
+def _bond_benefit(ir: dict, kd: float, anchor: str = "2026-09-30") -> float:
+    """PV of the interest saving on fixed-coupon bonds = face value - market value at today's yields.
+    Yield: Kd (long-bond yield) for maturities beyond 5 years, Kd - 0.46pp below (Bloomberg ST vs 2033 yield gap)."""
+    import datetime as dt
+    t0 = dt.date.fromisoformat(anchor)
+    total = 0.0
+    for b in ir["bonds"]["list"]:
+        if b["coupon"] is None:
+            continue
+        mat = dt.date.fromisoformat(b["maturity"])
+        yrs = (mat - t0).days / 365.0
+        y = kd if yrs > 5 else kd - 0.0046
+        c = b["coupon"] / 100
+        n = int(yrs) + 1                                   # remaining annual coupons
+        times = [yrs - k for k in range(n) if yrs - k > 0]
+        dirty = sum(c / (1 + y) ** t for t in times) + 1 / (1 + y) ** yrs
+        accrued = c * (1 - (min(times) % 1 if min(times) < 1 else min(times) - int(min(times))))
+        total += b["principal"] * (1 - (dirty - accrued))
+    return round(total, 0)
 
 
 SCENARIOS = {

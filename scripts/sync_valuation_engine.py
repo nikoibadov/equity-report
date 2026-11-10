@@ -15,7 +15,7 @@ if __name__ == "__main__":
     src = Path(ap.parse_args().src)
     n = 0
     for f in src.rglob("*"):
-        if f.suffix in (".py", ".yaml") and "__pycache__" not in f.parts:
+        if f.suffix in (".py", ".yaml", ".json") and "__pycache__" not in f.parts:
             out = DST / f.relative_to(src)
             out.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(f, out)

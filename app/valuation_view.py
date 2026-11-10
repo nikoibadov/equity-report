@@ -213,7 +213,8 @@ def _sap_view(edition: str, root: Path):
         st.caption(f"Base case: €{base['dcf']['price']:.2f}. Your changes: " + ", ".join(
             [f"{k}={v:.4g}" for k, v in changed.items()] + ([f"+{len(add)} peers"] if add else []) + ([f"-{len(drop)} peers"] if drop else [])))
 
-    t1, t2, t3, t4, t5, t6 = st.tabs(["Football field", "DCF & FCFF", "Sensitivity", "Peers", "Business & intangibles", "Download"])
+    t1, t2, t3, t4, t5, t7, t6 = st.tabs(["Football field", "DCF & FCFF", "Sensitivity", "Peers", "Business & intangibles",
+                                          "Cross-checks", "Download"])
     with t1:
         st.image(_chart(charts.football, res, title=f"SAP SE football field · {edition.upper()} edition (€/share)"))
         st.dataframe(pd.DataFrame(charts.football_items(res))[["label", "low", "mid", "high"]].rename(
@@ -297,8 +298,67 @@ def _sap_view(edition: str, root: Path):
                     f"- Capitalising R&D adds an unrecognised asset of **€{m['rd_asset_unrecognised']/1000:.1f}bn**; "
                     f"goodwill + acquired intangibles are €{m['goodwill_intangibles']/1000:.1f}bn.\n"
                     "- Consequence: book-based multiples (P/B, EV/IC) are uninformative; FCFF treats R&D as a cash cost, so the DCF is not affected.")
+    with t7:
+        _sap_crosschecks(res)
     with t6:
         _sap_downloads(res, edition)
+
+
+def _sap_crosschecks(res):
+    """Lecture-aligned cross-checks around the base DCF (engine: eqr.valuation.extensions)."""
+    x, a, d = res["ext"], res["assumptions"], res["dcf"]
+    s, b, t, w, br, pe = x["sotp"], x["beta"], x["tv"], x["wacc_iter"], x["bridge"], x["pe"]
+    with st.container(horizontal=True):
+        st.metric("Sum of the parts", f"€{s['price']['median']:.0f}", f"€{s['price']['q1']:.0f}-€{s['price']['q3']:.0f}", delta_color="off", border=True)
+        if b:
+            st.metric("DCF with bottom-up beta", f"€{b['price']:.0f}", f"β {b['beta_relevered']:.2f} vs {b['beta_base']:.2f}", delta_color="off", border=True)
+        st.metric("Zero-growth terminal value", f"€{t['zero']['price']:.0f}", "floor", delta_color="off", border=True)
+        st.metric("Exit-multiple terminal value", f"€{t['exit']['price']:.0f}", f"{t['exit']['mult_med']:.1f}x EBITDA", delta_color="off", border=True)
+        st.metric("WACC after iteration", f"{w['wacc']*100:.2f}%", f"€{w['price']:.2f}", delta_color="off", border=True)
+
+    st.subheader("Sum of the parts by revenue line")
+    parts = pd.DataFrame(s["parts"])[["part", "rev_ntm", "peers", "q1", "median", "q3", "ev_med"]]
+    st.dataframe(parts, hide_index=True, column_config={
+        "part": "Part", "peers": "Peer group", "rev_ntm": st.column_config.NumberColumn("NTM revenue €m", format="%,.0f"),
+        "q1": st.column_config.NumberColumn("EV/sales Q1", format="%.1fx"), "median": st.column_config.NumberColumn("Median", format="%.1fx"),
+        "q3": st.column_config.NumberColumn("Q3", format="%.1fx"), "ev_med": st.column_config.NumberColumn("EV at median €m", format="%,.0f")})
+    st.caption(f"Cloud is {s['cloud_share_of_rev']*100:.0f}% of NTM revenue and {s['cloud_share_of_ev']*100:.0f}% of the sum-of-the-parts value. "
+               f"The share price implies {s['implied_cloud']['market']:.1f}x sales for the cloud line against a peer median of {s['parts'][0]['median']:.1f}x: "
+               f"SAP's cloud grows {s['sap_cloud_growth']*100:.0f}% a year, cloud peers {s['peer_cloud_growth']*100:.0f}%.")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader("Terminal-value methods")
+        tv = pd.DataFrame({"Zero growth: FCFF / WACC": t["zero"], "Gordon growth (base)": t["gordon"], "Exit EV/EBITDA": t["exit"]}).T
+        tv = tv[["price", "low", "high", "tv_share"]].apply(pd.to_numeric, errors="coerce")
+        st.dataframe(tv.rename(columns={"price": "Value €", "low": "Low €", "high": "High €", "tv_share": "TV share of EV"}).style.format(
+            {"Value €": "€{:.0f}", "Low €": "€{:.0f}", "High €": "€{:.0f}", "TV share of EV": "{:.0%}"}, na_rep="–"))
+        st.caption(f"The exit multiple equals a perpetual growth of {t['exit']['implied_g']*100:.1f}%, above the risk-free rate, so it is an upper bound.")
+        st.subheader("WACC weights: circularity")
+        st.dataframe(w["steps"].rename(columns={"iter": "Round", "e_used": "Equity used €m", "we": "E/V", "wacc": "WACC",
+                                                "price": "Value €", "e_dcf": "DCF equity €m"}).style.format(
+            {"Equity used €m": "{:,.0f}", "E/V": "{:.2%}", "WACC": "{:.3%}", "Value €": "€{:.2f}", "DCF equity €m": "{:,.0f}"}), hide_index=True)
+    with c2:
+        if b:
+            st.subheader("Bottom-up beta")
+            st.dataframe(b["table"].rename(columns={"ticker": "Peer", "index": "Index", "beta_raw": "Raw", "beta_adj": "Adjusted",
+                                                    "d_e": "D/E", "beta_u": "Unlevered"}).style.format(
+                {"Raw": "{:.2f}", "Adjusted": "{:.2f}", "D/E": "{:.0%}", "Unlevered": "{:.2f}"}), hide_index=True, height=320)
+            st.caption(f"Median unlevered beta {b['beta_u_median']:.2f}, re-levered at SAP's D/E of {b['d_e_sap']*100:.1f}% and 30% tax: {b['beta_relevered']:.2f}. "
+                       f"SAP's own beta against the STOXX Europe 600 is {b['sap_vs_stoxx_adj']:.2f}, the same as against the DAX. Betas as of {b['fetched']}.")
+        st.subheader("Equity bridge and P/E")
+        st.markdown(
+            f"- Cheap old bonds: **€{br['debt_benefit']:.0f}m** (+€{br['debt_benefit_ps']:.2f} a share), in the base case.\n"
+            f"- Tax loss carryforwards: **€{br['tlcf']:.0f}m** (+€{br['tlcf_ps']:.2f} a share), in the base case.\n"
+            f"- Minorities at market value instead of book: €{br['nci_ps_at_market']:.2f} a share (footnote only).\n"
+            f"- WACC tax shield at the German marginal rate of {a['tax_wacc']*100:.0f}%.\n"
+            f"- P/E without levered peers ({', '.join(q['ticker'] for q in pe['flagged']) or 'none'}): median {pe['median']:.1f}x "
+            f"against {pe['median_all']:.1f}x for all core peers.")
+    with st.expander("Why each multiple is used or left out"):
+        st.dataframe(pd.DataFrame(x["multiples"], columns=["Multiple", "Role", "Pro", "Con and how it is handled"]), hide_index=True)
+    with st.expander("Explained, not modelled"):
+        for k, v in x["not_modelled"]:
+            st.markdown(f"**{k}.** {v}")
 
 
 def _sap_downloads(res, edition):

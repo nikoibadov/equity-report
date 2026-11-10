@@ -4,7 +4,7 @@ from __future__ import annotations
 import numpy as np
 
 from . import assumptions as A
-from . import comps, intangibles, model
+from . import comps, extensions, intangibles, model
 
 
 def run(ds: dict, a: A.Assumptions | None = None) -> dict:
@@ -40,6 +40,7 @@ def run(ds: dict, a: A.Assumptions | None = None) -> dict:
         "consensus": ds["consensus"],
         "ds": ds,
     }
+    res["ext"] = extensions.run(res)
     return res
 
 

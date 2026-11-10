@@ -75,7 +75,7 @@ def _assumptions(wb, a, res):
         ("Profitability (fade 2031-35 linear to terminal)", ["m_nonifrs", "acq_pct", "oneoff_2026", "tax"]),
         ("Reinvestment & SBC", ["da_pct", "capex_pct", "nwc_pct", "sbc_pct", "sbc_noncash", "sbc_addback"]),
         ("Terminal value & timing", ["g", "stub", "roll_days"]),
-        ("EV-to-equity bridge (30 Sep 2026)", ["cash", "st_inv", "lt_inv", "debt", "pension", "nci"]),
+        ("EV-to-equity bridge (30 Sep 2026)", ["cash", "st_inv", "lt_inv", "debt_benefit", "tlcf_asset", "debt", "pension", "nci"]),
     ]
     ref = {}
     r = 5
@@ -131,6 +131,7 @@ def _label(k):
         "sbc_pct": "SBC % revenue", "sbc_noncash": "Non-cash share of SBC", "sbc_addback": "Add back non-cash SBC? (0/1)",
         "g": "Terminal growth g", "stub": "Stub (Q4-26) year fraction", "roll_days": "Roll-forward days 30 Sep -> 13 Nov",
         "cash": "Cash & equivalents", "st_inv": "Current financial assets", "lt_inv": "Non-current financial investments",
+        "debt_benefit": "PV of below-market debt (benefit)", "tlcf_asset": "Tax value of loss carryforwards",
         "debt": "Financial debt incl. leases", "pension": "Pension deficit", "nci": "Non-controlling interests",
     }
     return L.get(k, k)
@@ -314,16 +315,18 @@ def _dcf(wb, ref, wref, R, res):
         ("+ Cash & equivalents", f"={ref['cash']}", EUR, None),
         ("+ Current financial assets", f"={ref['st_inv']}", EUR, None),
         ("+ Non-current financial investments", f"={ref['lt_inv']}", EUR, None),
-        ("- Financial debt incl. leases", f"=-{ref['debt']}", EUR, None),
+        ("+ PV of below-market debt (cheap old bonds)", f"={ref['debt_benefit']}", EUR, None),
+        ("+ Tax value of loss carryforwards", f"={ref['tlcf_asset']}", EUR, None),
+        ("- Financial debt incl. leases (notional)", f"=-{ref['debt']}", EUR, None),
         ("- Pension deficit", f"=-{ref['pension']}", EUR, None),
         ("- Non-controlling interests", f"=-{ref['nci']}", EUR, None),
-        ("Equity value (30 Sep 2026)", "=SUM(B23:B29)", EUR, d["equity"]),
+        ("Equity value (30 Sep 2026)", "=SUM(B23:B31)", EUR, d["equity"]),
         ("Diluted shares (m)", f"={ref['shares']}", EUR1, None),
-        ("Value per share at 30 Sep 2026", "=B30/B31", PX, d["ps_anchor"]),
+        ("Value per share at 30 Sep 2026", "=B32/B33", PX, d["ps_anchor"]),
         ("Roll-forward factor to 13 Nov 2026 (1+Ke)^(days/365)", f"=(1+{wref['ke']})^({ref['roll_days']}/365)", "0.0000", d["roll"]),
-        ("DCF value per share at 13 Nov 2026", "=B32*B33", PX, d["price"]),
+        ("DCF value per share at 13 Nov 2026", "=B34*B35", PX, d["price"]),
         ("Reference share price", f"={ref['price']}", PX, None),
-        ("Upside / (downside)", "=B34/B35-1", PCT, d["upside"]),
+        ("Upside / (downside)", "=B36/B37-1", PCT, d["upside"]),
         ("TV share of EV", "=B21/B23", PCT, d["tv_share"]),
         ("Implied exit multiple EV/EBIT (TV / EBIT T+1)", "=B19/B17", MULT, d["exit_ev_ebit"]),
         ("Implied EV / NTM revenue", f"=B23/(0.25*Forecast!D{R['revenue']}+0.75*Forecast!E{R['revenue']})", MULT, d["implied_ev_sales_ntm"]),
@@ -335,11 +338,11 @@ def _dcf(wb, ref, wref, R, res):
         c = ws.cell(row=i, column=2, value=f); c.number_format = fmt
         if chk is not None:
             cc = ws.cell(row=i, column=3, value=float(chk)); cc.number_format = fmt; cc.font = Font(italic=True, color="8091A5")
-    for rr in (23, 30, 34):
+    for rr in (23, 32, 36):
         ws[f"A{rr}"].font = F_B; ws[f"B{rr}"].font = F_B; ws[f"B{rr}"].fill = FILL_K
     _widths(ws, {"A": 52, "B": 16, "C": 14, **{YCOL[y]: 11 for y in YEARS}})
-    return {"price": "DCF!$B$34", "ev": "DCF!$B$23", "equity": "DCF!$B$30", "upside": "DCF!$B$36", "tv_share": "DCF!$B$37",
-            "ps_anchor": "DCF!$B$32"}
+    return {"price": "DCF!$B$36", "ev": "DCF!$B$23", "equity": "DCF!$B$32", "upside": "DCF!$B$38", "tv_share": "DCF!$B$39",
+            "ps_anchor": "DCF!$B$34"}
 
 
 # ======================================================================= Comps
@@ -398,7 +401,7 @@ def _comps(wb, ref, res):
     r += 1
     _hdr(ws, r, ["Metric", "SAP NTM metric", "Peer Q1", "Peer median", "Peer Q3", "Price @Q1", "Price @median", "Price @Q3", "Python check (median)"])
     r += 1
-    nonop = f"({ref['cash']}+{ref['st_inv']}+{ref['lt_inv']}-{ref['debt']}-{ref['pension']}-{ref['nci']})"
+    nonop = f"({ref['cash']}+{ref['st_inv']}+{ref['lt_inv']}+{ref['debt_benefit']}+{ref['tlcf_asset']}-{ref['debt']}-{ref['pension']}-{ref['nci']})"
     metric_rows = [
         ("EV / NTM sales", s["rev_ntm"], "J", "ev", cp["stats"]["ev_sales_ntm"]["p_med"]),
         ("EV / NTM EBIT", s["ebit_ntm"], "L", "ev", cp["stats"]["ev_ebit_ntm"]["p_med"]),
@@ -682,6 +685,128 @@ def _recon(wb, res):
     _widths(ws, {"A": 60, "B": 14})
 
 
+# ======================================================================= Lecture extensions (values from the Python engine)
+def _extensions(wb, res):
+    ws = wb.create_sheet("Lecture extensions")
+    x, a, d = res["ext"], res["assumptions"], res["dcf"]
+    _title(ws, "Lecture-aligned cross-checks (MEAC 'Valuation Methodologies')",
+           "Values calculated by the Python engine (valuation/extensions.py) around the base DCF. They do not change the base case.")
+    G = Font(italic=True, color="5B6B7F")
+    r = 4
+
+    def head(text, cols):
+        nonlocal r
+        ws.cell(row=r, column=1, value=text).font = F_B; r += 1
+        _hdr(ws, r, cols); r += 1
+
+    def row(vals, fmts=None, bold=False):
+        nonlocal r
+        for j, v in enumerate(vals, start=1):
+            c = ws.cell(row=r, column=j, value=(float(v) if isinstance(v, (int, float)) and not isinstance(v, bool) else v))
+            if fmts and j <= len(fmts) and fmts[j - 1]:
+                c.number_format = fmts[j - 1]
+            if bold:
+                c.font = F_B
+        r += 1
+
+    def note(text):
+        nonlocal r
+        ws.cell(row=r, column=1, value=text).font = G; r += 2
+
+    # 1 SOTP
+    s = x["sotp"]
+    head("1. Sum of the parts by revenue line (lecture p50-52)", ["Part", "NTM revenue €m", "Peer group", "EV/NTM sales Q1", "Median", "Q3", "EV @Q1 €m", "EV @median €m", "EV @Q3 €m"])
+    for p_ in s["parts"]:
+        row([p_["part"], p_["rev_ntm"], p_["peers"], p_["q1"], p_["median"], p_["q3"], p_["ev_q1"], p_["ev_med"], p_["ev_q3"]],
+            [None, EUR, None, MULT, MULT, MULT, EUR, EUR, EUR])
+    row(["Enterprise value", sum(p_["rev_ntm"] for p_ in s["parts"]), "", "", s["blended"], "", s["ev"]["q1"], s["ev"]["median"], s["ev"]["q3"]],
+        [None, EUR, None, None, MULT, None, EUR, EUR, EUR], bold=True)
+    row(["Value per share (after the equity bridge)", "", "", "", "", "", s["price"]["q1"], s["price"]["median"], s["price"]["q3"]],
+        [None] * 6 + [PX, PX, PX], bold=True)
+    r += 1
+    row(["Cloud share of NTM revenue / of SOTP enterprise value", s["cloud_share_of_rev"], s["cloud_share_of_ev"]], [None, PCT, PCT])
+    row(["Cloud multiple implied by the market price / by the DCF (support and services at peer medians)", s["implied_cloud"]["market"], s["implied_cloud"]["dcf"]], [None, MULT, MULT])
+    row(["SAP cloud NTM growth / cloud peer median NTM growth", s["sap_cloud_growth"], s["peer_cloud_growth"]], [None, PCT, PCT])
+    for m in s["mix"]:
+        row([f"Blended EV/sales at {m['period']} mix (cloud share, multiple)", m["cloud_share"], m["blended_ev_sales"]], [None, PCT, MULT])
+    note("Reading: at peer multiples the parts are worth less than the share price. The market pays a premium for SAP's cloud line because it grows about twice as fast as cloud peers; "
+         "the mix shift alone adds little because cloud and mature-software peers trade at similar EV/sales today. The value of the transformation is growth and margin, which the DCF captures.")
+
+    # 2 beta
+    b = x["beta"]
+    if b:
+        head("2. Bottom-up beta (lecture p20-23)", ["Peer", "Index", "Raw beta", "Adjusted beta", "D/E", "Unlevered beta"])
+        for _, q in b["table"].iterrows():
+            row([q["ticker"], q["index"], q["beta_raw"], q["beta_adj"], q["d_e"], q["beta_u"]], [None, None, "0.00", "0.00", PCT, "0.00"])
+        row(["Median unlevered beta", "", "", "", "", b["beta_u_median"]], [None] * 5 + ["0.00"], bold=True)
+        row(["Mean unlevered beta", "", "", "", "", b["beta_u_mean"]], [None] * 5 + ["0.00"])
+        row(["SAP D/E (market values)", "", "", "", b["d_e_sap"]], [None] * 4 + [PCT])
+        row(["Re-levered beta for SAP (median)", "", "", "", "", b["beta_relevered"]], [None] * 5 + ["0.00"], bold=True)
+        row(["Base-case beta (regression vs DAX, 5y adjusted)", "", "", "", "", b["beta_base"]], [None] * 5 + ["0.00"])
+        row(["SAP regression vs STOXX Europe 600 (adjusted)", "", "", "", "", b["sap_vs_stoxx_adj"]], [None] * 5 + ["0.00"])
+        row(["WACC with bottom-up beta", "", "", "", "", b["wacc"]], [None] * 5 + [PCT2])
+        row(["DCF value per share with bottom-up beta", "", "", "", "", b["price"]], [None] * 5 + [PX], bold=True)
+        note(f"Unlevering: beta_U = beta_E / (1 + (1 - t) x D/E), t = {b['t_peer']*100:.0f}% for peers; re-levered at SAP's D/E and 30% tax. {b['method']} (fetched {b['fetched']}). "
+             "DAX circularity check: SAP's beta against the broad STOXX Europe 600 is the same as against the DAX, so the base beta is not distorted by SAP's index weight. "
+             "US software peers carry higher betas against the S&P 500; the bottom-up value is shown as the cautious cross-check.")
+
+    # 3 TV
+    t = x["tv"]
+    head("3. Three terminal-value methods (lecture p14)", ["Method", "Terminal value €m", "TV share of EV", "Value per share", "Low", "High", "Comment"])
+    row(["Gordon growth (base)", t["gordon"]["tv"], t["gordon"]["tv_share"], t["gordon"]["price"], res["dcf_band"][0], res["dcf_band"][1],
+         f"g {a['g']*100:.2f}%; equals {t['gordon']['ev_ebitda']:.1f}x EBITDA T+1"], [None, EUR, PCT, PX, PX, PX])
+    row(["Zero-growth perpetuity FCFF(2035) / WACC", t["zero"]["tv"], t["zero"]["tv_share"], t["zero"]["price"], t["zero"]["low"], t["zero"]["high"],
+         "Floor: no growth after 2035; range WACC ±0.5pp"], [None, EUR, PCT, PX, PX, PX])
+    row(["Exit multiple EV/EBITDA", t["exit"]["tv"], t["exit"]["tv_share"], t["exit"]["price"], t["exit"]["low"], t["exit"]["high"],
+         f"Core peers' NTM EV/EBITDA {t['exit']['mult_q1']:.1f}x / {t['exit']['mult_med']:.1f}x / {t['exit']['mult_q3']:.1f}x on EBITDA T+1 €{t['exit']['ebitda_t1']/1000:.1f}bn"
+         + (" (SBC added back to match peers' street EBITDA)" if t["exit"]["sbc_added"] else "") + f"; median equals a perpetual growth of {t['exit']['implied_g']*100:.1f}%"],
+        [None, EUR, PCT, PX, PX, PX])
+    note("Reading: the exit multiple applies today's software multiples to 2035, when SAP is mature, and implies growth above the risk-free rate forever - too optimistic. "
+         "Gordon growth at 2.75% sits between the floor and the exit-multiple value and stays the base case.")
+
+    # 4 WACC iteration
+    w = x["wacc_iter"]
+    head("4. WACC weights: circularity (lecture p17)", ["Iteration", "Equity value used €m", "E / (D+E)", "WACC", "DCF value per share", "DCF equity value €m"])
+    for _, q in w["steps"].iterrows():
+        row([int(q["iter"]), q["e_used"], q["we"], q["wacc"], q["price"], q["e_dcf"]], ["0", EUR, PCT2, '0.000%', PX, EUR])
+    note(f"Start: market-cap weights. Each round replaces the equity value by the DCF result. Converged WACC {w['wacc']*100:.2f}% vs {w['wacc_start']*100:.2f}% "
+         f"and value €{w['price']:.2f} vs €{w['price_start']:.2f}: immaterial at ~4% debt, so the base case keeps observable market weights.")
+
+    # 5 tax
+    head("5. Tax rate (lecture p26)", ["Item", "Rate", "Use"])
+    row(["German marginal (statutory) rate", a["tax_wacc"], "WACC tax shield and terminal year"], [None, PCT])
+    row(["SAP effective / guided rate 2026", a["tax"][0], "Operating taxes in the explicit forecast (fades to 30%)"], [None, PCT])
+    r += 1
+
+    # 6 bridge
+    br = x["bridge"]
+    head("6. Equity-bridge refinements (lecture p30, p35-37)", ["Item", "€m", "€ per share", "Treatment"])
+    row(["PV of below-market debt (cheap old bonds)", br["debt_benefit"], br["debt_benefit_ps"], "In the base case: added as a non-operating asset; debt stays at notional"], [None, EUR, PX])
+    row(["Tax value of loss carryforwards (€921m x 30%)", br["tlcf"], br["tlcf_ps"], "In the base case: SAP is profitable, losses are usable (upper bound, undiscounted)"], [None, EUR, PX])
+    row([f"NCI at market instead of book (SAP's own P/B {br['pb']:.1f}x)", br["nci_market"], br["nci_ps_at_market"],
+         f"Footnote only: book NCI €{br['nci_book']:.0f}m is used; market-value NCI would lower the value by this amount"], [None, EUR, PX])
+    r += 1
+
+    # 7 multiples
+    pe = x["pe"]
+    head("7. Multiples: caveats (lecture p43, p46)", ["Multiple", "Role", "Pro", "Con / how it is handled"])
+    for m in x["multiples"]:
+        row(list(m))
+    r += 1
+    row(["P/E and leverage: core peers with net debt above 25% of market cap", ", ".join(f"{q['ticker']} ({q['net_debt_mcap']*100:.0f}%)" for q in pe["flagged"]) or "none"])
+    row(["Median P/NTM EPS, all core peers / ex levered peers", pe["median_all"], pe["median"]], [None, MULT, MULT])
+    row(["Implied value per share ex levered peers (Q1 / median / Q3)", pe["p_q1"], pe["p_med"], pe["p_q3"]], [None, PX, PX, PX])
+    r += 1
+
+    head("Explained, not modelled", ["Topic", "Reason"])
+    for k, v in x["not_modelled"]:
+        row([k, v])
+    _widths(ws, {"A": 62, "B": 18, "C": 30, "D": 16, "E": 14, "F": 16, "G": 16, "H": 16, "I": 16})
+    for rr in ws.iter_rows(min_row=4, max_col=1):
+        rr[0].alignment = Alignment(wrap_text=True, vertical="top")
+
+
+
 def _sources(wb, res):
     ws = wb.create_sheet("Sources & notes")
     ds = res["ds"]
@@ -697,7 +822,7 @@ def _sources(wb, res):
         ("Market cap", "CIQ €247bn (1,154m shares) vs Bloomberg WACC screen €213bn vs 1,229m issued", "Shares outstanding net of treasury (1,154.2m) + 7m dilution"),
         ("Debt", "CIQ Q3 10,588 vs Bloomberg 7,559 vs bond principal 8,050", "Reported financial liabilities 10,588 (bonds + CP + leases) - consistent with IFRS 16 FCFF"),
         ("EBIT basis", "CIQ EBIT 10,418 ≈ non-IFRS 10,419; IFRS 9,830 (SAP) vs 9,617 (CIQ as reported)", "Model builds from non-IFRS (incl. SBC) less acquisition-related charges"),
-        ("Tax rate", "27.9% (Bloomberg), 28.7% (CIQ ETR), 29% (guidance), 29.9% (CIQ DCF)", "29% 2026, 29.5% 2027-30, 30% terminal"),
+        ("Tax rate", "27.9% (Bloomberg), 28.7% (CIQ ETR), 29% (guidance), 29.9% (CIQ DCF)", "Operating taxes 29% 2026, 29.5% 2027-30, 30% terminal; WACC tax shield at the 30% German marginal rate"),
         ("Buyback avg. price", "Bloomberg €212.43 vs SAP Q3 statement €164.79", "Not a valuation input; noted only"),
         ("Valuation date", "13 Nov 2026 is after the data cut-off (5-9 Nov)", "Value anchored at 30 Sep balance sheet, rolled forward 44 days at Ke; price can be overridden at run time"),
     ]
@@ -750,12 +875,12 @@ def _summary(wb, ref, wref, dref, cref, res, out_dir):
         f"Non-IFRS operating margin (SBC included) {a['m_nonifrs'][0]*100:.1f}% (2026) → {a['m_nonifrs'][-1]*100:.1f}% (2030) → {a['m_terminal']*100:.0f}% terminal; tax 29-30%",
         f"Capex {a['capex_pct'][0]*100:.1f}-{a['capex_terminal']*100:.1f}% and D&A {a['da_pct'][0]*100:.1f}-{a['da_terminal']*100:.1f}% of revenue; NWC releases {a['nwc_pct']*100:.0f}% of incremental revenue (prepaid subscriptions)",
         f"WACC {d['wacc']*100:.2f}% = Ke {d['ke']*100:.2f}% (Rf {a['rf']*100:.2f}%, β {a['beta']:.2f}, ERP {a['erp']*100:.1f}%) x {d['we']*100:.0f}% + Kd after tax {d['kd_at']*100:.2f}% x {d['wd']*100:.0f}%; g {a['g']*100:.2f}%",
-        f"Bridge (30 Sep 2026): + cash & financial assets €{(a['cash']+a['st_inv'])/1000:.1f}bn + investments €{a['lt_inv']/1000:.1f}bn - debt incl. leases €{a['debt']/1000:.1f}bn - pensions/NCI €{(a['pension']+a['nci'])/1000:.1f}bn; {a['shares']:.1f}m diluted shares",
+        f"Bridge (30 Sep 2026): + cash & financial assets €{(a['cash']+a['st_inv'])/1000:.1f}bn + investments €{a['lt_inv']/1000:.1f}bn + cheap-debt benefit and tax losses €{(a['debt_benefit']+a['tlcf_asset'])/1000:.2f}bn - debt incl. leases €{a['debt']/1000:.1f}bn - pensions/NCI €{(a['pension']+a['nci'])/1000:.1f}bn; {a['shares']:.1f}m diluted shares",
         f"Peers ({cp['stats']['ev_sales_ntm']['n']} core): ORCL, MSFT, CRM, NOW, ADBE, WDAY, ADSK, DSY, PTC, SGE, OTEX, NEM; NTM EV/Sales, EV/EBIT, P/E; EV/EBITDA and P/B ruled out",
     ]
     for i, t in enumerate(ka, start=r + 1):
         ws.cell(row=i, column=1, value="• " + t)
-    img = XLImage(str(out_dir / f"football_{res['edition']}.png")); img.width, img.height = 880, 448
+    img = XLImage(str(out_dir / f"football_{res['edition']}.png")); img.width, img.height = 880, 528
     ws.add_image(img, "D4")
     _widths(ws, {"A": 46, "B": 18, "C": 3})
 
@@ -775,6 +900,7 @@ def write(res: dict, path: Path, out_dir: Path) -> Path:
     _intangibles(wb, res)
     _historicals(wb, res)
     _recon(wb, res)
+    _extensions(wb, res)
     _sources(wb, res)
     _summary(wb, ref, wref, dref, cref, res, out_dir)
     wb.save(path)

@@ -23,8 +23,8 @@ def check_workbook(path: Path, res: dict, tol: float = 0.01) -> tuple[bool, str]
     checks = {
         "WACC": (_val(sol, book, "WACC", "B15"), d["wacc"], 1e-6),
         "EV": (_val(sol, book, "DCF", "B23"), d["ev"], 0.5),
-        "Equity": (_val(sol, book, "DCF", "B30"), d["equity"], 0.5),
-        "DCF price": (_val(sol, book, "DCF", "B34"), d["price"], tol),
+        "Equity": (_val(sol, book, "DCF", "B32"), d["equity"], 0.5),
+        "DCF price": (_val(sol, book, "DCF", "B36"), d["price"], tol),
     }
     lines, ok = [], True
     for k, (xl_v, py_v, t) in checks.items():

@@ -15,16 +15,22 @@ def football_items(res: dict) -> list[dict]:
     """Assemble football-field bars from a valuation result bundle."""
     mk, d, sc, cp, sens = res["market"], res["dcf"], res["scenarios"], res["comps"], res["grid_wacc_g"]
     st = cp["stats"]
+    x = res.get("ext")
+    pe = x["pe"] if x and x["pe"]["flagged"] else None
     items = [
         {"label": "52-week range", "low": mk["lo52"], "high": mk["hi52"], "mid": None, "kind": "market"},
         {"label": f"Analyst targets (n={mk['tgt_n']})", "low": mk["tgt_low"], "high": mk["tgt_high"], "mid": mk["tgt_mean"], "kind": "market"},
         {"label": "DCF: WACC ±0.5pp, g ±0.25pp", "low": res["dcf_band"][0], "high": res["dcf_band"][1], "mid": d["price"], "kind": "dcf"},
         {"label": "DCF: bear / base / bull", "low": sc["Bear"]["price"], "high": sc["Bull"]["price"], "mid": sc["Weighted"]["price"], "kind": "dcf"},
+        *([{"label": "DCF: zero-growth terminal value (WACC ±0.5pp)", "low": x["tv"]["zero"]["low"], "high": x["tv"]["zero"]["high"], "mid": x["tv"]["zero"]["price"], "kind": "dcf"},
+           {"label": "DCF: exit EV/EBITDA terminal value (peer IQR)", "low": x["tv"]["exit"]["low"], "high": x["tv"]["exit"]["high"], "mid": x["tv"]["exit"]["price"], "kind": "dcf"}] if x else []),
         {"label": "EV / NTM sales (peer IQR)", "low": st["ev_sales_ntm"]["p_q1"], "high": st["ev_sales_ntm"]["p_q3"], "mid": st["ev_sales_ntm"]["p_med"], "kind": "comps"},
         {"label": ("EV / NTM EBIT (peer IQR)" if "ev_ebit_ntm_xsbc" in st else "EV / NTM EBIT, GAAP (peer IQR)"), "low": st["ev_ebit_ntm"]["p_q1"], "high": st["ev_ebit_ntm"]["p_q3"], "mid": st["ev_ebit_ntm"]["p_med"], "kind": "comps"},
         *([{"label": "EV / NTM EBIT ex-SBC (like-for-like)", "low": st["ev_ebit_ntm_xsbc"]["p_q1"], "high": st["ev_ebit_ntm_xsbc"]["p_q3"], "mid": st["ev_ebit_ntm_xsbc"]["p_med"], "kind": "comps"}] if "ev_ebit_ntm_xsbc" in st else []),
-        {"label": "P / NTM EPS (peer IQR)", "low": st["pe_ntm"]["p_q1"], "high": st["pe_ntm"]["p_q3"], "mid": st["pe_ntm"]["p_med"], "kind": "comps"},
+        ({"label": "P / NTM EPS (ex levered peers, IQR)", "low": pe["p_q1"], "high": pe["p_q3"], "mid": pe["p_med"], "kind": "comps"} if pe else
+         {"label": "P / NTM EPS (peer IQR)", "low": st["pe_ntm"]["p_q1"], "high": st["pe_ntm"]["p_q3"], "mid": st["pe_ntm"]["p_med"], "kind": "comps"}),
         {"label": "Growth-adj. EV/Sales (Rule of 40, ±1 SE)", "low": cp["regression"]["p_low"], "high": cp["regression"]["p_high"], "mid": cp["regression"]["p_fit"], "kind": "comps"},
+        *([{"label": "Sum of the parts (cloud / support / services)", "low": x["sotp"]["price"]["q1"], "high": x["sotp"]["price"]["q3"], "mid": x["sotp"]["price"]["median"], "kind": "comps"}] if x else []),
     ]
     return items
 
@@ -33,7 +39,7 @@ def football(res: dict, path, title: str | None = None, items: list[dict] | None
     items = items or football_items(res)
     price = res["market"]["price"]
     colors = {"market": SLATE, "dcf": TEAL, "comps": AMBER}
-    fig, ax = plt.subplots(figsize=(11, 5.6), dpi=150)
+    fig, ax = plt.subplots(figsize=(11, 6.6), dpi=150)
     for i, it in enumerate(reversed(items)):
         ax.barh(i, it["high"] - it["low"], left=it["low"], height=0.55, color=colors[it["kind"]], alpha=0.9)
         pad = (max(x["high"] for x in items) - min(x["low"] for x in items)) * 0.012

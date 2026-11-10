@@ -239,7 +239,7 @@ def load() -> dict:
         "beta": (bbg["beta"]["y5_adjusted"], "Bloomberg BETA vs DAX, 5y weekly, adjusted (Blume); SE 0.087 vs 0.173 for 2y"),
         "erp": (0.050, "House view 5.0% = low end of IDW/FAUB 5.0-6.5% range for German valuations; above CIQ DCF template 4.23% and Damodaran implied 4.63% (1 Nov 2026, incl. 0.22% default-spread adj.); Bloomberg's 10.32% market premium rejected as implausible"),
         "kd": (bbg["bond"]["sap_3_5_2033_yield"] / 100, "Bloomberg YAS: SAP 3.5% 06/2033 bond yield 3.92% (longest SAP bond, A+/A1)"),
-        "tax": (0.29, "SAP 2026 outlook non-IFRS tax rate ~29%; CIQ consensus 28.9-29.5%"),
+        "tax": (0.30, "Marginal (statutory) rate, Germany ~30% (15% corporate tax + 5.5% solidarity surcharge + ~14% trade tax; KPMG tax-rate table). Lecture: marginal home-country rate preferred over the effective rate (SAP ETR ~29%)"),
     }
 
     peers = _load_peers()
