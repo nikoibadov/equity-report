@@ -37,7 +37,6 @@ class Assumptions:
 def build(ds: dict) -> Assumptions:
     """Assemble the base-case assumptions from a loaded dataset (either edition)."""
     ir = ds["ir"]["q3_2026_statement"]
-    fy25 = ds["ir"]["fy2025_statement"]["fy2025"]
     h25 = ds["hist"][2025]
     y9 = ir["ytd9m"]
     y9p = ir["ytd9m_prior"]
@@ -127,15 +126,13 @@ def _bond_benefit(ir: dict, kd: float, anchor: str = "2026-09-30") -> float:
     for b in ir["bonds"]["list"]:
         if b["coupon"] is None:
             continue
-        mat = dt.date.fromisoformat(b["maturity"])
-        yrs = (mat - t0).days / 365.0
+        yrs = (dt.date.fromisoformat(b["maturity"]) - t0).days / 365.0
         y = kd if yrs > 5 else kd - 0.0046
         c = b["coupon"] / 100
-        n = int(yrs) + 1                                   # remaining annual coupons
-        times = [yrs - k for k in range(n) if yrs - k > 0]
+        times = [yrs - k for k in range(int(yrs) + 1) if yrs - k > 0]     # remaining annual coupon dates
         dirty = sum(c / (1 + y) ** t for t in times) + 1 / (1 + y) ** yrs
-        accrued = c * (1 - (min(times) % 1 if min(times) < 1 else min(times) - int(min(times))))
-        total += b["principal"] * (1 - (dirty - accrued))
+        accrued = c * (1 - min(times))                                    # share of the coupon year already elapsed
+        total += b["principal"] * (1 - (dirty - accrued))                 # face value minus clean market value
     return round(total, 0)
 
 

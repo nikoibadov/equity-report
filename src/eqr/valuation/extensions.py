@@ -160,6 +160,36 @@ def pe_leverage(peers: pd.DataFrame, eps_ntm: float, threshold: float = 0.25) ->
             "table": core[["ticker", "net_debt_mcap", "pe_ntm"]].sort_values("net_debt_mcap", ascending=False)}
 
 
+# ---------------------------------------------------------------- 8. external reference points
+def reference_points(a, base: dict, refs: dict | None, tv: dict) -> dict | None:
+    """Official and academic reference data set against the model's own inputs."""
+    if not refs:
+        return None
+    rows, out = [], {"as_of": refs.get("fetched"), "stale_from": refs.get("stale_from")}
+    y = refs.get("ecb_aaa_10y")
+    if y:
+        rows.append(("Risk-free rate", "ECB AAA euro-area yield curve, 10y (" + y["date"] + ")", y["yield"], a["rf"],
+                     "Model uses the 10y Bund; the AAA curve is the euro-area equivalent"))
+    s = refs.get("ecb_spf")
+    if s:
+        nominal = s["inflation_lt"] + s["real_gdp_lt"]
+        out["nominal_growth_lt"] = nominal
+        rows.append(("Terminal growth", f"ECB forecasters' long-term inflation {s['inflation_lt']*100:.1f}% + real growth {s['real_gdp_lt']*100:.1f}% ({s['round']})",
+                     nominal, a["g"], "Long-run nominal growth of the euro-area economy is the ceiling for g"))
+    d = refs.get("damodaran_industry")
+    if d:
+        beta = d["beta_unlevered_cash_adj"] * (1 + (1 - a["tax_wacc"]) * a["d_mv"] / a["e_mv"])
+        b = a.copy(); b.set("beta", beta)
+        r = model.dcf(b)
+        out.update(industry_beta=beta, industry_beta_price=r["price"], industry_beta_wacc=r["wacc"], industry_n=d["n_firms"])
+        rows.append(("Beta", f"Damodaran industry average, {d['industry']}, {d['region']} ({d['n_firms']} firms): unlevered {d['beta_unlevered_cash_adj']:.2f}, re-levered",
+                     beta, a["beta"], f"Industry average includes small, volatile firms; it would give WACC {r['wacc']*100:.2f}% and €{r['price']:.0f} per share"))
+        rows.append(("Exit EV/EBITDA", f"Damodaran industry average, {d['industry']}, {d['region']}", d["ev_ebitda"], tv["exit"]["mult_med"],
+                     "Model uses the median of the core peers' forward multiple"))
+    out["rows"] = rows
+    return out
+
+
 MULTIPLE_TABLE = [
     ("EV / EBIT", "Used (lead)", "After D&A, so it reflects the cost of the asset base; capital-structure neutral",
      "Sensitive to accounting: SAP's non-IFRS EBIT includes share-based pay, US peers' street EBIT excludes it → like-for-like ex-SBC variant added"),
@@ -183,10 +213,12 @@ NOT_MODELLED = [
 
 def run(res: dict) -> dict:
     a, base, peers, ds = res["assumptions"], res["dcf"], res["peers"], res["ds"]
+    tv = terminal_values(a, base, peers, ds.get("peer_ebit_basis", "street"))
     return {
         "sotp": sotp(base, a, peers),
         "beta": bottom_up_beta(a, peers),
-        "tv": terminal_values(a, base, peers, ds.get("peer_ebit_basis", "street")),
+        "tv": tv,
+        "refs": reference_points(a, base, ds.get("refs"), tv),
         "wacc_iter": wacc_iteration(a),
         "bridge": bridge_refinements(a, base, ds["ir"]["q3_2026_statement"]["balance_sheet_30sep2026"]["equity_parent"]),
         "pe": pe_leverage(peers, res["comps"]["sap"]["eps_ntm"]),

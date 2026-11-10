@@ -1,0 +1,27 @@
+{
+ "fetched": "2026-11-10",
+ "ecb_aaa_10y": {
+  "date": "2026-11-06",
+  "yield": 0.032855888131,
+  "source": "ECB euro-area AAA government yield curve, 10y spot rate"
+ },
+ "ecb_spf": {
+  "round": "2026-Q4",
+  "inflation_lt": 0.020190515007894736,
+  "real_gdp_lt": 0.012569636755263158,
+  "source": "ECB Survey of Professional Forecasters, long-term expectations (euro area)"
+ },
+ "damodaran_industry": {
+  "industry": "Software (System & Application)",
+  "region": "US",
+  "n_firms": 309,
+  "beta": 1.28,
+  "d_e": 0.0558,
+  "beta_unlevered": 1.23,
+  "beta_unlevered_cash_adj": 1.25,
+  "ev_ebitda": 17.96,
+  "ev_ebit": 24.48,
+  "source": "Damodaran, NYU Stern: industry betas and EV multiples (US, latest annual update)"
+ },
+ "ecb_fx": null
+}

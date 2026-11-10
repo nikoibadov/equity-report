@@ -19,7 +19,8 @@ import numpy as np
 import pandas as pd
 import requests
 
-from .common import PEER_CLASS, load_sap_ir, peer_frame
+from . import public_refs
+from .common import load_sap_ir, peer_frame
 
 CACHE = Path(os.environ.get("VALUATION_CACHE", Path(__file__).resolve().parents[2] / "data" / "web"))
 UA = {"User-Agent": "SAP-valuation-coursework research-bot (contact: admin@example.org)"}
@@ -35,14 +36,9 @@ YF_PEERS = {
 }
 
 
-def _cache_json(name: str, fn):
-    CACHE.mkdir(parents=True, exist_ok=True)
-    p = CACHE / f"{name}.json"
-    if p.exists():
-        return json.loads(p.read_text())
-    data = fn()
-    p.write_text(json.dumps(data, default=str, indent=1))
-    return data
+def _cache_json(name: str, fn, valid=None):
+    """Daily cache; if today's download fails, the most recent earlier download is used (flagged 'stale_from')."""
+    return public_refs.cached(name, fn, CACHE, valid)
 
 
 # ------------------------------------------------------------------ public sources
@@ -163,8 +159,8 @@ def peers() -> pd.DataFrame:
 
     def f():
         fx = {}
-        for c in ("USD", "GBP", "CAD"):
-            fx[c] = float(yf.Ticker(f"EUR{c}=X").history(period="1mo")["Close"].dropna().iloc[-1])
+        for c in ("USD", "GBP", "CAD"):          # ECB reference rate first, Yahoo Finance as fallback
+            fx[c] = public_refs.eur_rate(c) or float(yf.Ticker(f"EUR{c}=X").history(period="1mo")["Close"].dropna().iloc[-1])
         fx["EUR"] = 1.0
         out = []
         today = pd.Timestamp(TODAY)
@@ -191,7 +187,9 @@ def peers() -> pd.DataFrame:
                 rev_ttm = float(i.get("totalRevenue"))
                 ev = ev_ttm_sales * rev_ttm                        # in financial currency
                 op_m = i.get("operatingMargins")
-                mcap_fin = price * i.get("sharesOutstanding", 0) * (fx.get(fin_ccy, 1) / fx.get("GBP" if q_ccy == "GBp" else q_ccy, 1))
+                # Yahoo's marketCap covers all share classes; sharesOutstanding only the listed class (Workday: -19%)
+                mcap_q = float(i.get("marketCap") or 0) or price * float(i.get("sharesOutstanding") or 0)
+                mcap_fin = mcap_q * (fx.get(fin_ccy, 1) / fx.get("GBP" if q_ccy == "GBp" else q_ccy, 1))
                 to_eur = 1 / fx.get(fin_ccy, 1)
                 out.append({
                     "name": i.get("longName") or i.get("shortName"), "exchange": sym, "ticker": tk,
@@ -211,7 +209,8 @@ def peers() -> pd.DataFrame:
             except Exception as e:  # noqa: BLE001
                 out.append({"name": sym, "exchange": sym, "ticker": tk, "error": str(e)})
         return {"fx": fx, "rows": out, "fetched": TODAY}
-    data = _cache_json(f"yf_peers_v2_{TODAY}", f)
+    # A download where most peers failed (rate limit) is not cached; the last good one is used instead
+    data = _cache_json(f"yf_peers_v3_{TODAY}", f, valid=lambda d: sum("error" not in r for r in d["rows"]) >= 0.75 * len(d["rows"]))
     rows = [r for r in data["rows"] if "error" not in r]
     return peer_frame(rows)
 
@@ -291,6 +290,7 @@ def load() -> dict:
                      "source": "FY25 36,800 - 9M25 27,116 + 9M26 29,703 (SAP statements); EBIT LTM non-IFRS 10,419-7,590+8,639"},
         "bridge": bridge, "shares_diluted": shares_d, "wacc_inputs": wacc_in, "peers": pe,
         "web_meta": {"bund": b10, "damodaran": dam, "beta": beta},
+        "refs": public_refs.load(),
         "reference": {"damodaran_erp": dam["erp"] + dam["us_default_spread"]},
         "sources": [
             ("Segment revenue FY24-25, 9M-26, backlog, balance sheet 30 Sep 2026", "SAP Quarterly Statements Q4-2025 and Q3-2026 (SEC Form 6-K)"),
@@ -300,6 +300,7 @@ def load() -> dict:
             ("Risk-free rate", f"Deutsche Bundesbank 10y Bund {b10['date']}: {b10['yield']:.2f}%"),
             ("Beta", f"Own OLS regression, 5y weekly vs DAX (yfinance prices): adjusted {beta['adjusted']:.2f}"),
             ("ERP / credit spread", f"House ERP 5.0%; Damodaran implied {dam['erp']*100:.2f}% ({dam['erp_date']}); A1/A+ spread {dam['a_plus_spread']*100:.2f}%"),
+            ("Cross-checks", "ECB Data Portal (AAA yield curve, Survey of Professional Forecasters, FX reference rates); Damodaran industry averages for software"),
             ("Peers", "Same 30-name universe as the Capital IQ screen + Intuit; yfinance multiples; NTM = fiscal-year-weighted consensus"),
         ],
     }

@@ -798,10 +798,19 @@ def _extensions(wb, res):
     row(["Implied value per share ex levered peers (Q1 / median / Q3)", pe["p_q1"], pe["p_med"], pe["p_q3"]], [None, PX, PX, PX])
     r += 1
 
+    rf = x.get("refs")
+    if rf:
+        head("8. External reference points (free official and academic data)", ["Input", "Reference", "Reference value", "Model value", "Comment"])
+        for inp, ref_, v, mv, c in rf["rows"]:
+            f_ = PCT2 if v < 0.5 else ("0.00" if v < 3 else MULT)
+            row([inp, ref_, v, mv, c], [None, None, f_, f_])
+        note(f"Data as of {rf['stale_from'] or rf['as_of']}" + (" (last successful download; today's failed)" if rf["stale_from"] else "")
+             + ". Sources: ECB Data Portal; Damodaran Online (NYU Stern).")
+
     head("Explained, not modelled", ["Topic", "Reason"])
     for k, v in x["not_modelled"]:
         row([k, v])
-    _widths(ws, {"A": 62, "B": 18, "C": 30, "D": 16, "E": 14, "F": 16, "G": 16, "H": 16, "I": 16})
+    _widths(ws, {"A": 62, "B": 30, "C": 30, "D": 16, "E": 14, "F": 16, "G": 16, "H": 16, "I": 16})
     for rr in ws.iter_rows(min_row=4, max_col=1):
         rr[0].alignment = Alignment(wrap_text=True, vertical="top")
 

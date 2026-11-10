@@ -6,7 +6,6 @@ The SAP-specific segment model (model.py) stays the reference for SAP; this modu
 from __future__ import annotations
 
 import datetime as dt
-import json
 import os
 import re
 from copy import deepcopy
@@ -31,13 +30,9 @@ COVERAGE_SPREADS = [(8.5, 0.0040, "AAA"), (6.5, 0.0055, "AA"), (5.5, 0.0070, "A+
 
 
 def _cache(name: str, fn):
-    CACHE.mkdir(parents=True, exist_ok=True)
-    p = CACHE / f"{re.sub(r'[^A-Za-z0-9_.-]', '_', name)}.json"
-    if p.exists():
-        return json.loads(p.read_text())
-    d = fn()
-    p.write_text(json.dumps(d, default=str))
-    return d
+    """Daily cache; falls back to the most recent earlier download when today's fetch fails."""
+    from .loaders import public_refs
+    return public_refs.cached(name, fn, CACHE)
 
 
 def _fx(frm: str, to: str) -> float:
@@ -45,6 +40,10 @@ def _fx(frm: str, to: str) -> float:
     import yfinance as yf
     if not frm or not to or frm == to:
         return 1.0
+    from .loaders import public_refs
+    a, b = public_refs.eur_rate(frm), public_refs.eur_rate(to)      # ECB reference rates first
+    if a and b:
+        return b / a
     def f():
         return {"r": float(yf.Ticker(f"{frm}{to}=X").history(period="1mo")["Close"].dropna().iloc[-1])}
     return _cache(f"fx2_{frm}{to}_{TODAY}", f)["r"]
@@ -271,15 +270,17 @@ def peer_row(sym: str) -> dict | None:
             price, q_ccy = price / 100, "GBP"
         fin = i.get("financialCurrency") or q_ccy
         rev_ttm = float(i["totalRevenue"])
+        # marketCap covers all share classes (sharesOutstanding only the listed one); Yahoo quotes it in the main unit (GBP, not pence)
+        mcap_q = float(i.get("marketCap") or 0) or price * float(i.get("sharesOutstanding") or 0)
         if fin != q_ccy:
             # ADRs / cross listings: Yahoo's EV/revenue mixes quote and reporting currency -> rebuild EV in reporting currency
-            ev = (price * float(i["sharesOutstanding"]) * _fx(q_ccy, fin)
+            ev = (mcap_q * _fx(q_ccy, fin)
                   + float(i.get("totalDebt") or 0) - float(i.get("totalCash") or 0))
         else:
             ev = float(i["enterpriseToRevenue"]) * rev_ttm
         om = i.get("operatingMargins")
         eps_conv = _fx(fin, q_ccy)
-        mcap_eur = price * float(i.get("sharesOutstanding") or 0) * _fx(q_ccy, "EUR")
+        mcap_eur = mcap_q * _fx(q_ccy, "EUR")
         return {"ticker": sym, "name": i.get("longName") or i.get("shortName"), "country": i.get("country"),
                 "industry": i.get("industry"), "mcap_eur": mcap_eur, "ev_sales_ntm": ev / rev_ntm,
                 "ev_ebit_ntm": ev / (rev_ntm * om) if om and om > 0 else None,
@@ -287,7 +288,7 @@ def peer_row(sym: str) -> dict | None:
                 "g_ntm": (rev_ntm / rev_ttm - 1) * 100, "ebit_margin": (om or 0) * 100,
                 "rule40": (rev_ntm / rev_ttm - 1) * 100 + (om or 0) * 100}
     try:
-        return _cache(f"peer_{sym}_{TODAY}", f)
+        return _cache(f"peer2_{sym}_{TODAY}", f)
     except Exception:  # noqa: BLE001
         return None
 

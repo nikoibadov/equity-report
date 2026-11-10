@@ -13,7 +13,7 @@ INK, TEAL, MINT, AMBER, SLATE, CORAL, GRID = "#0E1B2C", "#0F8B8D", "#8FD3C8", "#
 
 def football_items(res: dict) -> list[dict]:
     """Assemble football-field bars from a valuation result bundle."""
-    mk, d, sc, cp, sens = res["market"], res["dcf"], res["scenarios"], res["comps"], res["grid_wacc_g"]
+    mk, d, sc, cp = res["market"], res["dcf"], res["scenarios"], res["comps"]
     st = cp["stats"]
     x = res.get("ext")
     pe = x["pe"] if x and x["pe"]["flagged"] else None

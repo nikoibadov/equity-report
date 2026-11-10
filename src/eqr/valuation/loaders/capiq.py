@@ -9,6 +9,7 @@ from pathlib import Path
 import openpyxl
 import yaml
 
+from . import public_refs
 from .common import load_sap_ir, peer_frame
 
 def _find_root() -> Path:
@@ -252,6 +253,7 @@ def load() -> dict:
         "market": market, "hist": hist, "rnd_long": rnd_long, "consensus": cons, "ir": ir,
         "bridge": bridge, "shares_diluted": shares_diluted, "wacc_inputs": wacc_in, "peers": peers,
         "bbg": bbg,
+        "refs": public_refs.load(),      # free official cross-checks (ECB, Damodaran industry data); None if offline
         "reference": {"ciq_dcf_price": 268.72, "ciq_wacc": 0.0749, "bbg_wacc": bbg["wacc_screen"]["wacc"] / 100,
                       "ciq_quick_val": 222.93},
         "sources": [
@@ -261,6 +263,7 @@ def load() -> dict:
             ("Price, targets, 52w range", "S&P Capital IQ Key Stats / Sentiment Analysis, 4-5 Nov 2026"),
             ("Risk-free, beta, Kd, credit", "Bloomberg screens (GC, BETA, YAS, CRPR, DDIS), 5 Nov 2026"),
             ("ERP", "House view 5.0% (IDW/FAUB range 5.0-6.5%); cross-checks CIQ 4.23%, Damodaran 4.63%, Bloomberg 10.32% (rejected)"),
+            ("Cross-checks (public)", "ECB Data Portal (AAA yield curve, Survey of Professional Forecasters); Damodaran industry averages for software; peer betas from Yahoo Finance prices"),
             ("Peers (30)", "S&P Capital IQ screen 'Top 30 by Peer Ranking', LTM & forward multiples in EUR"),
         ],
     }

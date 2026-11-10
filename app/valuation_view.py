@@ -155,7 +155,6 @@ def render(root: Path):
 def _sap_view(edition: str, root: Path):
     from eqr.valuation import charts
     with st.spinner("Loading data and running the model..."):
-        ds = _load_ds(edition)
         base = _run_sap(edition, (), (), ())
     a0 = base["assumptions"]
 
@@ -330,6 +329,7 @@ def _sap_crosschecks(res):
     with c1:
         st.subheader("Terminal-value methods")
         tv = pd.DataFrame({"Zero growth: FCFF / WACC": t["zero"], "Gordon growth (base)": t["gordon"], "Exit EV/EBITDA": t["exit"]}).T
+        tv.loc["Gordon growth (base)", ["low", "high"]] = res["dcf_band"]       # WACC ±0.5pp, g ±0.25pp
         tv = tv[["price", "low", "high", "tv_share"]].apply(pd.to_numeric, errors="coerce")
         st.dataframe(tv.rename(columns={"price": "Value €", "low": "Low €", "high": "High €", "tv_share": "TV share of EV"}).style.format(
             {"Value €": "€{:.0f}", "Low €": "€{:.0f}", "High €": "€{:.0f}", "TV share of EV": "{:.0%}"}, na_rep="–"))
@@ -354,6 +354,14 @@ def _sap_crosschecks(res):
             f"- WACC tax shield at the German marginal rate of {a['tax_wacc']*100:.0f}%.\n"
             f"- P/E without levered peers ({', '.join(q['ticker'] for q in pe['flagged']) or 'none'}): median {pe['median']:.1f}x "
             f"against {pe['median_all']:.1f}x for all core peers.")
+    rf = x.get("refs")
+    if rf:
+        st.subheader("External reference points")
+        fmt = lambda v: f"{v*100:.2f}%" if v < 0.5 else (f"{v:.2f}" if v < 3 else f"{v:.1f}x")  # noqa: E731
+        st.dataframe(pd.DataFrame([{"Input": i, "Reference": r, "Reference value": fmt(v), "Model": fmt(m), "Comment": c}
+                                   for i, r, v, m, c in rf["rows"]]), hide_index=True)
+        st.caption(f"ECB Data Portal and Damodaran Online, data as of {rf['stale_from'] or rf['as_of']}"
+                   + (" (last successful download)." if rf["stale_from"] else "."))
     with st.expander("Why each multiple is used or left out"):
         st.dataframe(pd.DataFrame(x["multiples"], columns=["Multiple", "Role", "Pro", "Con and how it is handled"]), hide_index=True)
     with st.expander("Explained, not modelled"):

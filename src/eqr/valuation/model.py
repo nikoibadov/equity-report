@@ -2,7 +2,6 @@
 so any change here must be mirrored in excel_writer.py (the test suite checks both agree)."""
 from __future__ import annotations
 
-import numpy as np
 import pandas as pd
 
 from .assumptions import EXPLICIT, FADE, YEARS, SCENARIOS, SCENARIO_WEIGHTS, Assumptions
@@ -206,7 +205,7 @@ def fcff_2025_reconciliation(ds: dict, a: Assumptions) -> pd.DataFrame:
     op_ifrs = fy["op_ifrs"]
     tax = 0.29
     nopat = op_ifrs * (1 - tax)
-    wc = -675.0 if ds["edition"] == "data" else -675.0   # CF statement: AR -388, payables -308, contract liab +1,336, other -1,315
+    wc = -675.0   # CF statement: AR -388, payables -308, contract liab +1,336, other -1,315
     fcff = nopat + h["da"] - h["capex"] + wc
     sbc_noncash = h["sbc"] - h["sbc_cash_settled"]
     tax_gap = op_ifrs * tax - h["cash_taxes"]
