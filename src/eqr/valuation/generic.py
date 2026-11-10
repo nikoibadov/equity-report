@@ -46,8 +46,8 @@ def _fx(frm: str, to: str) -> float:
     if not frm or not to or frm == to:
         return 1.0
     def f():
-        return {"r": float(yf.Ticker(f"{frm}{to}=X").history(period="5d")["Close"].iloc[-1])}
-    return _cache(f"fx_{frm}{to}_{TODAY}", f)["r"]
+        return {"r": float(yf.Ticker(f"{frm}{to}=X").history(period="1mo")["Close"].dropna().iloc[-1])}
+    return _cache(f"fx2_{frm}{to}_{TODAY}", f)["r"]
 
 
 def risk_free(currency: str) -> tuple[float, str]:
@@ -63,7 +63,7 @@ def risk_free(currency: str) -> tuple[float, str]:
             return r["y"] / 100, f"Bundesbank 10y Bund {r['d']}"
         if currency == "USD":
             import yfinance as yf
-            r = _cache(f"tnx_{TODAY}", lambda: {"y": float(yf.Ticker("^TNX").history(period="5d")["Close"].iloc[-1])})
+            r = _cache(f"tnx2_{TODAY}", lambda: {"y": float(yf.Ticker("^TNX").history(period="1mo")["Close"].dropna().iloc[-1])})
             return r["y"] / 100, "US 10y Treasury (^TNX)"
     except Exception:  # noqa: BLE001
         pass

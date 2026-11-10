@@ -96,7 +96,7 @@ def eur_per(ccy: str) -> float:
     if ccy in (None, "EUR"):
         return 1.0
     if ccy not in _FX:
-        _FX[ccy] = 1 / float(yf.Ticker(f"EUR{ccy}=X").history(period="5d")["Close"].iloc[-1])
+        _FX[ccy] = 1 / float(yf.Ticker(f"EUR{ccy}=X").history(period="1mo")["Close"].dropna().iloc[-1])
     return _FX[ccy]
 
 

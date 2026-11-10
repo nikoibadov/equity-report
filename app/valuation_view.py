@@ -197,6 +197,11 @@ def _sap_view(edition: str, root: Path):
     with st.spinner("Recalculating..."):
         res = _run_sap(edition, tuple(sorted(changed.items())), tuple(add), drop) if (changed or add or drop) else base
     d, sc, mk, a = res["dcf"], res["scenarios"], res["market"], res["assumptions"]
+    if not np.isfinite(d["price"]):
+        st.error("The valuation came back empty (a market input such as the share price is missing). "
+                 "This is usually a temporary Yahoo Finance gap; click Run valuation again in a minute.",
+                 icon=":material/error:")
+        return
 
     with st.container(horizontal=True):
         st.metric("DCF value / share", f"€{d['price']:.2f}", f"{d['upside']*100:+.1f}% vs €{a['price']:.2f}", border=True)
@@ -371,6 +376,10 @@ def _generic_view(ticker: str):
     with st.spinner("Valuing and fetching peer multiples..."):
         res = _run_generic(ticker, tuple((k, list(v) if isinstance(v, tuple) else v) for k, v in ov_t), tuple(peers))
     d, sc, mk, p = res["dcf"], res["scenarios"], res["market"], res["inputs"]
+    if not np.isfinite(d["price"]):
+        st.error("The valuation came back empty (a market input is missing for this ticker). Try again shortly or edit the inputs.",
+                 icon=":material/error:")
+        return
     with st.container(horizontal=True):
         st.metric("DCF value / share", f"{ccy}{d['price']:.2f}", f"{d['upside']*100:+.1f}% vs {ccy}{p['price']:.2f}", border=True)
         st.metric("Scenario-weighted", f"{ccy}{sc['Weighted']['price']:.2f}", border=True)
