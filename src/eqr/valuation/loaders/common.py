@@ -1,12 +1,14 @@
 """Helpers shared by both editions: SAP IR facts and the peer screen."""
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pandas as pd
 import yaml
 
 IR = Path(__file__).with_name("sap_ir.yaml")
+VALUATION_DATE = os.environ.get("VALUATION_DATE", "2026-11-13")     # the case's valuation date; prices are taken on or before it
 
 
 def load_sap_ir() -> dict:
@@ -65,3 +67,28 @@ def peer_frame(recs: list[dict]) -> pd.DataFrame:
     df.loc[df["mcap"] < 5000, "core"] = False
     df.loc[(df["ebit_ltm"] <= 0) | df["ebit_ltm"].isna(), "core"] = False
     return df
+
+
+def latest_close(t, info: dict | None = None) -> tuple[float, str]:
+    """Latest completed closing price and its date for a yfinance Ticker.
+
+    Yahoo's daily history can list the newest trading day with an empty close even after the market has closed
+    (seen for SAP.DE on 13 Nov 2026). Dropping that row would silently return the previous day's price. So: if the
+    market is closed and the quote is newer than the last valid close, the quote is that day's closing price.
+    Closes after VALUATION_DATE are ignored, so a later re-run still prices SAP on the valuation date."""
+    import pandas as pd
+    info = info if info is not None else t.info
+    closes = t.history(period="3mo")["Close"].dropna()
+    if len(closes):
+        closes = closes[[d.date().isoformat() <= VALUATION_DATE for d in closes.index]]
+    px, day = (float(closes.iloc[-1]), closes.index[-1].date()) if len(closes) else (None, None)
+    q, qt = info.get("regularMarketPrice") or info.get("currentPrice"), info.get("regularMarketTime")
+    if q and qt and info.get("marketState") in ("CLOSED", "POST", "POSTPOST", "PREPRE"):
+        qday = pd.Timestamp(qt, unit="s", tz="UTC").tz_convert(closes.index.tz if len(closes) else "UTC").date()
+        if (day is None or qday > day) and qday.isoformat() <= VALUATION_DATE:
+            return float(q), str(qday)
+    if px is None:
+        if not q:
+            raise ValueError("no price available")
+        return float(q), pd.Timestamp.today().date().isoformat()
+    return px, str(day)

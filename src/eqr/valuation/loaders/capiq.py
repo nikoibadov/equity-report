@@ -207,6 +207,18 @@ def load() -> dict:
         "bbg_price": bbg["price"]["last"],
     }
 
+    # The CIQ export is from 4-5 Nov; the case values SAP on 13 Nov, so the share price is the 13 Nov close
+    # (Yahoo Finance). Set SAP_USE_CIQ_PRICE=1 to keep the Capital IQ price.
+    market["ciq_price"], market["ciq_price_date"] = market["price"], market["price_date"]
+    if not os.environ.get("SAP_USE_CIQ_PRICE"):
+        try:
+            from . import web
+            y = web._yf_sap()
+            market.update(price=y["price"], price_date=y["price_date"],
+                          price_source=f"Yahoo Finance close {y['price_date']} (Capital IQ showed €{market['ciq_price']:.2f} on {market['ciq_price_date']})")
+        except Exception:  # noqa: BLE001  (offline: keep the Capital IQ price)
+            pass
+
     # ---------- bridge (30 Sep 2026) ----------
     bs = ir["q3_2026_statement"]["balance_sheet_30sep2026"]
     lt_ratio = hist[2025]["lt_investments"] / 7269.0     # CIQ LT investments / reported non-current OFA (FY25)
@@ -260,7 +272,8 @@ def load() -> dict:
             ("Historical financials FY21-25", "S&P Capital IQ SAP report export, 5 Nov 2026 (Income Statement, Cash Flow, Balance Sheet, As Reported sheets)"),
             ("Q3-26 / 9M-26 segment revenue, backlog, balance sheet", "SAP Quarterly Statement Q3 2026 (SEC 6-K) - gap fill"),
             ("Consensus FY26-31", "S&P Capital IQ Consensus export, 5 Nov 2026 (mean estimates)"),
-            ("Price, targets, 52w range", "S&P Capital IQ Key Stats / Sentiment Analysis, 4-5 Nov 2026"),
+            ("Price", "13 Nov 2026 close from Yahoo Finance (valuation date); Capital IQ price of 4 Nov kept as reference"),
+            ("Targets, 52w range", "S&P Capital IQ Key Stats / Sentiment Analysis, 4-5 Nov 2026"),
             ("Risk-free, beta, Kd, credit", "Bloomberg screens (GC, BETA, YAS, CRPR, DDIS), 5 Nov 2026"),
             ("ERP", "House view 5.0% (IDW/FAUB range 5.0-6.5%); cross-checks CIQ 4.23%, Damodaran 4.63%, Bloomberg 10.32% (rejected)"),
             ("Cross-checks (public)", "ECB Data Portal (AAA yield curve, Survey of Professional Forecasters); Damodaran industry averages for software; peer betas from Yahoo Finance prices"),

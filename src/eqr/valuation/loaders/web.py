@@ -20,7 +20,7 @@ import pandas as pd
 import requests
 
 from . import public_refs
-from .common import load_sap_ir, peer_frame
+from .common import latest_close, load_sap_ir, peer_frame
 
 CACHE = Path(os.environ.get("VALUATION_CACHE", Path(__file__).resolve().parents[2] / "data" / "web"))
 UA = {"User-Agent": "SAP-valuation-coursework research-bot (contact: admin@example.org)"}
@@ -107,17 +107,15 @@ def _yf_sap() -> dict:
     def f():
         t = yf.Ticker("SAP.DE")
         i = t.info
-        hist = t.history(period="1mo")
-        closes = hist["Close"].dropna()
+        price, price_date = latest_close(t, i)
         bs, cf, inc = t.balance_sheet, t.cashflow, t.income_stmt
         def row(df, name):
             return {int(c.year): (None if pd.isna(v) else float(v) / 1e6) for c, v in df.loc[name].items()} if name in df.index else {}
         re_ = t.revenue_estimate
         ee = t.earnings_estimate
         return {
-            # Yahoo can append an unfinished trading day with an empty close: use the last valid close
-            "price": float(closes.iloc[-1]) if len(closes) else float(i.get("currentPrice") or i.get("regularMarketPrice")),
-            "price_date": str(closes.index[-1].date()) if len(closes) else TODAY,
+            # Yahoo's history can list the newest day without a close: see common.latest_close
+            "price": price, "price_date": price_date,
             "hi52": i.get("fiftyTwoWeekHigh"), "lo52": i.get("fiftyTwoWeekLow"), "shares_out": i.get("sharesOutstanding") / 1e6,
             "tgt_mean": i.get("targetMeanPrice"), "tgt_median": i.get("targetMedianPrice"), "tgt_high": i.get("targetHighPrice"),
             "tgt_low": i.get("targetLowPrice"), "tgt_n": i.get("numberOfAnalystOpinions"), "rec": i.get("recommendationMean"),
@@ -131,7 +129,7 @@ def _yf_sap() -> dict:
             "dividends": {k: -v for k, v in row(cf, "Cash Dividends Paid").items() if v is not None},
             "fetched": TODAY,
         }
-    d = _cache_json(f"yf_sap_v2_{TODAY}", f)
+    d = _cache_json(f"yf_sap_v3_{TODAY}", f)
     if not (isinstance(d.get("price"), (int, float)) and np.isfinite(d["price"]) and d["price"] > 0):
         raise ValueError("No valid SAP.DE price from Yahoo Finance right now; try again in a minute")
     return d

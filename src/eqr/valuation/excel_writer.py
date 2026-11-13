@@ -1072,7 +1072,7 @@ def _sources(wb, res):
         ("EBIT basis", "CIQ EBIT 10,418 ≈ non-IFRS 10,419; IFRS 9,830 (SAP) vs 9,617 (CIQ as reported)", "Model builds from non-IFRS (incl. SBC) less acquisition-related charges"),
         ("Tax rate", "27.9% (Bloomberg), 28.7% (CIQ ETR), 29% (guidance), 29.9% (CIQ DCF)", "Operating taxes 29% 2026, 29.5% 2027-30, 30% terminal; WACC tax shield at the 30% German marginal rate"),
         ("Buyback avg. price", "Bloomberg €212.43 vs SAP Q3 statement €164.79", "Not a valuation input; noted only"),
-        ("Valuation date", "13 Nov 2026 is after the data cut-off (5-9 Nov)", "Value anchored at 30 Sep balance sheet, rolled forward 44 days at Ke; price can be overridden at run time"),
+        ("Valuation date", "Capital IQ and Bloomberg exports are from 4-5 Nov; the valuation date is 13 Nov", "Share price = 13 Nov close (Yahoo Finance) in both editions; Data edition keeps its 5 Nov rates, targets and peer multiples; Web edition uses public data of the run date. Value anchored at the 30 Sep balance sheet and rolled forward 44 days at Ke"),
     ]
     _hdr(ws, r, ["Item", "Conflict", "Resolution"]); r += 1
     for c in conflicts:

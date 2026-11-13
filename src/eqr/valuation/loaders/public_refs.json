@@ -1,8 +1,8 @@
 {
- "fetched": "2026-11-10",
+ "fetched": "2026-11-14",
  "ecb_aaa_10y": {
-  "date": "2026-11-06",
-  "yield": 0.032855888131,
+  "date": "2026-11-12",
+  "yield": 0.033672459163999996,
   "source": "ECB euro-area AAA government yield curve, 10y spot rate"
  },
  "ecb_spf": {
@@ -23,5 +23,20 @@
   "ev_ebit": 24.48,
   "source": "Damodaran, NYU Stern: industry betas and EV multiples (US, latest annual update)"
  },
- "ecb_fx": null
+ "ecb_fx": {
+  "date": "2026-11-13",
+  "rates": {
+   "AUD": 1.6288,
+   "CAD": 1.5758,
+   "CHF": 0.9266,
+   "CNY": 7.3738,
+   "GBP": 0.83559,
+   "HKD": 8.6714,
+   "INR": 104.1575,
+   "JPY": 176.83,
+   "KRW": 1477.8,
+   "SEK": 11.1075,
+   "USD": 1.1052
+  }
+ }
 }

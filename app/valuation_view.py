@@ -200,7 +200,7 @@ def _sap_view(edition: str, root: Path):
             nwc = c5.number_input("NWC release % of Δrevenue", value=round(a0["nwc_pct"] * 100, 1), step=1.0, format="%.1f")
             sbc = c6.toggle("Add back non-cash SBC", value=bool(a0["sbc_addback"]))
             price = c7.number_input("Reference price €", value=round(float(a0["price"]), 2), step=0.5, format="%.2f",
-                                    help="Set the 13 Nov 2026 close here once known")
+                                    help="Default: the 13 Nov 2026 close. Change it to test another price")
             core = base["peers"][base["peers"]["core"]]["ticker"].tolist()
             keep = st.multiselect("Core peers", core, default=core)
             sugg = _suggest("SAP.DE")
