@@ -239,12 +239,15 @@ def _sap_view(edition: str, root: Path):
         st.caption(f"Base case: €{base['dcf']['price']:.2f}. Your changes: " + ", ".join(
             [f"{k}={v:.4g}" for k, v in changed.items()] + ([f"+{len(add)} peers"] if add else []) + ([f"-{len(drop)} peers"] if drop else [])))
 
-    t1, t2, t3, t4, t5, t7, t6 = st.tabs(["Football field", "DCF & FCFF", "Sensitivity", "Peers", "Business & intangibles",
-                                          "Cross-checks", "Download"])
+    t1, t2, t3, t4, t8, t5, t7, t6 = st.tabs(["Football field", "DCF & FCFF", "Sensitivity", "Peers", "Precedents",
+                                              "Business & intangibles", "Cross-checks", "Download"])
     with t1:
         st.image(_chart(charts.football, res, title=f"SAP SE football field · {edition.upper()} edition (€/share)"))
         st.dataframe(pd.DataFrame(charts.football_items(res))[["label", "low", "mid", "high"]].rename(
             columns={"label": "Method", "low": "Low €", "mid": "Mid €", "high": "High €"}).round(1), hide_index=True)
+        pr = res["prec"]
+        st.caption(f"Weighted value with the team's 50 / 25 / 25 weights (DCF, comparable companies, precedent transactions): "
+                   f"**€{pr['weighted']:.0f}** per share. Change the weights on the Precedents tab.")
         scen = pd.DataFrame({n: {"Weight": sc[n]["weight"], "Value €": sc[n]["price"], "WACC": sc[n]["wacc"], "g": sc[n]["g"],
                                  "Terminal margin": sc[n]["m_terminal"], "Story": sc[n]["story"]} for n in ("Bear", "Base", "Bull")}).T
         st.dataframe(scen, column_config={"Value €": st.column_config.NumberColumn(format="€%.0f"),
@@ -324,10 +327,49 @@ def _sap_view(edition: str, root: Path):
                     f"- Capitalising R&D adds an unrecognised asset of **€{m['rd_asset_unrecognised']/1000:.1f}bn**; "
                     f"goodwill + acquired intangibles are €{m['goodwill_intangibles']/1000:.1f}bn.\n"
                     "- Consequence: book-based multiples (P/B, EV/IC) are uninformative; FCFF treats R&D as a cash cost, so the DCF is not affected.")
+    with t8:
+        _sap_precedents(res)
     with t7:
         _sap_crosschecks(res)
     with t6:
         _sap_downloads(res, edition)
+
+
+def _sap_precedents(res):
+    """Large software deals (public sources) applied to SAP's LTM revenue, and the football-field weighting."""
+    pr, a, d = res["prec"], res["assumptions"], res["dcf"]
+    stc, sta, px = pr["stats"]["core"], pr["stats"]["all"], pr["prices"]
+    with st.container(horizontal=True):
+        st.metric("Core-set median EV/revenue", f"{stc['median']:.1f}x", f"SAP trades at {pr['sap_multiple']:.1f}x", delta_color="off", border=True)
+        st.metric("Implied value per share", f"€{px['core']['median']:.0f}", f"€{px['core']['q1']:.0f} to €{px['core']['q3']:.0f}", delta_color="off", border=True)
+        st.metric("All-deals median", f"{sta['median']:.1f}x", f"€{px['all']['median']:.0f}", delta_color="off", border=True)
+        st.metric("Deals (core / all)", f"{stc['n']} / {sta['n']}", f"premium {pr['premium']['median']:.0f}% median", delta_color="off", border=True)
+    df = pr["deals"].copy()
+    df["In core set"] = df["core"].map({True: "yes", False: "no"})
+    df["growth_pct"] = df["growth_pct"].map(lambda v: "n/a" if pd.isna(v) else f"{v:.1f}")
+    df["premium_pct"] = df["premium_pct"].map(lambda v: "n/a" if pd.isna(v) else f"{v:.0f}")
+    st.dataframe(df[["announced", "target", "acquirer", "buyer", "ev_usd_bn", "revenue_usd_bn", "ev_rev", "growth_pct", "premium_pct", "In core set", "value_basis"]],
+                 hide_index=True, column_config={
+                     "announced": "Announced", "target": "Target", "acquirer": "Acquirer", "buyer": "Buyer", "value_basis": "Value basis",
+                     "ev_usd_bn": st.column_config.NumberColumn("EV $bn", format="%.1f"), "revenue_usd_bn": st.column_config.NumberColumn("Revenue $bn", format="%.2f"),
+                     "ev_rev": st.column_config.NumberColumn("EV/revenue", format="%.1fx"), "growth_pct": "Growth %", "premium_pct": "Premium %"})
+    st.caption(f"Core set = target revenue growth known and at most {pr['cfg']['core_growth_max_pct']}% (SAP grows about 13%). Deal values and revenues come from public sources "
+               "(listed in the Excel workbook and in valuation/loaders/precedents.yaml). Precedent multiples include a control premium, and no buyer exists for a company SAP's size, "
+               "so this is a cross-check on what control of a software franchise has cost.")
+    st.subheader("Football-field weighting")
+    c = st.columns(3)
+    w = {k: c[i].slider(f"{k} weight %", 0, 100, int(round(v * 100)), 5, key=f"w_{k}") for i, (k, v) in enumerate(pr["weights"].items())}
+    tot = sum(w.values())
+    if tot != 100:
+        st.warning(f"Weights add up to {tot}%. The weighted value is rescaled to 100%.")
+    comp = pr["components"]
+    weighted = sum(w[k] * comp[k] for k in w) / max(tot, 1)
+    st.dataframe(pd.DataFrame({"Value €": comp, "Weight %": w}).assign(**{"Contribution €": lambda t: t["Value €"] * t["Weight %"] / max(tot, 1)}).style.format(
+        {"Value €": "€{:.0f}", "Weight %": "{:.0f}", "Contribution €": "€{:.1f}"}))
+    st.metric("Weighted value per share", f"€{weighted:.0f}", f"{weighted / a['price'] - 1:+.1%} vs €{a['price']:.2f}", delta_color="off", border=True)
+    with st.expander("Considered and excluded"):
+        for e in pr["cfg"]["excluded"]:
+            st.markdown(f"**{e['what']}.** {e['why']}.")
 
 
 def _sap_crosschecks(res):

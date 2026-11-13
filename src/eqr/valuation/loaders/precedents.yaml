@@ -1,0 +1,180 @@
+# Precedent transactions: large software deals announced Jan 2022 - Nov 2026 (the same window as the team's Capital IQ screen).
+# Hand-collected from public sources because the Capital IQ transaction export (Application Software, 177 rows) is mostly SPAC shells and
+# has no implied multiples (EV/revenue, EV/EBITDA all blank; revenue for 3 rows). Each deal lists where its numbers come from.
+# Units: USD billions. EV/revenue is calculated by the model as EV / revenue; sources that quote their own multiple are in the note.
+as_of: "2026-11-14"
+core_growth_max_pct: 20          # core set = target revenue growth known and <= this (SAP grows about 13%)
+basis: "Announced deal value / target revenue of the last reported fiscal year or last twelve months before the announcement"
+deals:
+  - target: "PTC"
+    acquirer: "Schneider Electric"
+    announced: "2026-10-05"
+    buyer: "Strategic"
+    segment: "Industrial software (PLM, CAD)"
+    ev_usd_bn: 23.7
+    revenue_usd_bn: 2.733
+    revenue_basis: "LTM to Jun 2026 (Yahoo Finance)"
+    growth_pct: 19.2
+    premium_pct: 42.3
+    value_basis: "Enterprise value"
+    note: "PTC is also one of our trading peers. Growth: FY2025 vs FY2024 revenue (Yahoo Finance). Jefferies calls it a decade-low valuation."
+    sources:
+      - "https://live.euronext.com/en/financial-news/schneider-electric-buy-us-software-firm-ptc-226-billion-deal"
+      - "https://www.auganix.org/ar-news-schneider-electric-acquires-ptc/"
+  - target: "Confluent"
+    acquirer: "IBM"
+    announced: "2025-12-08"
+    buyer: "Strategic"
+    segment: "Data infrastructure software"
+    ev_usd_bn: 11.0
+    revenue_usd_bn: 1.10
+    revenue_basis: "LTM to Sep 2025"
+    growth_pct: 19.0
+    premium_pct: 34.0
+    value_basis: "Enterprise value"
+    note: "Growth: Q3 2025 revenue vs Q3 2024. One analyst quotes 10.0x LTM revenue."
+    sources:
+      - "https://www.constellationr.com/insights/news/ibm-buys-confluent-11-billion-heres-what-big-blue-gets"
+      - "https://www.tomtunguz.com/ibm-confluent-acquisition-analysis/index.md"
+  - target: "Dayforce"
+    acquirer: "Thoma Bravo"
+    announced: "2025-08-21"
+    buyer: "Financial"
+    segment: "Human capital management application"
+    ev_usd_bn: 12.3
+    revenue_usd_bn: 1.76
+    revenue_basis: "FY2024"
+    growth_pct: 16.3
+    premium_pct: null
+    value_basis: "Enterprise value"
+    note: "Closest business model to SAP SuccessFactors. An aggregator quotes 7.0x trailing revenue and about 24.5x EBITDA."
+    sources:
+      - "https://www.benzinga.com/m-a/25/08/47289772/dayforce-thoma-bravo-deal-has-some-analysts-vying-for-more"
+      - "https://multiples.vc/private-comps/dayforce"
+      - "https://www.sec.gov/Archives/edgar/data/1725057/000172505725000068/arsfinal.pdf"
+  - target: "Informatica"
+    acquirer: "Salesforce"
+    announced: "2025-05-27"
+    buyer: "Strategic"
+    segment: "Data management software"
+    ev_usd_bn: 8.0
+    revenue_usd_bn: 1.64
+    revenue_basis: "FY2024"
+    growth_pct: 2.8
+    premium_pct: null
+    value_basis: "Deal value (about $8bn net of Salesforce's existing stake)"
+    note: "Informatica had about $1.9bn of debt, so enterprise value is somewhat higher than the headline. One source quotes about 4.9x revenue."
+    sources:
+      - "https://www.streetinsider.com/Press+Releases/Salesforce+Signs+Definitive+Agreement+to+Acquire+Informatica/24850314.html"
+      - "https://www.sec.gov/Archives/edgar/data/0001868778/000186877825000004/infa-2024q4x8k_ex991.htm"
+  - target: "Ansys"
+    acquirer: "Synopsys"
+    announced: "2024-01-16"
+    buyer: "Strategic"
+    segment: "Engineering simulation software"
+    ev_usd_bn: 35.0
+    revenue_usd_bn: 2.270
+    revenue_basis: "FY2023"
+    growth_pct: 9.9
+    premium_pct: null
+    value_basis: "Enterprise value"
+    note: "High-margin niche leader; the highest multiple among the mature targets."
+    sources:
+      - "https://www.financierworldwide.com/fw-news/2024/1/18/synopsys-to-acquire-ansys-in-35bn-mega-deal"
+      - "https://www.ansys.com/news-center/press-releases/2-21-24-ansys-announces-q4-fy-2023-financial-results"
+  - target: "Splunk"
+    acquirer: "Cisco"
+    announced: "2023-09-21"
+    buyer: "Strategic"
+    segment: "Data analytics and security software"
+    ev_usd_bn: 28.0
+    revenue_usd_bn: 3.64
+    revenue_basis: "FY2023 (Jan 2023)"
+    growth_pct: 37.0
+    premium_pct: 30.0
+    value_basis: "Headline equity value (net debt not added)"
+    note: "Growth 37% puts it outside the core set. One analyst quotes about 6x fiscal 2025 revenue."
+    sources:
+      - "https://tomtunguz.com/splunk-cisco-acquisition/"
+      - "https://dc.fortune.com/2023/09/21/cisco-splunk-mergers-acquisition-28-billion-cash-dan-ives/"
+  - target: "Qualtrics"
+    acquirer: "Silver Lake and CPP Investments"
+    announced: "2023-03-13"
+    buyer: "Financial"
+    segment: "Experience management software"
+    ev_usd_bn: 12.5
+    revenue_usd_bn: 1.458
+    revenue_basis: "FY2022"
+    growth_pct: null
+    premium_pct: null
+    value_basis: "Headline deal value (SAP held the majority stake)"
+    note: "Growth not collected, so outside the core set. An aggregator shows an enterprise value of $10.4bn (7.1x), because Qualtrics held net cash."
+    sources:
+      - "https://www.silverlake.com/qualtrics-to-be-acquired-by-silver-lake-and-cpp-investments-for-12-5-billion/"
+      - "https://multiples.vc/private-comps/qualtrics"
+  - target: "Coupa"
+    acquirer: "Thoma Bravo"
+    announced: "2022-12-12"
+    buyer: "Financial"
+    segment: "Procurement and spend management application"
+    ev_usd_bn: 8.0
+    revenue_usd_bn: 0.818
+    revenue_basis: "LTM (S&P Global 451 Research: 9.8x)"
+    growth_pct: null
+    premium_pct: null
+    value_basis: "Enterprise value"
+    note: "Growth not collected, so outside the core set. Another analyst uses LTM revenue of $787m (about 10.2x) and quotes 8.4x forward revenue."
+    sources:
+      - "https://www.spglobal.com/market-intelligence/en/news-insights/articles/2022/12/thoma-bravo-takes-another-bite-out-of-public-infotech-space-with-coupa-deal-73495374"
+      - "https://multiples.vc/private-comps/coupa"
+  - target: "VMware"
+    acquirer: "Broadcom"
+    announced: "2022-05-26"
+    buyer: "Strategic"
+    segment: "Virtualisation and infrastructure software"
+    ev_usd_bn: 69.0
+    revenue_usd_bn: 12.851
+    revenue_basis: "FY2022 (Feb 2022)"
+    growth_pct: 9.2
+    premium_pct: null
+    value_basis: "Enterprise value ($61bn equity plus $8bn net debt)"
+    note: "The only deal close to SAP in size."
+    sources:
+      - "https://www.rcrwireless.com/20220526/featured/broadcom-to-acquire-vmware-for-61-billion"
+      - "https://www.aranca.com/assets/docs/SpecialReport_BroadcomIncacquiresVMware_Final.pdf"
+  - target: "Citrix"
+    acquirer: "Vista Equity Partners and Elliott (Evergreen Coast)"
+    announced: "2022-01-31"
+    buyer: "Financial"
+    segment: "Virtual workspace software"
+    ev_usd_bn: 16.5
+    revenue_usd_bn: 3.22
+    revenue_basis: "FY2021"
+    growth_pct: -1.0
+    premium_pct: null
+    value_basis: "Enterprise value (includes debt)"
+    note: "Mature, flat revenue. TechCrunch quotes about 4.8x run-rate revenue."
+    sources:
+      - "https://www.vistaequitypartners.com/news/citrix-to-be-acquired-by-affiliates-of-vista-equity-partners-and-evergreen-coast-capital-for-16-5-billion/"
+      - "https://techcrunch.com/?p=2264493"
+  - target: "Anaplan"
+    acquirer: "Thoma Bravo"
+    announced: "2022-03-20"
+    buyer: "Financial"
+    segment: "Planning application"
+    ev_usd_bn: 10.7
+    revenue_usd_bn: 0.592
+    revenue_basis: "FY2022 (Jan 2022)"
+    growth_pct: 32.3
+    premium_pct: null
+    value_basis: "Headline deal value"
+    note: "Growth 32% puts it outside the core set."
+    sources:
+      - "https://www.businesswire.com/news/home/20220320005039/en/Anaplan-to-be-Acquired-by-Thoma-Bravo-for-10.7-Billion"
+excluded:
+  - {what: "Capital IQ transaction screen (Application Software, Jan 2022 - Nov 2026)", why: "177 rows, mostly SPAC shells; implied EV/revenue and EV/EBITDA are blank for every row and revenue exists for 3 rows"}
+  - {what: "Smartsheet / Blackstone and Vista (Sep 2024, $8.4bn)", why: "Sources conflict on enterprise value and revenue (7.1x vs 8.8x)"}
+  - {what: "Wiz / Alphabet and CyberArk / Palo Alto (2025)", why: "Security software at hyper-growth multiples above 20x revenue"}
+  - {what: "Slack / Salesforce (2020), Cerner / Oracle (Dec 2021)", why: "Announced before January 2022, the start of the window"}
+  - {what: "Electronic Arts take-private (2025)", why: "Video games, not enterprise software"}
+  - {what: "EBITDA multiples", why: "Not collected: GAAP EBITDA of software targets is small or negative, so revenue is the only multiple that exists for most deals"}

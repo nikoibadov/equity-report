@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pandas as pd
 from openpyxl import Workbook
 from openpyxl.drawing.image import Image as XLImage
 from openpyxl.formatting.rule import ColorScaleRule
@@ -527,6 +528,130 @@ def _comps(wb, ref, res):
     return {"stats_row": stats_r, "impl": impl_rows, "reg_base": base}
 
 
+# ======================================================================= Precedent transactions (live formulas)
+def _precedents(wb, ref, res, cref, dref):
+    ws = wb.create_sheet("Precedents")
+    pr, cfg = res["prec"], res["prec"]["cfg"]
+    df = pr["deals"]
+    n = len(df)
+    _title(ws, "Precedent transactions: large software deals, Jan 2022 - Nov 2026",
+           "Deal values and revenues are hand-collected from public sources (links in the last column); multiples, statistics and SAP's implied value are live formulas. "
+           "Precedent multiples include a control premium.")
+    cols = ["Target", "Acquirer", "Announced", "Buyer", "Segment", "EV (USD bn)", "Revenue (USD bn)", "EV / revenue", "Revenue growth %",
+            "Premium %", "In core set", "Core multiple", "Value basis", "Revenue basis", "Sources"]
+    _hdr(ws, 4, cols)
+    r0, r1 = 5, 4 + n
+    cap_row = r1 + 2
+    cap = f"$B${cap_row}"
+    for i, d in df.iterrows():
+        r = r0 + i
+        vals = [d["target"], d["acquirer"], d["announced"], d["buyer"], d["segment"], float(d["ev_usd_bn"]), float(d["revenue_usd_bn"])]
+        for j, v in enumerate(vals, start=1):
+            c = ws.cell(row=r, column=j, value=v)
+            if j in (6, 7):
+                c.font = F_IN; c.number_format = "#,##0.000" if j == 7 else "#,##0.0"
+        ws.cell(row=r, column=8, value=f"=F{r}/G{r}").number_format = MULT
+        gi = ws.cell(row=r, column=9, value=(float(d["growth_pct"]) if pd.notna(d["growth_pct"]) else "n/a")); gi.font = F_IN; gi.number_format = "0.0"
+        pi = ws.cell(row=r, column=10, value=(float(d["premium_pct"]) if pd.notna(d["premium_pct"]) else "n/a")); pi.font = F_IN; pi.number_format = "0.0"
+        ws.cell(row=r, column=11, value=f"=IF(AND(ISNUMBER(I{r}),I{r}<={cap}),1,0)")
+        ws.cell(row=r, column=12, value=f'=IF(K{r}=1,H{r},"")').number_format = MULT
+        ws.cell(row=r, column=13, value=d["value_basis"]); ws.cell(row=r, column=14, value=d["revenue_basis"])
+        ws.cell(row=r, column=15, value=" | ".join(d["sources"]))
+    ws.cell(row=cap_row, column=1, value="Core-set rule: target revenue growth at most (%)").font = F_B
+    c = ws.cell(row=cap_row, column=2, value=float(cfg["core_growth_max_pct"])); c.font = F_IN
+    ws.cell(row=cap_row, column=3, value="SAP's revenue grows about 13%; faster-growing targets (Splunk, Anaplan) and targets without a growth figure (Qualtrics, Coupa) stay in the all-deals statistics only.")
+    st = cap_row + 2
+    _hdr(ws, st, ["Statistic (EV / revenue)", "All deals", "Core set", "Python check (core)"])
+    rngA, rngC = f"H{r0}:H{r1}", f"L{r0}:L{r1}"
+    srow = {}
+    for k, (lab, fa, fc, key) in enumerate([
+            ("Number of deals", f"=COUNT({rngA})", f"=COUNT({rngC})", "n"), ("25th percentile", f"=QUARTILE({rngA},1)", f"=QUARTILE({rngC},1)", "q1"),
+            ("Median", f"=MEDIAN({rngA})", f"=MEDIAN({rngC})", "median"), ("75th percentile", f"=QUARTILE({rngA},3)", f"=QUARTILE({rngC},3)", "q3"),
+            ("Mean", f"=AVERAGE({rngA})", f"=AVERAGE({rngC})", "mean")], start=1):
+        r = st + k
+        ws.cell(row=r, column=1, value=lab)
+        for col, f in ((2, fa), (3, fc)):
+            ws.cell(row=r, column=col, value=f).number_format = "0" if key == "n" else MULT
+        cc = ws.cell(row=r, column=4, value=float(pr["stats"]["core"][key])); cc.number_format = "0" if key == "n" else MULT; cc.font = Font(italic=True, color="8091A5")
+        srow[key] = r
+    pm = st + 7
+    ws.cell(row=pm, column=1, value="Premium paid to the undisturbed price: median of the 3 deals with a quoted premium (%)")
+    ws.cell(row=pm, column=2, value=f"=MEDIAN(J{r0}:J{r1})").number_format = "0.0"
+    # SAP application
+    ap = pm + 2
+    ws.cell(row=ap, column=1, value="Applied to SAP (EV / LTM revenue, same equity bridge as the DCF)").font = F_B
+    ws.cell(row=ap + 1, column=1, value="SAP revenue, last twelve months to 30 Sep 2026 (€m)")
+    c = ws.cell(row=ap + 1, column=2, value=float(pr["rev_ltm"])); c.font = F_IN; c.number_format = EUR
+    nonop = f"({ref['cash']}+{ref['st_inv']}+{ref['lt_inv']}+{ref['debt_benefit']}+{ref['tlcf_asset']}-{ref['debt']}-{ref['pension']}-{ref['nci']})"
+    ws.cell(row=ap + 2, column=1, value="SAP market enterprise value (€m)")
+    ws.cell(row=ap + 2, column=2, value=f"={ref['price']}*{ref['shares']}-{nonop}").number_format = EUR
+    ws.cell(row=ap + 3, column=1, value="SAP's own market EV / LTM revenue")
+    ws.cell(row=ap + 3, column=2, value=f"=B{ap+2}/B{ap+1}").number_format = MULT
+    h = ap + 5
+    _hdr(ws, h, ["Multiple applied", "EV / revenue", "Implied EV (€m)", "Equity value (€m)", "Value per share (€)", "Python check"])
+    rows = [("Core set: 25th percentile", f"=C{srow['q1']}", pr["prices"]["core"]["q1"]), ("Core set: median", f"=C{srow['median']}", pr["prices"]["core"]["median"]),
+            ("Core set: 75th percentile", f"=C{srow['q3']}", pr["prices"]["core"]["q3"]), ("All deals: median", f"=B{srow['median']}", pr["prices"]["all"]["median"])]
+    prow = {}
+    for k, (lab, f, chk) in enumerate(rows, start=1):
+        r = h + k
+        ws.cell(row=r, column=1, value=lab)
+        ws.cell(row=r, column=2, value=f).number_format = MULT
+        ws.cell(row=r, column=3, value=f"=B{r}*$B${ap+1}").number_format = EUR
+        ws.cell(row=r, column=4, value=f"=C{r}+{nonop}").number_format = EUR
+        ws.cell(row=r, column=5, value=f"=D{r}/{ref['shares']}").number_format = PX
+        cc = ws.cell(row=r, column=6, value=float(chk)); cc.number_format = PX; cc.font = Font(italic=True, color="8091A5")
+        prow[lab] = r
+    med = prow["Core set: median"]
+    ws[f"A{med}"].font = F_B; ws[f"E{med}"].font = F_B; ws[f"E{med}"].fill = FILL_K
+    # weighting
+    wh = h + 7
+    ws.cell(row=wh - 1, column=1, value="Football-field weighting (team plan: DCF 50%, comparable companies 25%, precedent transactions 25%)").font = F_B
+    _hdr(ws, wh, ["Method", "Weight", "Value per share (€)", "Weighted (€)", "Basis"])
+    impl = cref["impl"]
+    ebit_lab = "EV / NTM EBIT ex-SBC (like-for-like)" if "EV / NTM EBIT ex-SBC (like-for-like)" in impl else "EV / NTM EBIT"
+    comp_f = f"=AVERAGE(Comps!G{impl['EV / NTM sales']},Comps!G{impl[ebit_lab]},Comps!G{impl['P / NTM EPS']})"
+    meth = [("DCF", f"={dref['price']}", "Base-case DCF value per share"),
+            ("Comparable companies", comp_f, "Average of the median-implied values: EV/NTM sales, EV/NTM EBIT (" + ("ex-SBC" if "ex-SBC" in ebit_lab else "GAAP") + "), P/E"),
+            ("Precedent transactions", f"=E{med}", "Core-set median EV / LTM revenue")]
+    for k, (lab, f, basis) in enumerate(meth, start=1):
+        r = wh + k
+        ws.cell(row=r, column=1, value=lab)
+        c = ws.cell(row=r, column=2, value=float(pr["weights"][lab])); c.font = F_IN; c.number_format = PCT
+        ws.cell(row=r, column=3, value=f).number_format = PX
+        ws.cell(row=r, column=4, value=f"=B{r}*C{r}").number_format = PX
+        ws.cell(row=r, column=5, value=basis)
+    tr = wh + 4
+    ws.cell(row=tr, column=1, value="Weighted value per share")
+    ws.cell(row=tr, column=2, value=f"=SUM(B{wh+1}:B{wh+3})").number_format = PCT
+    ws.cell(row=tr, column=4, value=f"=SUMPRODUCT(B{wh+1}:B{wh+3},C{wh+1}:C{wh+3})").number_format = PX
+    cc = ws.cell(row=tr, column=6, value=float(pr["weighted"])); cc.number_format = PX; cc.font = Font(italic=True, color="8091A5")
+    for col in "ABD":
+        ws[f"{col}{tr}"].font = F_B
+    ws[f"D{tr}"].fill = FILL_K
+    ws.cell(row=tr + 1, column=1, value="Reference share price").font = Font(italic=True, color="5B6B7F")
+    ws.cell(row=tr + 1, column=4, value=f"={ref['price']}").number_format = PX
+    # notes and exclusions
+    r = tr + 3
+    ws.cell(row=r, column=1, value="Reading and limits").font = F_B
+    notes = [
+        f"SAP trades at about {pr['sap_multiple']:.1f}x LTM revenue; the core-set median is {pr['stats']['core']['median']:.1f}x. The gap is mostly the control premium (the three deals with a quoted premium paid 30-42% over the undisturbed price).",
+        "Size: SAP is worth about 6x the largest deal except VMware, so no buyer exists in practice; the precedent value is a cross-check on what control of a software franchise has cost, not a price anyone would pay.",
+        "Sample: 7 deals in the core set (11 in all). Quartiles over so few deals are wide; the all-deals median is pulled up by high-growth targets.",
+        "Basis: deal value divided by revenue of the last reported fiscal year or LTM before the announcement. Where a source quotes a different multiple the difference is noted in the deal file (valuation/loaders/precedents.yaml).",
+        "EBITDA multiples are not used: GAAP EBITDA of software targets is small or negative, so revenue is the only multiple available for most deals.",
+    ]
+    for t in notes:
+        r += 1; ws.cell(row=r, column=1, value="• " + t)
+    r += 2
+    ws.cell(row=r, column=1, value="Considered and excluded").font = F_B
+    for e in cfg["excluded"]:
+        r += 1; ws.cell(row=r, column=1, value=e["what"]); ws.cell(row=r, column=3, value=e["why"])
+    _widths(ws, {"A": 58, "B": 26, "C": 16, "D": 16, "E": 40, "F": 14, "G": 14, "H": 12, "I": 12, "J": 11, "K": 10, "L": 12, "M": 34, "N": 30, "O": 90})
+    ws.freeze_panes = "B5"
+    return {"median_price": f"Precedents!$E${med}", "weighted": f"Precedents!$D${tr}", "weights_sum": f"Precedents!$B${tr}",
+            "median_row": med, "weighted_row": tr}
+
+
 # ======================================================================= value sheets
 def _grid(ws, r, title, grid, row_lab, col_lab, row_fmt, col_fmt, base_r=None, base_c=None):
     ws.cell(row=r, column=1, value=title).font = F_B
@@ -838,7 +963,7 @@ def _addr(res, key):
 
 
 # ======================================================================= Checks (live)
-def _checks(wb, ref, wref, R, res):
+def _checks(wb, ref, wref, R, res, pref):
     ws = wb.create_sheet("Checks")
     _title(ws, "Model integrity checks (live formulas)", "Every row must read TRUE. The Python-engine comparisons apply to the Base scenario (selector = 2).")
     _hdr(ws, 4, ["Check", "Result", "Left side", "Right side"])
@@ -860,12 +985,15 @@ def _checks(wb, ref, wref, R, res):
         ("WACC matches the Python engine (Base)", f"ABS({wref['wacc']}-WACC!C15)", "0.000001", "le_base"),
         ("DCF value per share matches the Python engine (Base)", "ABS(DCF!B36-DCF!C36)", "0.01", "le_base"),
         ("DDM value per share matches the Python engine (Base)", "ABS(DDM!B24-DDM!C24)", "0.01", "le_base"),
+        ("Football-field weights add up to 100%", pref["weights_sum"], "1", "eq"),
+        ("Precedent value per share matches the Python engine", f"ABS(Precedents!E{pref['median_row']}-Precedents!F{pref['median_row']})", "0.01", "le_any"),
+        ("Weighted value matches the Python engine (Base)", f"ABS(Precedents!D{pref['weighted_row']}-Precedents!F{pref['weighted_row']})", "0.01", "le_base"),
     ]
     for i, (lab, left, right, kind) in enumerate(checks, start=5):
         ws.cell(row=i, column=1, value=lab)
         ws.cell(row=i, column=3, value=f"={left}"); ws.cell(row=i, column=4, value=f"={right}")
         f_ = {"abs": f"=ABS(C{i}-D{i})<0.001", "eq": f"=ABS(C{i}-D{i})<0.000001", "ge": f"=C{i}>=D{i}",
-              "le_base": f"=OR({base_only},C{i}<=D{i})"}[kind]
+              "le_base": f"=OR({base_only},C{i}<=D{i})", "le_any": f"=C{i}<=D{i}"}[kind]
         c = ws.cell(row=i, column=2, value=f_); c.font = F_B
         for col in (3, 4):
             ws.cell(row=i, column=col).number_format = "#,##0.0000"
@@ -912,6 +1040,7 @@ def _cover(wb, ref, dref, kref, res):
             ("Sensitivity", "Engine values", "WACC vs growth, margin, cloud growth; tornado"),
             ("Monte Carlo", "Engine values, live statistics", "Distribution of the DCF value"),
             ("Comps", "Live", "Peer multiples, implied values, growth-adjusted regression"),
+            ("Precedents", "Live", "Large software deals, EV/revenue statistics, implied SAP value, 50/25/25 weighted value"),
             ("Business model", "Engine values", "Cloud transformation: revenue mix and backlog"),
             ("Intangibles", "Engine values", "R&D capitalisation, market vs book value"),
             ("Historicals", "Data", "FY2021-25 financials and consensus"), ("FCFF bridge", "Data", "FY2025 FCFF vs SAP's reported free cash flow"),
@@ -1084,7 +1213,7 @@ def _sources(wb, res):
     _widths(ws, {"A": 34, "B": 80, "C": 90})
 
 
-def _summary(wb, ref, wref, dref, cref, res, out_dir):
+def _summary(wb, ref, wref, dref, cref, res, out_dir, pref):
     ws = wb["Summary"]
     d, sc, cp, mk = res["dcf"], res["scenarios"], res["comps"], res["market"]
     _title(ws, f"SAP SE - company valuation as of 13 Nov 2026 ({res['edition'].upper()} edition)",
@@ -1106,6 +1235,8 @@ def _summary(wb, ref, wref, dref, cref, res, out_dir):
         *([("Comps: EV/NTM EBIT ex-SBC (median)", f"=Comps!G{impl['EV / NTM EBIT ex-SBC (like-for-like)']}", PX)] if 'EV / NTM EBIT ex-SBC (like-for-like)' in impl else []),
         ("Comps: P/NTM EPS (median)", f"=Comps!G{impl['P / NTM EPS']}", PX),
         ("Comps: growth-adjusted EV/sales", f"=Comps!B{rb+8}", PX),
+        ("Precedent transactions: core-set median EV/revenue", f"={pref['median_price']}", PX),
+        ("Weighted value (50% DCF, 25% comps, 25% precedents)", f"={pref['weighted']}", PX),
         ("Analyst target mean (n=%d)" % mk["tgt_n"], mk["tgt_mean"], PX),
         ("52-week range", f"€{mk['lo52']:.2f} - €{mk['hi52']:.2f}", None),
     ]
@@ -1143,19 +1274,22 @@ def write(res: dict, path: Path, out_dir: Path) -> Path:
     R = _forecast(wb, ref, res)
     dref = _dcf(wb, ref, wref, R, res)
     _ddm(wb, ref, wref, R, res)
-    kref = _checks(wb, ref, wref, R, res)
     _scenarios(wb, res)
     _sensitivity(wb, res, out_dir)
     _monte_carlo(wb, res, out_dir)
     cref = _comps(wb, ref, res)
+    pref = _precedents(wb, ref, res, cref, dref)
+    kref = _checks(wb, ref, wref, R, res, pref)
     _business(wb, res, out_dir)
     _intangibles(wb, res)
     _historicals(wb, res)
     _recon(wb, res)
     _extensions(wb, res)
     _sources(wb, res)
-    _summary(wb, ref, wref, dref, cref, res, out_dir)
+    _summary(wb, ref, wref, dref, cref, res, out_dir, pref)
     _cover(wb, ref, dref, kref, res)
     res.pop("_ref", None)
+    order = ["Cover", "Summary", "Assumptions", "WACC", "Forecast", "DCF", "DDM", "Checks", "Scenarios", "Sensitivity", "Monte Carlo", "Comps", "Precedents"]
+    wb._sheets = [wb[n_] for n_ in order] + [x for x in wb._sheets if x.title not in order]
     wb.save(path)
     return path

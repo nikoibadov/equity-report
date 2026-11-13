@@ -16,6 +16,7 @@ def football_items(res: dict) -> list[dict]:
     mk, d, sc, cp = res["market"], res["dcf"], res["scenarios"], res["comps"]
     st = cp["stats"]
     x = res.get("ext")
+    pr = res.get("prec")
     pe = x["pe"] if x and x["pe"]["flagged"] else None
     items = [
         {"label": "52-week range", "low": mk["lo52"], "high": mk["hi52"], "mid": None, "kind": "market"},
@@ -29,6 +30,7 @@ def football_items(res: dict) -> list[dict]:
         {"label": "EV / NTM sales (peer IQR)", "low": st["ev_sales_ntm"]["p_q1"], "high": st["ev_sales_ntm"]["p_q3"], "mid": st["ev_sales_ntm"]["p_med"], "kind": "comps"},
         {"label": ("EV / NTM EBIT (peer IQR)" if "ev_ebit_ntm_xsbc" in st else "EV / NTM EBIT, GAAP (peer IQR)"), "low": st["ev_ebit_ntm"]["p_q1"], "high": st["ev_ebit_ntm"]["p_q3"], "mid": st["ev_ebit_ntm"]["p_med"], "kind": "comps"},
         *([{"label": "EV / NTM EBIT ex-SBC (like-for-like)", "low": st["ev_ebit_ntm_xsbc"]["p_q1"], "high": st["ev_ebit_ntm_xsbc"]["p_q3"], "mid": st["ev_ebit_ntm_xsbc"]["p_med"], "kind": "comps"}] if "ev_ebit_ntm_xsbc" in st else []),
+        *([{"label": f"Precedent transactions (EV/revenue, core set n={pr['stats']['core']['n']})", "low": pr["prices"]["core"]["q1"], "high": pr["prices"]["core"]["q3"], "mid": pr["prices"]["core"]["median"], "kind": "comps"}] if pr else []),
         ({"label": "P / NTM EPS (ex levered peers, IQR)", "low": pe["p_q1"], "high": pe["p_q3"], "mid": pe["p_med"], "kind": "comps"} if pe else
          {"label": "P / NTM EPS (peer IQR)", "low": st["pe_ntm"]["p_q1"], "high": st["pe_ntm"]["p_q3"], "mid": st["pe_ntm"]["p_med"], "kind": "comps"}),
         {"label": "Growth-adj. EV/Sales (Rule of 40, ±1 SE)", "low": cp["regression"]["p_low"], "high": cp["regression"]["p_high"], "mid": cp["regression"]["p_fit"], "kind": "comps"},
@@ -41,7 +43,7 @@ def football(res: dict, path, title: str | None = None, items: list[dict] | None
     items = items or football_items(res)
     price = res["market"]["price"]
     colors = {"market": SLATE, "dcf": TEAL, "comps": AMBER}
-    fig, ax = plt.subplots(figsize=(11, 7.4), dpi=150)
+    fig, ax = plt.subplots(figsize=(11, 8.0), dpi=150)
     for i, it in enumerate(reversed(items)):
         ax.barh(i, it["high"] - it["low"], left=it["low"], height=0.55, color=colors[it["kind"]], alpha=0.9)
         pad = (max(x["high"] for x in items) - min(x["low"] for x in items)) * 0.012
@@ -54,6 +56,10 @@ def football(res: dict, path, title: str | None = None, items: list[dict] | None
     ax.axvline(price, color=CORAL, ls="--", lw=1.4)
     ax.text(price, -0.75, f" Price {currency}{price:.2f}", color=CORAL, fontsize=9, va="center")
     ax.axvline(res["dcf"]["price"], color=TEAL, ls=":", lw=1.2)
+    if res.get("prec"):
+        w = res["prec"]["weighted"]
+        ax.axvline(w, color=INK, ls="-.", lw=1.0)
+        ax.text(w, len(items) - 0.35, f"Weighted {currency}{w:.0f} ", color=INK, fontsize=8, va="bottom", ha="right")
     ax.set_xlabel(f"{currency} per share")
     lo = min(it["low"] for it in items); hi = max(it["high"] for it in items)
     ax.set_xlim(lo - (hi - lo) * 0.12, hi + (hi - lo) * 0.12)

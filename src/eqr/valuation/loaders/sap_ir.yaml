@@ -100,7 +100,7 @@ fy2025_statement:
     services: 4262
     revenue: 36800
     cost_of_cloud: 5480    # IFRS, as reported (CIQ as-reported sheet)
-    op_ifrs: 9617          # SEC XBRL ProfitLossFromOperatingActivities CY2025 (page summary said 9,830 - superseded)
+    op_ifrs: 9617          # audited figure: SEC XBRL ProfitLossFromOperatingActivities CY2025 and Capital IQ. SAP's preliminary Q4-2025 statement (29 Jan 2026) printed 9,830, which the team's Drive files use. Not used in the valuation (FCFF reconciliation and ROIC only)
     op_nonifrs: 10419
     sbc: 1695
     ocf: 9156

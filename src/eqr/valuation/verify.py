@@ -26,6 +26,10 @@ def check_workbook(path: Path, res: dict, tol: float = 0.01) -> tuple[bool, str]
         "Equity": (_val(sol, book, "DCF", "B32"), d["equity"], 0.5),
         "DCF price": (_val(sol, book, "DCF", "B36"), d["price"], tol),
     }
+    if res.get("prec"):
+        pm, wt = _label_cells(path)
+        checks["Precedent"] = (_val(sol, book, "Precedents", pm), res["prec"]["prices"]["core"]["median"], tol)
+        checks["Weighted"] = (_val(sol, book, "Precedents", wt), res["prec"]["weighted"], tol)
     lines, ok = [], True
     try:
         chk = [k for k in sol if "CHECKS" in k.upper() and k.upper().endswith("!B" + str(_last_check_row(path)))]
@@ -64,3 +68,17 @@ def scenario_price(path: Path, selector: int, tmp: Path) -> float:
     wb.save(out)
     sol = formulas.ExcelModel().loads(str(out)).finish().calculate()
     return _val(sol, out.name, "DCF", "B36")
+
+
+def _label_cells(path: Path) -> tuple[str, str]:
+    """Cells of the precedent median price and the weighted value, found by their row labels."""
+    import openpyxl
+    ws = openpyxl.load_workbook(path)["Precedents"]
+    med = wt = None
+    for r in range(1, ws.max_row + 1):
+        a = ws.cell(row=r, column=1).value
+        if a == "Core set: median":
+            med = f"E{r}"
+        elif a == "Weighted value per share":
+            wt = f"D{r}"
+    return med, wt
