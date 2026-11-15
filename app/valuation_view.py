@@ -158,6 +158,12 @@ def render(root: Path):
     _drop_stale_results(root)
     from eqr.valuation.loaders import capiq
 
+    # The date picker opens in a popup that takes the light theme's dark text, which is unreadable on its dark
+    # background: show every day in grey (the selected day keeps the accent colour).
+    st.html("<style>table[aria-label^='Choose date'] div[role='button']:not([data-selected='true']):not([aria-selected='true'])"
+            "{color:rgba(242,247,247,0.62) !important}"
+            "table[aria-label^='Choose date'] div[role='button'][data-disabled='true']{color:rgba(242,247,247,0.32) !important}</style>")
+
     st.title("Company valuation")
     st.caption("FCFF DCF + relative valuation · global peer universe · AIFA Group 5 (academic project; not investment advice)")
 
