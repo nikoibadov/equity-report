@@ -7,6 +7,8 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass, field
 
+from .loaders.common import DEFAULT_DATE, fmt_date, roll_days
+
 EXPLICIT = [2027, 2028, 2029, 2030]          # segment-driven years after the 2026 anchor
 FADE = [2031, 2032, 2033, 2034, 2035]        # linear fade to terminal values
 YEARS = [2026] + EXPLICIT + FADE
@@ -88,7 +90,8 @@ def build(ds: dict) -> Assumptions:
         # ---------- terminal & timing ----------
         "g": A(0.0275, "%", "Own estimate", "Long-run nominal growth: ECB 2% inflation + ~0.75% real; below 10y Bund (3.3%); SAP still structurally growing in ERP cloud but mature by 2035"),
         "stub": A(0.25, "years", "Methodology", "Valuation anchored on last balance sheet (30 Sep 2026); Q4-2026 = 25% of FY2026 FCFF"),
-        "roll_days": A(44, "days", "Methodology", "Equity value rolled forward from 30 Sep to 13 Nov 2026 at cost of equity"),
+        "roll_days": A(roll_days(ds["meta"].get("valuation_date")), "days", "Methodology",
+                       f"Equity value rolled forward from 30 Sep 2026 to {fmt_date(ds['meta'].get('valuation_date', DEFAULT_DATE))} at cost of equity"),
         # ---------- WACC ----------
         "rf": A(w["rf"][0], "%", w["rf"][1], "Risk-free: 10-year German government yield (EUR cash flows, AAA)"),
         "beta": A(w["beta"][0], "x", w["beta"][1], "Levered equity beta"),

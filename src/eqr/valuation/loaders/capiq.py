@@ -10,6 +10,7 @@ import openpyxl
 import yaml
 
 from . import public_refs
+from . import common
 from .common import load_sap_ir, peer_frame
 
 def _find_root() -> Path:
@@ -260,7 +261,8 @@ def load() -> dict:
     return {
         "edition": "data",
         "peer_ebit_basis": "street",  # CIQ forward EBIT = broker 'street' EBIT (US peers: non-GAAP, ex-SBC)
-        "meta": {"name": "SAP SE", "ticker": "SAP GY / XTRA:SAP", "currency": "EUR", "data_date": "2026-11-05"},
+        "meta": {"name": "SAP SE", "ticker": "SAP GY / XTRA:SAP", "currency": "EUR", "data_date": "2026-11-05",
+                 "valuation_date": common.VALUATION_DATE, "lookahead": common.VALUATION_DATE < __import__("datetime").date.today().isoformat()},
         "hist_ltm": {"revenue": 39387.0, "ebit": 11470.0, "ebit_margin": 29.12, "source": "CIQ Key Stats 2026 FQ3 LTM"},
         "market": market, "hist": hist, "rnd_long": rnd_long, "consensus": cons, "ir": ir,
         "bridge": bridge, "shares_diluted": shares_diluted, "wacc_inputs": wacc_in, "peers": peers,

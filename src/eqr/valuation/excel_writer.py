@@ -59,11 +59,18 @@ def _widths(ws, widths):
         ws.column_dimensions[col].width = w
 
 
+def _vd(res, short: bool = False) -> str:
+    """Valuation date as '13 Nov 2026' (or '13 Nov')."""
+    from .loaders.common import DEFAULT_DATE, fmt_date
+    lab = fmt_date(res["meta"].get("valuation_date", DEFAULT_DATE))
+    return lab.rsplit(" ", 1)[0] if short else lab
+
+
 # ======================================================================= Assumptions
 def _assumptions(wb, a, res):
     ws = wb.create_sheet("Assumptions")
     _title(ws, "Assumptions (blue = input; edit here and the model recalculates)",
-           f"{res['meta']['name']} | edition: {res['edition'].upper()} | valuation date 13 Nov 2026 | € millions unless stated")
+           f"{res['meta']['name']} | edition: {res['edition'].upper()} | valuation date {_vd(res)} | € millions unless stated")
     _hdr(ws, 4, ["Key", "Assumption", "Unit", "2026", "2027", "2028", "2029", "2030", "Terminal", "Source", "Rationale"])
     sections = [
         ("Market & capital structure", ["price", "e_mv", "d_mv", "shares"]),
@@ -181,7 +188,7 @@ def _label(k):
         "acq_pct": "Acquisition-related charges % rev", "oneoff_2026": "2026 one-offs (restructuring, litigation)",
         "tax": "Tax rate on EBIT", "da_pct": "D&A % revenue", "capex_pct": "Capex % revenue", "nwc_pct": "NWC release % of Δrevenue",
         "sbc_pct": "SBC % revenue", "sbc_noncash": "Non-cash share of SBC", "sbc_addback": "Add back non-cash SBC? (0/1)",
-        "g": "Terminal growth g", "stub": "Stub (Q4-26) year fraction", "roll_days": "Roll-forward days 30 Sep -> 13 Nov",
+        "g": "Terminal growth g", "stub": "Stub (Q4-26) year fraction", "roll_days": "Roll-forward days 30 Sep -> valuation date",
         "cash": "Cash & equivalents", "st_inv": "Current financial assets", "lt_inv": "Non-current financial investments",
         "debt_benefit": "PV of below-market debt (benefit)", "tlcf_asset": "Tax value of loss carryforwards",
         "debt": "Financial debt incl. leases", "pension": "Pension deficit", "nci": "Non-controlling interests",
@@ -377,8 +384,8 @@ def _dcf(wb, ref, wref, R, res):
         ("Equity value (30 Sep 2026)", "=SUM(B23:B31)", EUR, d["equity"]),
         ("Diluted shares (m)", f"={ref['shares']}", EUR1, None),
         ("Value per share at 30 Sep 2026", "=B32/B33", PX, d["ps_anchor"]),
-        ("Roll-forward factor to 13 Nov 2026 (1+Ke)^(days/365)", f"=(1+{wref['ke']})^({ref['roll_days']}/365)", "0.0000", d["roll"]),
-        ("DCF value per share at 13 Nov 2026", "=B34*B35", PX, d["price"]),
+        (f"Roll-forward factor to {_vd(res)} (1+Ke)^(days/365)", f"=(1+{wref['ke']})^({ref['roll_days']}/365)", "0.0000", d["roll"]),
+        (f"DCF value per share at {_vd(res)}", "=B34*B35", PX, d["price"]),
         ("Reference share price", f"={ref['price']}", PX, None),
         ("Upside / (downside)", "=B36/B37-1", PCT, d["upside"]),
         ("TV share of EV", "=B21/B23", PCT, d["tv_share"]),
@@ -672,7 +679,7 @@ def _grid(ws, r, title, grid, row_lab, col_lab, row_fmt, col_fmt, base_r=None, b
 def _sensitivity(wb, res, out_dir):
     ws = wb.create_sheet("Sensitivity")
     a, d = res["assumptions"], res["dcf"]
-    _title(ws, "Sensitivity analysis (DCF value per share, €, 13 Nov 2026)",
+    _title(ws, f"Sensitivity analysis (DCF value per share, €, {_vd(res)})",
            "Values computed by the Python engine (same formulas as the DCF sheet); bold = base case")
     r = 4
     r = _grid(ws, r, "1) WACC vs terminal growth", res["grid_wacc_g"], "WACC", "g", PCT2, PCT2, round(d["wacc"], 4), round(a["g"], 4))
@@ -902,7 +909,7 @@ def _ddm(wb, ref, wref, R, res):
         ("Terminal value per share (Gordon growth at Ke)", f"=B20/(B7-{ref['g']})", PX, dd["tv"]),
         ("PV of terminal value", f"=B21/(1+B7)^{M}15", PX, dd["pv_tv"]),
         ("PV of dividends 2026-35", f"=SUM(D16:{M}16)", PX, dd["pv_div"]),
-        ("DDM value per share at 13 Nov 2026 (dividends only)", "=(B22+B23)*DCF!B35", PX, dd["price"]),
+        (f"DDM value per share at {_vd(res)} (dividends only)", "=(B22+B23)*DCF!B35", PX, dd["price"]),
         ("Value if all free cash flow is paid out (dividends + buybacks)", float(dd["total_payout_price"]), PX, None),
         ("DCF value per share (for comparison)", "=DCF!B36", PX, None),
     ]
@@ -1008,7 +1015,7 @@ def _checks(wb, ref, wref, R, res, pref):
 def _cover(wb, ref, dref, kref, res):
     ws = wb.create_sheet("Cover", 0)
     _title(ws, f"SAP SE: company valuation model ({res['edition'].upper()} edition)",
-           "AIFA Assignment 2, Group 5 · valuation date 13 Nov 2026 · € millions unless stated")
+           f"AIFA Assignment 2, Group 5 · valuation date {_vd(res)} · € millions unless stated")
     rows = [("DCF value per share", f"={dref['price']}", PX), ("Reference share price", f"={ref['price']}", PX),
             ("Active scenario", f'=CHOOSE({ref["scen_sel"]},"Bear","Base","Bull")', None), ("All integrity checks pass", f"={kref['all']}", None)]
     for i, (lab, f_, fm) in enumerate(rows, start=4):
@@ -1201,7 +1208,10 @@ def _sources(wb, res):
         ("EBIT basis", "CIQ EBIT 10,418 ≈ non-IFRS 10,419; IFRS 9,830 (SAP) vs 9,617 (CIQ as reported)", "Model builds from non-IFRS (incl. SBC) less acquisition-related charges"),
         ("Tax rate", "27.9% (Bloomberg), 28.7% (CIQ ETR), 29% (guidance), 29.9% (CIQ DCF)", "Operating taxes 29% 2026, 29.5% 2027-30, 30% terminal; WACC tax shield at the 30% German marginal rate"),
         ("Buyback avg. price", "Bloomberg €212.43 vs SAP Q3 statement €164.79", "Not a valuation input; noted only"),
-        ("Valuation date", "Capital IQ and Bloomberg exports are from 4-5 Nov; the valuation date is 13 Nov", "Share price = 13 Nov close (Yahoo Finance) in both editions; Data edition keeps its 5 Nov rates, targets and peer multiples; Web edition uses public data of the run date. Value anchored at the 30 Sep balance sheet and rolled forward 44 days at Ke"),
+        ("Valuation date", f"Capital IQ and Bloomberg exports are from 4-5 Nov; the valuation date is {_vd(res)}",
+         f"Share price = {_vd(res)} close (Yahoo Finance) in both editions; Bund yield and beta window are as of that date. Data edition keeps its 5 Nov Bloomberg rates, "
+         "targets and peer multiples; Web edition uses public peer multiples, consensus and targets of the run date" + (" (later than the valuation date: they include information published after it)" if res["meta"].get("lookahead") else "")
+         + f". Value anchored at the 30 Sep balance sheet and rolled forward {res['assumptions']['roll_days']:.0f} days at Ke"),
     ]
     _hdr(ws, r, ["Item", "Conflict", "Resolution"]); r += 1
     for c in conflicts:
@@ -1216,7 +1226,7 @@ def _sources(wb, res):
 def _summary(wb, ref, wref, dref, cref, res, out_dir, pref):
     ws = wb["Summary"]
     d, sc, cp, mk = res["dcf"], res["scenarios"], res["comps"], res["market"]
-    _title(ws, f"SAP SE - company valuation as of 13 Nov 2026 ({res['edition'].upper()} edition)",
+    _title(ws, f"SAP SE - company valuation as of {_vd(res)} ({res['edition'].upper()} edition)",
            "FCFF DCF + relative valuation | € per share | all figures link to the model sheets")
     _hdr(ws, 4, ["Key outputs", "Value"])
     impl = cref["impl"]; rb = cref["reg_base"]

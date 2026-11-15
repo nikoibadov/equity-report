@@ -20,6 +20,7 @@ import pandas as pd
 import requests
 
 from . import public_refs
+from . import common
 from .common import latest_close, load_sap_ir, peer_frame
 
 CACHE = Path(os.environ.get("VALUATION_CACHE", Path(__file__).resolve().parents[2] / "data" / "web"))
@@ -44,13 +45,15 @@ def _cache_json(name: str, fn, valid=None):
 # ------------------------------------------------------------------ public sources
 def bund_10y() -> dict:
     def f():
+        vd = dt.date.fromisoformat(common.VALUATION_DATE)
         url = ("https://api.statistiken.bundesbank.de/rest/data/BBSIS/"
-               "D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A?format=csv&lastNObservations=15&lang=en")
+               f"D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A?format=csv&startPeriod={(vd - dt.timedelta(days=21)).isoformat()}"
+               f"&endPeriod={vd.isoformat()}&lang=en")
         txt = requests.get(url, timeout=30).text
         obs = [l.split(",") for l in txt.splitlines() if re.match(r"^\d{4}-\d{2}-\d{2},\d", l)]
         d, v = obs[-1][0], float(obs[-1][1])
         return {"date": d, "yield": v, "url": url, "fetched": TODAY}
-    return _cache_json(f"bundesbank_10y_{TODAY}", f)
+    return _cache_json(f"bundesbank_10y_{TODAY}_{common.VALUATION_DATE}", f)
 
 
 def damodaran() -> dict:
@@ -129,7 +132,7 @@ def _yf_sap() -> dict:
             "dividends": {k: -v for k, v in row(cf, "Cash Dividends Paid").items() if v is not None},
             "fetched": TODAY,
         }
-    d = _cache_json(f"yf_sap_v3_{TODAY}", f)
+    d = _cache_json(f"yf_sap_v4_{TODAY}_{common.VALUATION_DATE}", f)
     if not (isinstance(d.get("price"), (int, float)) and np.isfinite(d["price"]) and d["price"] > 0):
         raise ValueError("No valid SAP.DE price from Yahoo Finance right now; try again in a minute")
     return d
@@ -140,7 +143,9 @@ def beta_regression() -> dict:
     import yfinance as yf
 
     def f():
-        px = yf.download(["SAP.DE", "^GDAXI"], period="5y", interval="1wk", auto_adjust=True, progress=False)["Close"].dropna()
+        vd = dt.date.fromisoformat(common.VALUATION_DATE)
+        px = yf.download(["SAP.DE", "^GDAXI"], start=(vd - dt.timedelta(days=5 * 365 + 7)).isoformat(), end=(vd + dt.timedelta(days=1)).isoformat(),
+                         interval="1wk", auto_adjust=True, progress=False)["Close"].dropna()
         r = px.pct_change().dropna()
         x, y = r["^GDAXI"].values, r["SAP.DE"].values
         b = np.cov(y, x)[0, 1] / np.var(x, ddof=1)
@@ -149,7 +154,7 @@ def beta_regression() -> dict:
         r2 = np.corrcoef(x, y)[0, 1] ** 2
         return {"raw": float(b), "adjusted": float(0.67 * b + 0.33), "se": float(se), "r2": float(r2), "n": int(len(x)),
                 "start": str(r.index[0].date()), "end": str(r.index[-1].date()), "fetched": TODAY}
-    return _cache_json(f"beta_{TODAY}", f)
+    return _cache_json(f"beta_{TODAY}_{common.VALUATION_DATE}", f)
 
 
 def peers() -> pd.DataFrame:
@@ -282,7 +287,8 @@ def load() -> dict:
     return {
         "edition": "web",
         "peer_ebit_basis": "gaap",   # NTM EBIT = GAAP operating margin (SBC included) x NTM revenue
-        "meta": {"name": "SAP SE", "ticker": "SAP.DE", "currency": "EUR", "data_date": TODAY},
+        "meta": {"name": "SAP SE", "ticker": "SAP.DE", "currency": "EUR", "data_date": TODAY, "valuation_date": common.VALUATION_DATE,
+                 "lookahead": common.VALUATION_DATE < TODAY},
         "market": market, "hist": hist, "rnd_long": rnd_long, "consensus": cons, "ir": ir,
         "hist_ltm": {"revenue": ltm_rev, "ebit": 11470.0, "ebit_margin": 29.12,
                      "source": "FY25 36,800 - 9M25 27,116 + 9M26 29,703 (SAP statements); EBIT LTM non-IFRS 10,419-7,590+8,639"},

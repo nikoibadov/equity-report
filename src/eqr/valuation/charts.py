@@ -11,6 +11,11 @@ import matplotlib.pyplot as plt  # noqa: E402
 INK, TEAL, MINT, AMBER, SLATE, CORAL, GRID = "#0E1B2C", "#0F8B8D", "#8FD3C8", "#F4A259", "#5B6B7F", "#E4572E", "#E3E8EF"
 
 
+def _label(res) -> str:
+    from .loaders.common import DEFAULT_DATE, fmt_date
+    return fmt_date(res.get("meta", {}).get("valuation_date", DEFAULT_DATE))
+
+
 def football_items(res: dict) -> list[dict]:
     """Assemble football-field bars from a valuation result bundle."""
     mk, d, sc, cp = res["market"], res["dcf"], res["scenarios"], res["comps"]
@@ -69,7 +74,7 @@ def football(res: dict, path, title: str | None = None, items: list[dict] | None
     from matplotlib.patches import Patch
     ax.legend(handles=[Patch(color=SLATE, label="Market reference"), Patch(color=TEAL, label="Cash-flow based (DCF, DDM)"),
                        Patch(color=AMBER, label="Relative valuation")], loc="lower right", fontsize=8, frameon=False)
-    ax.set_title(title or "SAP SE: valuation football field (€/share, 13 Nov 2026)", fontsize=11, color=INK, loc="left")
+    ax.set_title(title or f"SAP SE: valuation football field (€/share, {_label(res)})", fontsize=11, color=INK, loc="left")
     fig.tight_layout()
     fig.savefig(path)
     plt.close(fig)

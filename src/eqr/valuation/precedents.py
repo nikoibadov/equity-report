@@ -19,8 +19,11 @@ def load() -> dict:
     return yaml.safe_load(PATH.read_text())
 
 
-def deals_frame(cfg: dict) -> pd.DataFrame:
+def deals_frame(cfg: dict, as_of: str | None = None) -> pd.DataFrame:
+    """Deals announced on or before `as_of` (ISO date): a later deal was not known on the valuation date."""
     df = pd.DataFrame(cfg["deals"])
+    if as_of:
+        df = df[df["announced"].astype(str) <= as_of].copy()
     df["ev_rev"] = df["ev_usd_bn"] / df["revenue_usd_bn"]
     cap = cfg["core_growth_max_pct"]
     df["core"] = df["growth_pct"].map(lambda g: bool(pd.notna(g) and g <= cap))
@@ -43,7 +46,8 @@ def comps_value(comps_res: dict) -> tuple[float, list[str]]:
 
 def run(ds: dict, a, comps_res: dict, dcf_price: float) -> dict:
     cfg = load()
-    df = deals_frame(cfg)
+    as_of = ds["meta"].get("valuation_date")
+    df = deals_frame(cfg, as_of)
     non_op = a["cash"] + a["st_inv"] + a["lt_inv"] + a["debt_benefit"] + a["tlcf_asset"]
     claims = a["debt"] + a["pension"] + a["nci"]
     rev = ds["hist_ltm"]["revenue"]
@@ -60,6 +64,6 @@ def run(ds: dict, a, comps_res: dict, dcf_price: float) -> dict:
     prem = df["premium_pct"].dropna()
     return {"cfg": cfg, "deals": df, "stats": stats, "prices": prices, "rev_ltm": rev, "ev_market": ev_mkt,
             "sap_multiple": ev_mkt / rev, "non_op": non_op, "claims": claims, "weights": dict(WEIGHTS), "components": comp,
-            "comps_keys": comps_keys, "weighted": weighted,
+            "comps_keys": comps_keys, "weighted": weighted, "as_of": as_of, "n_after_date": len(cfg["deals"]) - len(df),
             "premium": {"n": int(len(prem)), "median": float(prem.median()) if len(prem) else None,
                         "min": float(prem.min()) if len(prem) else None, "max": float(prem.max()) if len(prem) else None}}

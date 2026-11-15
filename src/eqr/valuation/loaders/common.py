@@ -8,7 +8,39 @@ import pandas as pd
 import yaml
 
 IR = Path(__file__).with_name("sap_ir.yaml")
-VALUATION_DATE = os.environ.get("VALUATION_DATE", "2026-11-13")     # the case's valuation date; prices are taken on or before it
+DEFAULT_DATE = "2026-11-13"                                  # the case's valuation date
+VALUATION_DATE = os.environ.get("VALUATION_DATE", DEFAULT_DATE)     # prices and rates are taken on or before it
+ANCHOR_DATE = "2026-09-30"                                   # SAP balance sheet date: the DCF is anchored here
+
+
+def fmt_date(iso: str) -> str:
+    """'2026-11-13' -> '13 Nov 2026' (no leading zero)."""
+    import datetime as dt
+    d = dt.date.fromisoformat(str(iso)[:10])
+    return f"{d.day} {d.strftime('%b %Y')}"
+
+
+def check_sap_date(iso: str) -> str:
+    """The SAP model needs the 30 Sep 2026 balance sheet and a closing price, so the date must lie between them and today."""
+    import datetime as dt
+    d = dt.date.fromisoformat(str(iso)[:10])
+    if d < dt.date.fromisoformat(ANCHOR_DATE):
+        raise ValueError(f"Valuation date {d} is before the 30 Sep 2026 balance sheet the SAP model is anchored on")
+    if d > dt.date.today():
+        raise ValueError(f"Valuation date {d} is in the future")
+    return d.isoformat()
+
+
+def set_valuation_date(iso: str | None) -> str:
+    """Set the valuation date for this process (None = the case date). Returns the ISO date."""
+    global VALUATION_DATE
+    VALUATION_DATE = check_sap_date(iso or DEFAULT_DATE)
+    return VALUATION_DATE
+
+
+def roll_days(iso: str | None = None) -> int:
+    import datetime as dt
+    return (dt.date.fromisoformat(iso or VALUATION_DATE) - dt.date.fromisoformat(ANCHOR_DATE)).days
 
 
 def load_sap_ir() -> dict:
@@ -78,7 +110,9 @@ def latest_close(t, info: dict | None = None) -> tuple[float, str]:
     Closes after VALUATION_DATE are ignored, so a later re-run still prices SAP on the valuation date."""
     import pandas as pd
     info = info if info is not None else t.info
-    closes = t.history(period="3mo")["Close"].dropna()
+    import datetime as dt
+    vd = dt.date.fromisoformat(VALUATION_DATE)
+    closes = t.history(start=(vd - dt.timedelta(days=21)).isoformat(), end=(vd + dt.timedelta(days=1)).isoformat())["Close"].dropna()
     if len(closes):
         closes = closes[[d.date().isoformat() <= VALUATION_DATE for d in closes.index]]
     px, day = (float(closes.iloc[-1]), closes.index[-1].date()) if len(closes) else (None, None)

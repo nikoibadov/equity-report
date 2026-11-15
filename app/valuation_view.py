@@ -4,18 +4,26 @@ SAP.DE: the full segment model from the AIFA Assignment 2 package (Data or Web e
 Any other ticker: the generic DCF (same conventions) on public data."""
 from __future__ import annotations
 
+import datetime as dt
 import io
 import os
 import tempfile
+import threading
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import streamlit as st
 
+CASE_DATE, ANCHOR = "2026-11-13", "2026-09-30"      # SAP case valuation date; balance sheet the model is anchored on
 SAP_MODELS = {"sap_data": "SAP segment model · Data edition (Capital IQ + Bloomberg)",
               "sap_web": "SAP segment model · Web edition (public sources)",
               "generic": "Generic DCF (any listed company)"}
+
+
+def _vlabel(iso: str) -> str:
+    d = dt.date.fromisoformat(iso)
+    return f"{d.day} {d.strftime('%b')}"
 
 
 def _chart(fn, res, **kw) -> bytes:
@@ -25,21 +33,28 @@ def _chart(fn, res, **kw) -> bytes:
 
 
 # ------------------------------------------------------------------ cached computations
+_DATE_LOCK = threading.Lock()
+
+
 @st.cache_resource(show_spinner=False)
-def _load_ds(edition: str):
-    if edition == "data":
-        from eqr.valuation.loaders import capiq
-        return capiq.load()
-    from eqr.valuation.loaders import web
-    return web.load()
+def _load_ds(edition: str, vdate: str):
+    """Load the SAP dataset as of `vdate` (price, Bund yield and beta window follow the date)."""
+    from eqr.valuation.loaders import common
+    with _DATE_LOCK:                                   # the loaders read the date from a module global
+        common.set_valuation_date(vdate)
+        if edition == "data":
+            from eqr.valuation.loaders import capiq
+            return capiq.load()
+        from eqr.valuation.loaders import web
+        return web.load()
 
 
 @st.cache_data(show_spinner=False)
-def _run_sap(edition: str, overrides: tuple, extra_peers: tuple, drop_peers: tuple):
+def _run_sap(edition: str, vdate: str, overrides: tuple, extra_peers: tuple, drop_peers: tuple):
     import copy
     from eqr.valuation import assumptions, pipeline
     from eqr.valuation.generic import peer_row
-    ds = copy.deepcopy(_load_ds(edition))
+    ds = copy.deepcopy(_load_ds(edition, vdate))
     a = assumptions.build(ds)
     ov = dict(overrides)
     for k in ("rf", "beta", "erp", "kd", "g", "m_terminal", "nwc_pct", "sbc_addback", "lt_inv", "price"):
@@ -64,9 +79,9 @@ def _run_sap(edition: str, overrides: tuple, extra_peers: tuple, drop_peers: tup
 
 
 @st.cache_data(show_spinner=False)
-def _run_generic(ticker: str, overrides: tuple, peers: tuple):
+def _run_generic(ticker: str, vdate: str, overrides: tuple, peers: tuple):
     from eqr.valuation import generic
-    return generic.run(ticker, dict(overrides), list(peers))
+    return generic.run(ticker, dict(overrides), list(peers), vdate=vdate)
 
 
 @st.cache_resource(show_spinner=False)
@@ -158,6 +173,20 @@ def render(root: Path):
         model = st.radio("Model", opts, format_func=SAP_MODELS.get, key=f"val_model_{ticker}")
         st.caption("The Data edition reads the licensed Capital IQ/Bloomberg exports from the local "
                    "'Data Assigment 2' folder and is only offered when they are present.")
+        is_sap = ticker in ("SAP.DE", "SAP") and model in ("sap_data", "sap_web")
+        today = dt.date.today()
+        if is_sap:
+            vdate = st.date_input("Valuation date", value=min(dt.date.fromisoformat(CASE_DATE), today), key="val_date_sap",
+                                  min_value=dt.date.fromisoformat(ANCHOR), max_value=today, format="YYYY-MM-DD",
+                                  help="Share price, 10-year Bund yield, beta window, the roll-forward from the 30 Sep 2026 balance "
+                                       "sheet and the precedent deals all follow this date. Case date: 13 Nov 2026.")
+        else:
+            vdate = st.date_input("Valuation date", value=today, key="val_date_gen", min_value=today - dt.timedelta(days=5 * 365),
+                                  max_value=today, format="YYYY-MM-DD",
+                                  help="Share price, 52-week range, risk-free rate and the beta window are taken as of this date.")
+        vdate = vdate.isoformat() if isinstance(vdate, dt.date) else str(vdate)
+        if vdate < today.isoformat():
+            st.caption("Peer multiples, consensus and analyst targets are the latest available, so they include information published after this date.")
         n_univ = len(_universe())
         st.caption(f"Global peer universe: {n_univ:,} listed companies" if n_univ else
                    "Global peer universe not built yet: run scripts/build_global_universe.py")
@@ -171,18 +200,18 @@ def render(root: Path):
         return
     try:
         if model in ("sap_data", "sap_web"):
-            _sap_view(model.split("_")[1], root)
+            _sap_view(model.split("_")[1], vdate, root)
         else:
-            _generic_view(ticker)
+            _generic_view(ticker, vdate)
     except Exception as e:  # noqa: BLE001
         st.error(f"{type(e).__name__}: {e}", title=f"Could not value {ticker}")
 
 
 # ------------------------------------------------------------------ SAP segment model
-def _sap_view(edition: str, root: Path):
+def _sap_view(edition: str, vdate: str, root: Path):
     from eqr.valuation import charts
     with st.spinner("Loading data and running the model..."):
-        base = _run_sap(edition, (), (), ())
+        base = _run_sap(edition, vdate, (), (), ())
     a0 = base["assumptions"]
 
     with st.expander("Adjust key assumptions", icon=":material/tune:", expanded=False):
@@ -200,7 +229,7 @@ def _sap_view(edition: str, root: Path):
             nwc = c5.number_input("NWC release % of Δrevenue", value=round(a0["nwc_pct"] * 100, 1), step=1.0, format="%.1f")
             sbc = c6.toggle("Add back non-cash SBC", value=bool(a0["sbc_addback"]))
             price = c7.number_input("Reference price €", value=round(float(a0["price"]), 2), step=0.5, format="%.2f",
-                                    help="Default: the 13 Nov 2026 close. Change it to test another price")
+                                    help=f"Default: the close on or before {vdate}. Change it to test another price")
             core = base["peers"][base["peers"]["core"]]["ticker"].tolist()
             keep = st.multiselect("Core peers", core, default=core)
             sugg = _suggest("SAP.DE")
@@ -221,7 +250,7 @@ def _sap_view(edition: str, root: Path):
     changed = {k: v for k, v in ov.items() if k == "price" or abs(v - defaults[k]) > 1e-9}
     drop = tuple(sorted(set(core) - set(keep)))
     with st.spinner("Recalculating..."):
-        res = _run_sap(edition, tuple(sorted(changed.items())), tuple(add), drop) if (changed or add or drop) else base
+        res = _run_sap(edition, vdate, tuple(sorted(changed.items())), tuple(add), drop) if (changed or add or drop) else base
     d, sc, mk, a = res["dcf"], res["scenarios"], res["market"], res["assumptions"]
     if not np.isfinite(d["price"]):
         st.error("The valuation came back empty (a market input such as the share price is missing). "
@@ -229,6 +258,8 @@ def _sap_view(edition: str, root: Path):
                  icon=":material/error:")
         return
 
+    st.caption(f"Valuation date **{_vlabel(vdate)} {vdate[:4]}** · price €{a['price']:.2f} (close {mk['price_date']}) · "
+               f"balance sheet 30 Sep 2026, rolled forward {a['roll_days']:.0f} days at the cost of equity")
     with st.container(horizontal=True):
         st.metric("DCF value / share", f"€{d['price']:.2f}", f"{d['upside']*100:+.1f}% vs €{a['price']:.2f}", border=True)
         st.metric("Scenario-weighted", f"€{sc['Weighted']['price']:.2f}", border=True)
@@ -242,7 +273,7 @@ def _sap_view(edition: str, root: Path):
     t1, t2, t3, t4, t8, t5, t7, t6 = st.tabs(["Football field", "DCF & FCFF", "Sensitivity", "Peers", "Precedents",
                                               "Business & intangibles", "Cross-checks", "Download"])
     with t1:
-        st.image(_chart(charts.football, res, title=f"SAP SE football field · {edition.upper()} edition (€/share)"))
+        st.image(_chart(charts.football, res, title=f"SAP SE football field · {edition.upper()} edition (€/share, {_vlabel(vdate)} {vdate[:4]})"))
         st.dataframe(pd.DataFrame(charts.football_items(res))[["label", "low", "mid", "high"]].rename(
             columns={"label": "Method", "low": "Low €", "mid": "Mid €", "high": "High €"}).round(1), hide_index=True)
         pr = res["prec"]
@@ -276,7 +307,7 @@ def _sap_view(edition: str, root: Path):
             st.dataframe(pd.DataFrame({"€m": {
                 "PV of FCFF 2026-35": d["sum_pv"], "PV of terminal value": d["pv_tv"], "Enterprise value": d["ev"],
                 "+ cash & financial assets": d["non_op"], "- debt, pensions, NCI": -d["claims"], "Equity value": d["equity"],
-                "Value/share 30 Sep (€)": d["ps_anchor"], "Value/share 13 Nov (€)": d["price"]}}).style.format("{:,.2f}"))
+                "Value/share 30 Sep (€)": d["ps_anchor"], f"Value/share {_vlabel(vdate)} (€)": d["price"]}}).style.format("{:,.2f}"))
         with st.expander("All assumptions with sources and rationale"):
             st.dataframe(pd.DataFrame([{"Key": k, "Value": str(v.value), "Unit": v.unit, "Source": v.source, "Rationale": v.rationale}
                                        for k, v in a.items.items()]), hide_index=True)
@@ -496,10 +527,10 @@ def _peer_finder(ticker: str) -> list[str]:
 
 
 # ------------------------------------------------------------------ generic model
-def _generic_view(ticker: str):
+def _generic_view(ticker: str, vdate: str):
     from eqr.valuation import charts, generic
     with st.spinner(f"Loading {ticker}..."):
-        s = generic.snapshot(ticker)
+        s = generic.snapshot(ticker, vdate)
         p0 = generic.default_inputs(s)
         sugg = _suggest(ticker)
     ccy = {"EUR": "€", "USD": "$", "GBP": "£", "JPY": "¥"}.get(p0["q_ccy"], p0["q_ccy"] + " ")
@@ -532,7 +563,7 @@ def _generic_view(ticker: str):
           "erp": erp / 100, "kd": kd / 100}
     ov_t = tuple(sorted((k, tuple(v) if isinstance(v, list) else v) for k, v in ov.items()))
     with st.spinner("Valuing and fetching peer multiples..."):
-        res = _run_generic(ticker, tuple((k, list(v) if isinstance(v, tuple) else v) for k, v in ov_t), tuple(peers))
+        res = _run_generic(ticker, vdate, tuple((k, list(v) if isinstance(v, tuple) else v) for k, v in ov_t), tuple(peers))
     d, sc, mk, p = res["dcf"], res["scenarios"], res["market"], res["inputs"]
     if not np.isfinite(d["price"]):
         st.error("The valuation came back empty (a market input is missing for this ticker). Try again shortly or edit the inputs.",
@@ -545,7 +576,7 @@ def _generic_view(ticker: str):
         if mk.get("tgt_mean"):
             st.metric("Analyst target (mean)", f"{ccy}{mk['tgt_mean']:.2f}", f"n={mk['tgt_n']}", delta_color="off", border=True)
         st.metric("TV share of EV", f"{d['tv_share']*100:.0f}%", border=True)
-    st.caption(f"{p['name']} · financials in {p['fin_ccy']}, price in {p['q_ccy']} · data {s['price_date']} (yfinance)")
+    st.caption(f"{p['name']} · financials in {p['fin_ccy']}, price in {p['q_ccy']} · price as of {s['price_date']} (yfinance), valuation date {vdate}")
     t1, t2, t3, t4, t5 = st.tabs(["Football field", "DCF & FCFF", "Sensitivity", "Peers", "Download"])
     with t1:
         items = generic.football_items(res)

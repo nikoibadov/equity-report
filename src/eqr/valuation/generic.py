@@ -49,20 +49,37 @@ def _fx(frm: str, to: str) -> float:
     return _cache(f"fx2_{frm}{to}_{TODAY}", f)["r"]
 
 
-def risk_free(currency: str) -> tuple[float, str]:
+def check_date(vdate: str | None) -> str:
+    """Valuation date for any ticker: not in the future, at most five years back (the beta window needs history)."""
+    d = dt.date.fromisoformat(str(vdate)[:10]) if vdate else dt.date.fromisoformat(TODAY)
+    if d > dt.date.fromisoformat(TODAY):
+        raise ValueError(f"Valuation date {d} is in the future")
+    if d < dt.date.fromisoformat(TODAY) - dt.timedelta(days=5 * 365):
+        raise ValueError(f"Valuation date {d} is more than five years back")
+    return d.isoformat()
+
+
+def _vkey(vdate: str | None) -> str:
+    return "" if not vdate or vdate == TODAY else f"_{vdate}"
+
+
+def risk_free(currency: str, vdate: str | None = None) -> tuple[float, str]:
+    vd = dt.date.fromisoformat(vdate or TODAY)
     try:
         if currency == "EUR":
             url = ("https://api.statistiken.bundesbank.de/rest/data/BBSIS/"
-                   "D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A?format=csv&lastNObservations=15&lang=en")
+                   f"D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A?format=csv&startPeriod={(vd - dt.timedelta(days=21)).isoformat()}"
+                   f"&endPeriod={vd.isoformat()}&lang=en")
             def f():
                 txt = requests.get(url, timeout=30).text
                 obs = [l.split(",") for l in txt.splitlines() if re.match(r"^\d{4}-\d{2}-\d{2},\d", l)]
                 return {"d": obs[-1][0], "y": float(obs[-1][1])}
-            r = _cache(f"bund10y_{TODAY}", f)
+            r = _cache(f"bund10y2_{TODAY}{_vkey(vdate)}", f)
             return r["y"] / 100, f"Bundesbank 10y Bund {r['d']}"
         if currency == "USD":
             import yfinance as yf
-            r = _cache(f"tnx2_{TODAY}", lambda: {"y": float(yf.Ticker("^TNX").history(period="1mo")["Close"].dropna().iloc[-1])})
+            r = _cache(f"tnx3_{TODAY}{_vkey(vdate)}", lambda: {"y": float(yf.Ticker("^TNX").history(
+                start=(vd - dt.timedelta(days=21)).isoformat(), end=(vd + dt.timedelta(days=1)).isoformat())["Close"].dropna().iloc[-1])})
             return r["y"] / 100, "US 10y Treasury (^TNX)"
     except Exception:  # noqa: BLE001
         pass
@@ -70,8 +87,9 @@ def risk_free(currency: str) -> tuple[float, str]:
 
 
 # ---------------------------------------------------------------- data
-def snapshot(ticker: str) -> dict:
+def snapshot(ticker: str, vdate: str | None = None) -> dict:
     import yfinance as yf
+    vd = dt.date.fromisoformat(vdate or TODAY)
 
     def f():
         t = yf.Ticker(ticker)
@@ -91,11 +109,12 @@ def snapshot(ticker: str) -> dict:
             re_, ee = {}, {}
         suffix = ticker.split(".")[-1] if "." in ticker else ""
         idx = INDEX_BY_SUFFIX.get(suffix, "^GSPC")
-        px = yf.download([ticker, idx], period="5y", interval="1wk", auto_adjust=True, progress=False)["Close"].dropna()
+        px = yf.download([ticker, idx], start=(vd - dt.timedelta(days=5 * 365 + 7)).isoformat(), end=(vd + dt.timedelta(days=1)).isoformat(),
+                         interval="1wk", auto_adjust=True, progress=False)["Close"].dropna()
         r = px.pct_change().dropna()
         x, y = r[idx].values, r[ticker].values
         b = float(np.cov(y, x)[0, 1] / np.var(x, ddof=1)) if len(x) > 30 else None
-        hist = t.history(period="1y")
+        hist = t.history(start=(vd - dt.timedelta(days=365)).isoformat(), end=(vd + dt.timedelta(days=1)).isoformat())["Close"].dropna()
         return {
             "ticker": ticker, "info": {k: i.get(k) for k in (
                 "longName", "shortName", "currency", "financialCurrency", "sector", "industry", "country", "longBusinessSummary",
@@ -111,9 +130,14 @@ def snapshot(ticker: str) -> dict:
             "sbc": row(cf, "Stock Based Compensation"), "nci": row(bs, "Minority Interest"),
             "rev_est": re_, "eps_est": ee, "beta_raw": b, "beta_index": idx, "beta_n": int(len(x)),
             "price_date": str(hist.index[-1].date()) if len(hist) else TODAY,
+            "vdate": vd.isoformat(),
+            # as of an earlier valuation date: close, 52-week range from the history up to that date (else live quote values)
+            "price_v": float(hist.iloc[-1]) if len(hist) and vd.isoformat() < TODAY else None,
+            "hi_v": float(hist.max()) if len(hist) and vd.isoformat() < TODAY else None,
+            "lo_v": float(hist.min()) if len(hist) and vd.isoformat() < TODAY else None,
             "fetched": TODAY,
         }
-    return _cache(f"snap_{ticker}_{TODAY}", f)
+    return _cache(f"snap2_{ticker}_{TODAY}{_vkey(vdate)}", f)
 
 
 def _latest(d: dict, n=3):
@@ -124,14 +148,15 @@ def _latest(d: dict, n=3):
 def default_inputs(s: dict) -> dict:
     i = s["info"]
     fin_ccy, q_ccy = i.get("financialCurrency") or i.get("currency"), i.get("currency")
-    price = float(i.get("currentPrice") or i.get("regularMarketPrice"))
+    price = float(s.get("price_v") or i.get("currentPrice") or i.get("regularMarketPrice"))     # price_v: close on the valuation date
+    vdt = pd.Timestamp(s.get("vdate") or TODAY)
     if q_ccy == "GBp":
         price, q_ccy = price / 100, "GBP"
     fx = _fx(fin_ccy, q_ccy)                      # quote-currency units per financial-currency unit
     rev_ttm = float(i.get("totalRevenue") or _latest(s["revenue"], 1)[0])
     re_ = s["rev_est"]
     lfy = pd.Timestamp(i["lastFiscalYearEnd"], unit="s") if i.get("lastFiscalYearEnd") else None
-    w0 = float(np.clip(((lfy + pd.DateOffset(years=1)) - pd.Timestamp(TODAY)).days / 365, 0, 1)) if lfy is not None else 0.5
+    w0 = float(np.clip(((lfy + pd.DateOffset(years=1)) - vdt).days / 365, 0, 1)) if lfy is not None else 0.5
     if re_.get("0y") and re_.get("+1y"):
         g1 = (w0 * re_["0y"] + (1 - w0) * re_["+1y"]) / rev_ttm - 1        # NTM vs TTM (same base as rev0)
         g2 = re_["+1y"] / re_["0y"] - 1
@@ -146,7 +171,7 @@ def default_inputs(s: dict) -> dict:
     cx_pct = float(np.mean([-c / r for c, r in zip(cxs, revs)])) if cxs else 0.04
     taxes = [t for t in _latest(s["tax_rate"]) if t is not None and 0 < t < 0.5]
     tax = float(np.clip(np.mean(taxes), 0.15, 0.30)) if taxes else 0.25
-    rf, rf_src = risk_free(fin_ccy)
+    rf, rf_src = risk_free(fin_ccy, s.get("vdate"))
     beta_raw = s.get("beta_raw") or 1.0
     beta = 0.67 * beta_raw + 0.33
     interest = abs((_latest(s["interest"], 1) or [0])[0] or 0)
@@ -296,7 +321,7 @@ def peer_row(sym: str) -> dict | None:
 def comps(p: dict, s: dict, peers: pd.DataFrame) -> dict:
     re_ = s["rev_est"]
     lfy = pd.Timestamp(s["info"]["lastFiscalYearEnd"], unit="s") if s["info"].get("lastFiscalYearEnd") else None
-    w0 = float(np.clip(((lfy + pd.DateOffset(years=1)) - pd.Timestamp(TODAY)).days / 365, 0, 1)) if lfy is not None else 0.5
+    w0 = float(np.clip(((lfy + pd.DateOffset(years=1)) - pd.Timestamp(s.get("vdate") or TODAY)).days / 365, 0, 1)) if lfy is not None else 0.5
     rev_ntm = (w0 * re_["0y"] + (1 - w0) * re_["+1y"]) if re_.get("0y") and re_.get("+1y") else p["rev0"] * (1 + p["growth"][0])
     ee = s["eps_est"]
     eps_ntm = (w0 * ee["0y"] + (1 - w0) * ee["+1y"]) * p["fx"] if ee.get("0y") and ee.get("+1y") else None
@@ -327,8 +352,9 @@ def comps(p: dict, s: dict, peers: pd.DataFrame) -> dict:
     return out
 
 
-def run(ticker: str, overrides: dict | None = None, peer_tickers: list[str] | None = None) -> dict:
-    s = snapshot(ticker)
+def run(ticker: str, overrides: dict | None = None, peer_tickers: list[str] | None = None, vdate: str | None = None) -> dict:
+    vdate = check_date(vdate)
+    s = snapshot(ticker, vdate)
     p = default_inputs(s)
     if overrides:
         p.update(overrides)
@@ -341,11 +367,12 @@ def run(ticker: str, overrides: dict | None = None, peer_tickers: list[str] | No
     i = s["info"]
     to_q = (1 / 100) if i.get("currency") == "GBp" else 1
     market = {"price": p["price"], "price_date": s["price_date"],
-              "hi52": (i.get("fiftyTwoWeekHigh") or p["price"]) * to_q, "lo52": (i.get("fiftyTwoWeekLow") or p["price"]) * to_q,
+              "hi52": (s.get("hi_v") or i.get("fiftyTwoWeekHigh") or p["price"]) * to_q, "lo52": (s.get("lo_v") or i.get("fiftyTwoWeekLow") or p["price"]) * to_q,
               "tgt_mean": i.get("targetMeanPrice"), "tgt_low": i.get("targetLowPrice"), "tgt_high": i.get("targetHighPrice"),
               "tgt_n": i.get("numberOfAnalystOpinions") or 0}
+    meta = {"valuation_date": vdate, "lookahead": vdate < TODAY}
     return {"inputs": p, "snapshot": s, "dcf": d, "scenarios": sc, "dcf_band": (min(band), max(band)),
-            "grid_wacc_g": grid_wacc_g(p), "comps": cp, "peers": peers, "market": market}
+            "grid_wacc_g": grid_wacc_g(p), "comps": cp, "peers": peers, "market": market, "meta": meta}
 
 
 def football_items(res: dict) -> list[dict]:
