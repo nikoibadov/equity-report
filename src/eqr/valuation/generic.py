@@ -139,6 +139,7 @@ _ANNUAL = {
     "pref": ("bs", ["Preferred Stock Equity", "Preferred Stock"]),
     "receivables": ("bs", ["Accounts Receivable", "Receivables"]), "inventory": ("bs", ["Inventory"]),
     "payables": ("bs", ["Accounts Payable", "Payables"]),
+    "deferred_rev": ("bs", ["Current Deferred Revenue"]), "ppe": ("bs", ["Net PPE"]),
 }
 _QUARTER = ("cash_sti", "lt_inv", "debt", "nci", "pref")
 
@@ -154,6 +155,13 @@ def snapshot(ticker: str, vdate: str | None = None) -> dict:
             raise ValueError(f"{ticker} is not an equity")
         frames = {"inc": t.income_stmt, "cf": t.cashflow, "bs": t.balance_sheet}
         qbs = t.quarterly_balance_sheet
+        try:                                      # trailing twelve months from the last four reported quarters
+            qi = t.quarterly_income_stmt
+            qq = qi.loc[["Total Revenue", "Operating Income"]].dropna(axis=1).iloc[:, :4]
+            ttm = ({"rev": float(qq.loc["Total Revenue"].sum()), "ebit": float(qq.loc["Operating Income"].sum()),
+                    "end": str(qq.columns[0].date())} if qq.shape[1] == 4 and vd.isoformat() >= TODAY else {})
+        except Exception:  # noqa: BLE001
+            ttm = {}
 
         def row(df, names):
             for n in names:
@@ -186,7 +194,7 @@ def snapshot(ticker: str, vdate: str | None = None) -> dict:
                 "lastFiscalYearEnd", "nextFiscalYearEnd", "mostRecentQuarter", "dividendRate", "trailingAnnualDividendRate",
                 "payoutRatio", "exchange", "fullExchangeName")},
             "q": {k: row(qbs, _ANNUAL[k][1]) for k in _QUARTER},
-            "rev_est": re_, "eps_est": ee, "beta_raw": b, "beta_r2": r2, "beta_index": idx, "beta_n": int(len(x)),
+            "ttm": ttm, "rev_est": re_, "eps_est": ee, "beta_raw": b, "beta_r2": r2, "beta_index": idx, "beta_n": int(len(x)),
             "price_date": str(hist.index[-1].date()) if len(hist) else TODAY,
             "vdate": vd.isoformat(),
             # as of an earlier valuation date: close, 52-week range from the history up to that date (else live quote values)
@@ -198,7 +206,7 @@ def snapshot(ticker: str, vdate: str | None = None) -> dict:
         for k, (frame, names) in _ANNUAL.items():
             out[k] = row(frames[frame], names)
         return out
-    return _cache(f"snap4_{ticker}_{TODAY}{_vkey(vdate)}", f)
+    return _cache(f"snap5_{ticker}_{TODAY}{_vkey(vdate)}", f)
 
 
 def _latest(d: dict, n=3, upto: str | None = None):
@@ -268,15 +276,30 @@ def default_inputs(s: dict) -> dict:
         g_src = "FY1: Yahoo trailing revenue growth (no consensus); FY2 = 80% of FY1"
     g1, g2 = float(np.clip(g1, -0.2, 0.5)), float(np.clip(g2, -0.2, 0.5))
     g_term = 0.025
-    path = [g1, g2] + [float(x) for x in np.linspace(g2, (g2 + g_term) / 2, 4)[1:]]
+    g5 = min((g2 + g_term) / 2, 0.15)             # FY5: halfway from FY2 growth to terminal growth, at most 15%
+    path = [g1, g2] + [float(x) for x in np.linspace(min(g2, 0.25), g5, 4)[1:]]   # beyond consensus, growth above 25% is not extrapolated
 
     # ---- profitability and reinvestment: last three reported fiscal years
     up = fy0_date or vd
     revs, ebits = _latest(s.get("revenue", {}), 3, up), _latest(s.get("ebit", {}), 3, up)
-    m_ttm = i.get("operatingMargins") or (ebits[0] / revs[0] if revs and ebits else 0.15)
+    fy_m = [e / r for e, r in zip(ebits, revs) if r]
+    ttm = s.get("ttm") or {}
+    if ttm.get("rev") and ttm.get("end", "") >= (fy0_date or ""):
+        m_ttm, m_src = ttm["ebit"] / ttm["rev"], f"last four quarters to {ttm['end']}"
+    elif fy_m:
+        m_ttm, m_src = fy_m[0], f"fiscal year {fy0}"
+    else:
+        m_ttm, m_src = (i.get("operatingMargins") or 0.15), "Yahoo's latest-quarter figure"
+    # target: today's margin, unless it sits more than 5 points outside the range of the reported fiscal years
+    # (a cyclical peak or trough); then halfway back to the average of those years
+    cyc = bool(fy_m) and (m_ttm > max(fy_m) + 0.05 or m_ttm < min(fy_m) - 0.05)
+    m_target = float(np.mean([m_ttm, np.mean(fy_m)])) if cyc else float(m_ttm)
     das, cxs = _latest(s.get("da", {}), 3, up), _latest(s.get("capex", {}), 3, up)
     da_pct = float(np.mean([d / r for d, r in zip(das, revs)])) if das else 0.04
     cx_pct = float(np.mean([-c / r for c, r in zip(cxs, revs)])) if cxs else 0.04
+    ppe = (_latest(s.get("ppe", {}), 1, up) or [None])[0]
+    ppe_rev = float(ppe / revs[0]) if ppe and revs else None
+    cx_term = da_pct + g_term * ppe_rev if ppe_rev is not None else max(cx_pct, da_pct)
     sbcs = _latest(s.get("sbc", {}), 3, up)
     sbc_pct = float(np.mean([x / r for x, r in zip(sbcs, revs)])) if sbcs else 0.0
     taxes = [t for t in _latest(s.get("tax_rate", {}), 3, up) if t is not None and 0 < t < 0.5]
@@ -286,9 +309,9 @@ def default_inputs(s: dict) -> dict:
     # the investment each year is that ratio times the revenue increase
     twc = []
     for d_ in sorted(d for d, v in s.get("revenue", {}).items() if v and d <= up)[-3:]:
-        ar, inv, ap = (s.get(k, {}).get(d_) for k in ("receivables", "inventory", "payables"))
+        ar, inv, ap, dr = (s.get(k, {}).get(d_) for k in ("receivables", "inventory", "payables", "deferred_rev"))
         if ar is not None or ap is not None:
-            twc.append(((ar or 0) + (inv or 0) - (ap or 0)) / s["revenue"][d_])
+            twc.append(((ar or 0) + (inv or 0) - (ap or 0) - (dr or 0)) / s["revenue"][d_])
     nwc_pct = float(np.clip(np.mean(twc), -0.10, 0.25)) if twc else 0.0
 
     # ---- cost of capital
@@ -316,9 +339,9 @@ def default_inputs(s: dict) -> dict:
         "fin_ccy": fin_ccy, "q_ccy": q_ccy, "fx": fx, "price": price, "shares": shares,
         "fy0": fy0, "fy0_date": fy0_date, "bs_date": bs_date, "valuation_date": vd, "stub": stub, "roll_days": roll_days,
         "rev0": rev0, "growth": path[:N_EXPLICIT],
-        "margin0": float(m_ttm), "margin_target": float(m_ttm),
+        "margin0": float(m_ttm), "margin_target": m_target,
         "tax": tax, "tax_terminal": tax_stat, "tax_wacc": tax_stat,
-        "da_pct": da_pct, "da_terminal": da_pct, "capex_pct": cx_pct, "capex_terminal": cx_pct,
+        "da_pct": da_pct, "da_terminal": da_pct, "capex_pct": cx_pct, "capex_terminal": float(cx_term),
         "nwc_pct": nwc_pct, "sbc_pct": sbc_pct, "sbc_addback": 0,
         "g": g_term, "rf": rf, "beta": beta, "erp": 0.05, "kd": rf + spread,
         "cash": cash, "lt_inv": lt_inv, "other_nonop": 0.0, "debt": debt, "pension": 0.0, "nci": nci, "pref": pref,
@@ -328,14 +351,21 @@ def default_inputs(s: dict) -> dict:
             "rf": rf_src, "beta": f"OLS 5y weekly vs {s.get('beta_index', '?')} (n={s.get('beta_n', 0)}), raw {beta_raw:.2f}, Blume-adjusted 0.67 x raw + 0.33",
             "erp": "House view 5.0% (IDW/FAUB lower end; Damodaran implied ~4.4-4.6%)",
             "kd": f"Rf + synthetic-rating spread {spread*100:.2f}% (interest cover {cover:.1f}x -> {rating}, Damodaran table)",
-            "growth": f"{g_src}; FY3-FY5 linear towards the midpoint of FY2 growth and terminal growth; FY6-FY10 fade linearly to g",
-            "margin": "FY1 = trailing operating margin (GAAP/IFRS, SBC included); moves linearly to the target by FY5 (target = FY1 unless edited)",
+            "growth": f"{g_src}; FY3-FY5 linear from FY2 growth (at most 25%) towards the midpoint of FY2 and terminal growth (at most 15% in FY5); "
+                      "FY6-FY10 fade linearly to g",
+            "margin": f"FY1 = trailing-twelve-month operating margin ({m_src}; GAAP/IFRS, SBC included). "
+                      + (f"It is more than 5 points outside the range of the last {len(fy_m)} fiscal years ({min(fy_m) * 100:.1f}% - {max(fy_m) * 100:.1f}%), "
+                         f"so the target from FY5 is set halfway back to their average ({np.mean(fy_m) * 100:.1f}%): a cyclical peak or trough is not extrapolated"
+                         if cyc else "Target from FY5 = the same margin (within the range of recent fiscal years); edit for a margin story"),
             "tax": f"Explicit years: average effective tax rate of the last {len(taxes)} fiscal years (Yahoo 'Tax Rate For Calcs'), "
                    "fading in FY6-FY10 to the statutory rate",
             "tax_terminal": f"Statutory (marginal) rate: {tax_src}. Lecture: the marginal home-country rate is used in perpetuity and "
                             "for the debt tax shield, because deductions save tax at the marginal rate",
-            "reinvestment": f"D&A and capex: average % of revenue over the last {len(das)} fiscal years; terminal = same unless edited",
-            "nwc": f"Trade working capital (receivables + inventory - payables) / revenue, average of the last {len(twc)} fiscal years, capped at -10% / +25%; "
+            "reinvestment": f"D&A and capex: average % of revenue over the last {len(das)} fiscal years. Terminal capex = D&A + g x net PP&E / revenue"
+                            + (f" ({ppe_rev * 100:.0f}%)" if ppe_rev is not None else "")
+                            + ": in a steady state the asset base grows with revenue, so capex covers depreciation plus that growth "
+                              "(today's capex can sit far above or below it during a build-out or a pause)",
+            "nwc": f"Trade working capital (receivables + inventory - payables - deferred revenue) / revenue, average of the last {len(twc)} fiscal years, capped at -10% / +25%; "
                    "invested (or released, if negative) in proportion to revenue growth",
             "sbc": "Stock-based compensation is treated as a real expense (it is in operating profit); the add-back switch is off",
             "bridge": f"Latest quarterly balance sheet on or before the valuation date ({bs_date}): cash and short-term investments, "
@@ -555,6 +585,77 @@ def monte_carlo(p: dict, n: int = 2000, seed: int = 7) -> dict:
             "p_above_price": float((px > p["price"]).mean()), "base": dcf(p, full=False)["price"], "drivers": MC_DRIVERS}
 
 
+# ---------------------------------------------------------------- reverse DCF: what the share price implies
+def _solve(fn, lo: float, hi: float, target: float, n: int = 70) -> float | None:
+    """Bisection for fn(x) = target on [lo, hi]; None if the target is not bracketed."""
+    flo, fhi = fn(lo) - target, fn(hi) - target
+    if not (np.isfinite(flo) and np.isfinite(fhi)) or flo * fhi > 0:
+        return None
+    for _ in range(n):
+        mid = (lo + hi) / 2
+        fm = fn(mid) - target
+        if flo * fm <= 0:
+            hi = mid
+        else:
+            lo, flo = mid, fm
+    return (lo + hi) / 2
+
+
+def reverse_dcf(p: dict, hist: pd.DataFrame | None = None) -> dict:
+    """Solve the DCF backwards: the value each driver would need, one at a time and all else at base, for the DCF
+    value to equal the share price. None = no value in a sensible range does it."""
+    p = norm(p)
+    price, w0 = p["price"], wacc(p)["wacc"]
+    px = lambda q, w=None: dcf(q, w, full=False)["price"]  # noqa: E731
+    m = _solve(lambda x: px({**p, "margin_target": x}), -0.20, 0.95, price)
+    dg = _solve(lambda x: px({**p, "d_growth": x}), -0.30, 0.60, price)
+    w = _solve(lambda x: px(p, x), p["g"] + 0.005, 0.30, price)
+    g = _solve(lambda x: px({**p, "g": x}), -0.03, w0 - 0.005, price)
+    base_g = float(np.mean(p["growth"][1:]))
+    ctx = {}
+    if hist is not None and len(hist) and "revenue" in hist:
+        h = hist[hist["revenue"].notna()]
+        if "ebit" in h and h["ebit"].notna().any():
+            mm = (h["ebit"] / h["revenue"]).dropna()
+            ctx["margin_hist"] = (float(mm.min()), float(mm.max()))
+        if len(h) >= 2:
+            n_ = len(h) - 1
+            ctx["rev_cagr"] = float((h["revenue"].iloc[-1] / h["revenue"].iloc[0]) ** (1 / n_) - 1)
+            ctx["rev_years"] = n_
+    return {"price": price, "base_price": px(p),
+            "margin_target": {"base": p["margin_target"], "implied": m},
+            "growth": {"base": base_g, "implied": None if dg is None else base_g + dg, "shift": dg},
+            "wacc": {"base": w0, "implied": w},
+            "g": {"base": p["g"], "implied": g}, "context": ctx}
+
+
+class ModelNotApplicable(ValueError):
+    """The one-segment FCFF model does not fit this company (bank, insurer, REIT, loss-maker)."""
+
+
+def applicability(s: dict) -> list[str]:
+    """Reasons why the FCFF model should not be used for this company (empty list = fine)."""
+    i = s.get("info", {})
+    ind, sec = (i.get("industry") or ""), (i.get("sector") or "")
+    out = []
+    if ind.startswith("Banks") or "Insurance" in ind:
+        out.append(f"{ind}: for banks and insurers debt is an operating item, so free cash flow to the firm and WACC are not meaningful. "
+                   "Use a dividend discount or excess-return model")
+    if ind.startswith("REIT") or (sec == "Real Estate" and "REIT" in ind):
+        out.append(f"{ind}: REITs are valued on funds from operations and net asset value, not on an FCFF DCF")
+    if ind in ("Auto Manufacturers", "Farm & Heavy Construction Machinery") and (i.get("totalDebt") or 0) > 0.5 * (i.get("marketCap") or float("inf")):
+        out.append(f"{ind} with debt above half of market value: most likely a captive financing arm, whose customer loans, leased assets and "
+                   "funding debt distort capex, working capital and the WACC. Value the industrial and financing businesses separately")
+    ebit = (_latest(s.get("ebit", {}), 1) or [None])[0]
+    om = i.get("operatingMargins")
+    if (ebit is not None and ebit <= 0) or (om is not None and om <= 0):
+        out.append("Operating profit is negative: a margin-on-revenue forecast from the trailing margin gives a negative value. "
+                   "A loss-making company needs an explicit path to profitability")
+    if not (i.get("totalRevenue") or _latest(s.get("revenue", {}), 1)):
+        out.append("No revenue reported")
+    return out
+
+
 def ddm(p: dict) -> dict | None:
     """Two-stage dividend discount model at the cost of equity (cross-check; ignores buybacks)."""
     p = norm(p)
@@ -672,14 +773,25 @@ def comps_value(cp: dict) -> float | None:
 
 
 def run(ticker: str, overrides: dict | None = None, peer_tickers: list[str] | None = None, vdate: str | None = None,
-        extras: bool = True) -> dict:
+        extras: bool = True, force: bool = False) -> dict:
     vdate = check_date(vdate)
     s = snapshot(ticker, vdate)
+    problems = applicability(s)
+    if problems and not force:
+        raise ModelNotApplicable(f"{ticker}: " + "; ".join(problems))
     p = default_inputs(s)
     if overrides:
         p.update(overrides)
     p = norm(p)
     d = dcf(p)
+    if (d["fcff_t1"] <= 0 or d["ev"] <= 0) and not force:
+        raise ModelNotApplicable(
+            f"{ticker}: the forecast free cash flow is negative in the long run (capex {p['capex_terminal'] * 100:.1f}% of revenue and working capital "
+            f"{p['nwc_pct'] * 100:.0f}% of growth exceed after-tax profit). Typical for a company with a financing arm, whose customer loans "
+            "and leased assets sit in receivables and capex; value the industrial and financing businesses separately")
+    if abs(p["growth"][0]) > 0.30:
+        problems = problems + [f"FY1 revenue growth is {p['growth'][0] * 100:+.0f}% against the last fiscal year: check that the consensus figure "
+                               "uses the same revenue definition as the reported one"]
     sc = scenarios(p)
     w0 = d["wacc"]
     band = [dcf({**p, "g": p["g"] + dg}, w0 + dw, full=False)["price"] for dw in (-0.005, 0, 0.005) for dg in (-0.0025, 0, 0.0025)]
@@ -698,6 +810,9 @@ def run(ticker: str, overrides: dict | None = None, peer_tickers: list[str] | No
     if extras:
         res.update({"grid_wacc_margin": grid_wacc_margin(p), "grid_growth_margin": grid_growth_margin(p), "grid_beta_erp": grid_beta_erp(p),
                     "tornado": tornado(p), "mc": monte_carlo(p), "ddm": ddm(p), "hist": history(s)})
+        res["reverse"] = reverse_dcf(p, res["hist"])
+    if problems:
+        meta["warnings"] = problems
     return res
 
 

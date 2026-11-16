@@ -279,7 +279,7 @@ def load() -> dict:
         "beta": (beta["adjusted"], f"OLS 5y weekly SAP.DE vs DAX ({beta['start']} to {beta['end']}, n={beta['n']}): raw {beta['raw']:.2f}, Blume-adjusted, SE {beta['se']:.3f}"),
         "erp": (0.050, f"House view 5.0% = low end of IDW/FAUB 5.0-6.5%; Damodaran implied ERP {dam['erp']*100:.2f}% on {dam['erp_date']} (+{dam['us_default_spread']*100:.2f}% default-spread adj. = {(dam['erp']+dam['us_default_spread'])*100:.2f}%)"),
         "kd": (kd, f"Rf {b10['yield']:.2f}% + Damodaran A1/A+ default spread {dam['a_plus_spread']*100:.2f}% (S&P A+ / Moody's A1)"),
-        "tax": (0.2993, "Marginal (statutory) rate, Germany 29.93% (15% corporate tax + 5.5% solidarity surcharge = 15.825%, plus trade tax 14.105% at SAP's Walldorf multiplier; KPMG tax-rate table). Lecture: marginal home-country rate preferred over the effective rate (SAP ETR ~29%)"),
+        "tax": (0.2993, "Marginal (statutory) rate, Germany 29.93% (15% corporate tax + 5.5% solidarity surcharge = 15.825%, plus trade tax 14.105% = 3.5% x the 403% average municipal multiplier; KPMG tax-rate table). Lecture: marginal home-country rate preferred over the effective rate (SAP ETR ~29%)"),
     }
     rnd_long = dict(sec["rnd"])
     pe = peers()

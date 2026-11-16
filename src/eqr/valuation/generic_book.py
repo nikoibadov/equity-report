@@ -640,6 +640,45 @@ def _monte_carlo(wb, c: Ctx, out_dir: Path):
     _widths(ws, {"A": 40, "B": 18, "C": 22, "D": 3, "E": 3, "F": 7, "G": 12, "H": 16, "I": 16, "J": 20, "K": 15})
 
 
+def _reverse(wb, c: Ctx):
+    rv = c.res.get("reverse")
+    if not rv:
+        return
+    ws = wb.create_sheet("Reverse DCF")
+    p = c.p
+    _title(ws, f"Reverse DCF: what the share price of {c.sym}{rv['price']:,.2f} implies",
+           "Each row changes one driver and holds everything else at the base case until the DCF value equals the share price (engine values).")
+    _hdr(ws, 4, ["Driver", "Base case", "Implied by the price", "Change", "For comparison", "How to read it"])
+    ctx = rv.get("context", {})
+    mh = ctx.get("margin_hist")
+    rows = [
+        ("Target EBIT margin", rv["margin_target"], PCT, (f"Reported range {mh[0] * 100:.1f}% - {mh[1] * 100:.1f}%" if mh else ""),
+         "The long-run operating margin the market would need at the base growth and WACC"),
+        (f"Revenue growth {c.fy(2)}-{c.fy(5)} (average)", rv["growth"], PCT,
+         (f"Reported CAGR {ctx['rev_cagr'] * 100:.1f}% over {ctx['rev_years']} years" if "rev_cagr" in ctx else ""),
+         "The growth needed in the explicit years at the base margin and WACC"),
+        ("WACC", rv["wacc"], PCT2, f"Risk-free rate {p['rf'] * 100:.2f}%", "The discount rate at which the base forecast is worth the share price"),
+        ("Terminal growth", rv["g"], PCT2, f"Risk-free rate {p['rf'] * 100:.2f}%", "The perpetual growth needed at the base forecast and WACC"),
+    ]
+    for i, (lab, d_, fmt, cmp_, read) in enumerate(rows, start=5):
+        ws.cell(row=i, column=1, value=lab)
+        _put(ws, f"B{i}", d_["base"], fmt)
+        if d_["implied"] is None:
+            ws.cell(row=i, column=3, value="no solution in range")
+        else:
+            _put(ws, f"C{i}", d_["implied"], fmt, F_B).fill = FILL_K
+            _put(ws, f"D{i}", f"=C{i}-B{i}", fmt)
+        ws.cell(row=i, column=5, value=cmp_); ws.cell(row=i, column=6, value=read)
+    ws["A10"] = "Base-case DCF value per share"; _put(ws, "B10", f"={c.ref['price_out']}", c.PX, F_LINK)
+    ws["A11"] = "Share price"; _put(ws, "B11", f"={c.ref['price']}", c.PX, F_LINK)
+    notes = ["To check a row: type the implied value into its blue cell on the Assumptions sheet (WACC: adjust beta or the equity risk premium); the DCF value then equals the share price.",
+             "'No solution in range' means that driver alone cannot explain the price (ranges: margin -20% to 95%, growth shift -30 to +60 points, WACC up to 30%, terminal growth below WACC).",
+             "Reading: an implied value far outside the company's own history says either the market expects a different business from the one in the forecast, or the discount rate is too high or too low. It does not say which."]
+    for i, n in enumerate(notes, start=13):
+        ws.cell(row=i, column=1, value="• " + n).font = NOTE
+    _widths(ws, {"A": 40, "B": 14, "C": 20, "D": 12, "E": 34, "F": 80})
+
+
 # ======================================================================= Historicals and FCFF bridge
 HIST_ROWS = [("revenue", "Revenue", EUR), ("growth", "  growth y/y", PCT), ("gross_profit", "Gross profit", EUR), ("gm", "  gross margin", PCT),
              ("rnd", "R&D expense", EUR), ("ebit", "Operating profit (EBIT)", EUR), ("em", "  EBIT margin", PCT), ("pretax", "Pre-tax income", EUR),
@@ -810,6 +849,12 @@ def _summary(wb, c: Ctx, out_dir: Path):
             ("Terminal value share of EV", f"={ref['tv_share_out']}", PCT)]
     if res.get("mc"):
         rows.append(("Monte Carlo median (P5-P95 on the sheet)", "='Monte Carlo'!B15", c.PX))
+    rv = res.get("reverse")
+    if rv:
+        if rv["margin_target"]["implied"] is not None:
+            rows.append(("Price implies a target EBIT margin of", float(rv["margin_target"]["implied"]), PCT))
+        if rv["wacc"]["implied"] is not None:
+            rows.append(("Price implies a WACC of", float(rv["wacc"]["implied"]), PCT2))
     if "ddm_out" in ref:
         rows.append(("DDM value per share (dividends only)", f"={ref['ddm_out']}", c.PX))
     for lab, cell, _ in ref.get("comps_rows", []):
@@ -865,6 +910,8 @@ def _summary(wb, c: Ctx, out_dir: Path):
         ws.cell(row=r + len(ka) + 2, column=1, value=(
             "Look-ahead warning: the valuation date is earlier than today. Price, risk-free rate, beta window and balance sheet are as of that date; "
             "consensus, peer multiples and analyst targets are today's.")).font = Font(bold=True, color="C0392B")
+    for j, wmsg in enumerate(res.get("meta", {}).get("warnings", []), start=r + len(ka) + 3):
+        ws.cell(row=j, column=1, value="Check: " + wmsg).font = Font(bold=True, color="C0392B")
     png = out_dir / f"{_tag(p)}_football.png"
     from . import charts
     charts.football(res, png, f"{p['name']}: valuation football field ({p['q_ccy']} per share, {c.vd})",
@@ -908,6 +955,7 @@ def _cover(wb, c: Ctx):
             "DDM": ("Live", "Dividend discount model as a cross-check"), "Checks": ("Live", f"{ref['n_checks']} integrity checks and sanity flags"),
             "Scenarios": ("Engine values", "Bear, base and bull values and weights"),
             "Sensitivity": ("Engine values", "WACC vs growth and margin, growth vs margin, beta vs ERP; tornado"),
+            "Reverse DCF": ("Engine values", "The margin, growth, WACC or terminal growth the share price implies"),
             "Monte Carlo": ("Engine values, live statistics", "Distribution of the DCF value"),
             "Comps": ("Live statistics", "Peer multiples, quartiles, implied values"),
             "Historicals": ("Data", "Annual statements and consensus"), "FCFF bridge": ("Live", f"{c.fy(0)} FCFF vs reported free cash flow"),
@@ -1001,7 +1049,7 @@ def _mc_png(res, path, sym):
 
 
 # ======================================================================= entry points
-ORDER = ["Cover", "Summary", "Assumptions", "WACC", "Forecast", "DCF", "DDM", "Checks", "Scenarios", "Sensitivity", "Monte Carlo",
+ORDER = ["Cover", "Summary", "Assumptions", "WACC", "Forecast", "DCF", "DDM", "Checks", "Scenarios", "Sensitivity", "Reverse DCF", "Monte Carlo",
          "Comps", "Historicals", "FCFF bridge", "Sources & notes"]
 
 
@@ -1027,6 +1075,7 @@ def write(res: dict, path: Path, out_dir: Path | None = None, weights: dict | No
     _scenarios(wb, c)
     _sensitivity(wb, c, out_dir)
     _monte_carlo(wb, c, out_dir)
+    _reverse(wb, c)
     _comps(wb, c)
     _historicals(wb, c)
     _recon(wb, c)
@@ -1070,4 +1119,19 @@ def verify(path: Path, res: dict, scenarios: bool = True, tol: float = 0.01) -> 
                 good = abs(xv - pv) <= tol
                 ok &= good
                 lines.append(f"  {'OK ' if good else 'BAD'} {n + ' (sel)':10s} excel={xv:,.4f} python={pv:,.4f}")
+    rv = res.get("reverse") or {}
+    im = (rv.get("margin_target") or {}).get("implied")
+    if scenarios and im is not None:
+        import openpyxl
+        wb = openpyxl.load_workbook(path)
+        ws = wb["Assumptions"]
+        row = next(r for r in range(1, ws.max_row + 1) if ws.cell(row=r, column=1).value == "margin_target")
+        ws.cell(row=row, column=4).value = float(im)
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "reverse.xlsx"
+            wb.save(out)
+            xv = _val(formulas.ExcelModel().loads(str(out)).finish().calculate(), out.name, "DCF", "B36")
+        good = abs(xv - rv["price"]) <= max(tol, 1e-4 * rv["price"])
+        ok &= good
+        lines.append(f"  {'OK ' if good else 'BAD'} {'Reverse':10s} excel at implied margin={xv:,.4f} share price={rv['price']:,.4f}")
     return ok, f"Excel recalculation check ({book}):\n" + "\n".join(lines)

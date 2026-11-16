@@ -537,6 +537,10 @@ def _generic_view(ticker: str, vdate: str):
     from eqr.valuation import charts, generic
     with st.spinner(f"Loading {ticker}..."):
         s = generic.snapshot(ticker, vdate)
+        problems = generic.applicability(s)
+        if problems:
+            st.error("This model does not fit " + ticker + ". " + " ".join(problems), icon=":material/block:")
+            return
         p0 = generic.default_inputs(s)
         sugg = _suggest(ticker)
     ccy = {"EUR": "€", "USD": "$", "GBP": "£", "JPY": "¥"}.get(p0["q_ccy"], p0["q_ccy"] + " ")
@@ -571,7 +575,11 @@ def _generic_view(ticker: str, vdate: str):
           "erp": erp / 100, "kd": kd / 100}
     ov_t = tuple(sorted((k, tuple(v) if isinstance(v, list) else v) for k, v in ov.items()))
     with st.spinner("Valuing and fetching peer multiples..."):
-        res = _run_generic(ticker, vdate, tuple((k, list(v) if isinstance(v, tuple) else v) for k, v in ov_t), tuple(peers))
+        try:
+            res = _run_generic(ticker, vdate, tuple((k, list(v) if isinstance(v, tuple) else v) for k, v in ov_t), tuple(peers))
+        except generic.ModelNotApplicable as e:
+            st.error(str(e), icon=":material/block:")
+            return
     d, sc, mk, p = res["dcf"], res["scenarios"], res["market"], res["inputs"]
     if not np.isfinite(d["price"]):
         st.error("The valuation came back empty (a market input is missing for this ticker). Try again shortly or edit the inputs.",
@@ -585,6 +593,8 @@ def _generic_view(ticker: str, vdate: str):
             st.metric("Analyst target (mean)", f"{ccy}{mk['tgt_mean']:.2f}", f"n={mk['tgt_n']}", delta_color="off", border=True)
         st.metric("TV share of EV", f"{d['tv_share']*100:.0f}%", border=True)
     st.caption(f"{p['name']} · financials in {p['fin_ccy']}, price in {p['q_ccy']} · price as of {s['price_date']} (yfinance), valuation date {vdate}")
+    for wmsg in res["meta"].get("warnings", []):
+        st.warning(wmsg, icon=":material/warning:")
     t1, t2, t3, t4, t5 = st.tabs(["Football field", "DCF & FCFF", "Sensitivity", "Peers", "Download"])
     with t1:
         items = generic.football_items(res)
@@ -599,6 +609,21 @@ def _generic_view(ticker: str, vdate: str):
                    f"{p['stub']:.2f} of FY{p['fy0'] + 1} still to come · rolled forward {p['roll_days']:.0f} days at Ke")
         st.dataframe((f / np.where(f.index.isin(ratio), 1, 1e6)[:, None]).style.format(
             lambda v: f"{v*100:.1f}%" if abs(v) < 1.5 else f"{v:,.0f}"))
+        rv = res.get("reverse")
+        if rv:
+            st.subheader("What the share price implies")
+            st.caption("Each row changes one driver, all else at the base case, until the DCF value equals the share price.")
+            fmt = lambda v, d=1: "no solution in range" if v is None else f"{v*100:.{d}f}%"  # noqa: E731
+            ctx = rv.get("context", {})
+            st.dataframe(pd.DataFrame([
+                {"Driver": "Target EBIT margin", "Base case": fmt(rv["margin_target"]["base"]), "Implied by the price": fmt(rv["margin_target"]["implied"]),
+                 "For comparison": (f"reported range {ctx['margin_hist'][0]*100:.1f}% - {ctx['margin_hist'][1]*100:.1f}%" if "margin_hist" in ctx else "")},
+                {"Driver": "Revenue growth FY2-FY5 (average)", "Base case": fmt(rv["growth"]["base"]), "Implied by the price": fmt(rv["growth"]["implied"]),
+                 "For comparison": (f"reported CAGR {ctx['rev_cagr']*100:.1f}% over {ctx['rev_years']} years" if "rev_cagr" in ctx else "")},
+                {"Driver": "WACC", "Base case": fmt(rv["wacc"]["base"], 2), "Implied by the price": fmt(rv["wacc"]["implied"], 2),
+                 "For comparison": f"risk-free rate {p['rf']*100:.2f}%"},
+                {"Driver": "Terminal growth", "Base case": fmt(rv["g"]["base"], 2), "Implied by the price": fmt(rv["g"]["implied"], 2),
+                 "For comparison": f"risk-free rate {p['rf']*100:.2f}%"}]), hide_index=True)
         st.dataframe(pd.DataFrame({"Source": p["sources"]}))
     with t3:
         grid = res["grid_wacc_g"].copy()
@@ -644,5 +669,5 @@ def _generic_view(ticker: str, vdate: str):
             st.download_button("Download valuation workbook (xlsx)", data, file_name=f"{ticker.replace('.', '_')}_Valuation.xlsx",
                                icon=":material/download:", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         st.caption("Same template as the SAP model: Cover, Summary, Assumptions with sources and a live bear/base/bull selector, WACC, "
-                   "Forecast, DCF, DDM, Checks, Scenarios, Sensitivity, Monte Carlo, Comps, Historicals, FCFF bridge, Sources & notes. "
+                   "Forecast, DCF, DDM, Checks, Scenarios, Sensitivity, Reverse DCF, Monte Carlo, Comps, Historicals, FCFF bridge, Sources & notes. "
                    "Sheets without data for this company are left out; precedent transactions and segment analysis exist only in the SAP model.")
