@@ -1121,7 +1121,7 @@ def _extensions(wb, res):
         row(["SAP regression vs STOXX Europe 600 (adjusted)", "", "", "", "", b["sap_vs_stoxx_adj"]], [None] * 5 + ["0.00"])
         row(["WACC with bottom-up beta", "", "", "", "", b["wacc"]], [None] * 5 + [PCT2])
         row(["DCF value per share with bottom-up beta", "", "", "", "", b["price"]], [None] * 5 + [PX], bold=True)
-        note(f"Unlevering: beta_U = beta_E / (1 + (1 - t) x D/E), t = {b['t_peer']*100:.0f}% for peers; re-levered at SAP's D/E and 30% tax. {b['method']} (fetched {b['fetched']}). "
+        note(f"Unlevering: beta_U = beta_E / (1 + (1 - t) x D/E), t = {b['t_peer']*100:.0f}% for peers; re-levered at SAP's D/E and 29.93% tax. {b['method']} (fetched {b['fetched']}). "
              "DAX circularity check: SAP's beta against the broad STOXX Europe 600 is the same as against the DAX, so the base beta is not distorted by SAP's index weight. "
              "US software peers carry higher betas against the S&P 500; the bottom-up value is shown as the cautious cross-check.")
 
@@ -1150,14 +1150,14 @@ def _extensions(wb, res):
     # 5 tax
     head("5. Tax rate (lecture p26)", ["Item", "Rate", "Use"])
     row(["German marginal (statutory) rate", a["tax_wacc"], "WACC tax shield and terminal year"], [None, PCT])
-    row(["SAP effective / guided rate 2026", a["tax"][0], "Operating taxes in the explicit forecast (fades to 30%)"], [None, PCT])
+    row(["SAP effective / guided rate 2026", a["tax"][0], "Operating taxes in the explicit forecast (fades to 29.93%)"], [None, PCT])
     r += 1
 
     # 6 bridge
     br = x["bridge"]
     head("6. Equity-bridge refinements (lecture p30, p35-37)", ["Item", "€m", "€ per share", "Treatment"])
     row(["PV of below-market debt (cheap old bonds)", br["debt_benefit"], br["debt_benefit_ps"], "In the base case: added as a non-operating asset; debt stays at notional"], [None, EUR, PX])
-    row(["Tax value of loss carryforwards (€921m x 30%)", br["tlcf"], br["tlcf_ps"], "In the base case: SAP is profitable, losses are usable (upper bound, undiscounted)"], [None, EUR, PX])
+    row(["Tax value of loss carryforwards (€921m x 29.93%)", br["tlcf"], br["tlcf_ps"], "In the base case: SAP is profitable, losses are usable (upper bound, undiscounted)"], [None, EUR, PX])
     row([f"NCI at market instead of book (SAP's own P/B {br['pb']:.1f}x)", br["nci_market"], br["nci_ps_at_market"],
          f"Footnote only: book NCI €{br['nci_book']:.0f}m is used; market-value NCI would lower the value by this amount"], [None, EUR, PX])
     r += 1
@@ -1206,7 +1206,7 @@ def _sources(wb, res):
         ("Market cap", "CIQ €247bn (1,154m shares) vs Bloomberg WACC screen €213bn vs 1,229m issued", "Shares outstanding net of treasury (1,154.2m) + 7m dilution"),
         ("Debt", "CIQ Q3 10,588 vs Bloomberg 7,559 vs bond principal 8,050", "Reported financial liabilities 10,588 (bonds + CP + leases) - consistent with IFRS 16 FCFF"),
         ("EBIT basis", "CIQ EBIT 10,418 ≈ non-IFRS 10,419; IFRS 9,830 (SAP) vs 9,617 (CIQ as reported)", "Model builds from non-IFRS (incl. SBC) less acquisition-related charges"),
-        ("Tax rate", "27.9% (Bloomberg), 28.7% (CIQ ETR), 29% (guidance), 29.9% (CIQ DCF)", "Operating taxes 29% 2026, 29.5% 2027-30, 30% terminal; WACC tax shield at the 30% German marginal rate"),
+        ("Tax rate", "27.9% (Bloomberg), 28.7% (CIQ ETR), 29% (guidance), 29.9% (CIQ DCF)", "Operating taxes 29% 2026, 29.5% 2027-30, 29.93% terminal; WACC tax shield at the 29.93% German marginal rate"),
         ("Buyback avg. price", "Bloomberg €212.43 vs SAP Q3 statement €164.79", "Not a valuation input; noted only"),
         ("Valuation date", f"Capital IQ and Bloomberg exports are from 4-5 Nov; the valuation date is {_vd(res)}",
          f"Share price = {_vd(res)} close (Yahoo Finance) in both editions; Bund yield and beta window are as of that date. Data edition keeps its 5 Nov Bloomberg rates, "
@@ -1261,7 +1261,7 @@ def _summary(wb, ref, wref, dref, cref, res, out_dir, pref):
     a = res["assumptions"]
     ka = [
         f"Revenue: cloud +{a['q4g_cloud']*100:.0f}% Q4-26, then {', '.join(f'{x*100:.0f}%' for x in a['g_cloud'])} (2027-30); support {a['g_support'][0]*100:.0f}% to {a['g_support'][-1]*100:.0f}% p.a.; licences -25% p.a. → 2030E revenue €{d['forecast'].loc[2030,'revenue']/1000:.1f}bn" + (f" (consensus €{res['consensus'][2030]['revenue']/1000:.1f}bn)" if res['consensus'].get(2030, {}).get('revenue') else ""),
-        f"Non-IFRS operating margin (SBC included) {a['m_nonifrs'][0]*100:.1f}% (2026) → {a['m_nonifrs'][-1]*100:.1f}% (2030) → {a['m_terminal']*100:.0f}% terminal; tax 29-30%",
+        f"Non-IFRS operating margin (SBC included) {a['m_nonifrs'][0]*100:.1f}% (2026) → {a['m_nonifrs'][-1]*100:.1f}% (2030) → {a['m_terminal']*100:.0f}% terminal; tax 29-29.93%",
         f"Capex {a['capex_pct'][0]*100:.1f}-{a['capex_terminal']*100:.1f}% and D&A {a['da_pct'][0]*100:.1f}-{a['da_terminal']*100:.1f}% of revenue; NWC releases {a['nwc_pct']*100:.0f}% of incremental revenue (prepaid subscriptions)",
         f"WACC {d['wacc']*100:.2f}% = Ke {d['ke']*100:.2f}% (Rf {a['rf']*100:.2f}%, β {a['beta']:.2f}, ERP {a['erp']*100:.1f}%) x {d['we']*100:.0f}% + Kd after tax {d['kd_at']*100:.2f}% x {d['wd']*100:.0f}%; g {a['g']*100:.2f}%",
         f"Bridge (30 Sep 2026): + cash & financial assets €{(a['cash']+a['st_inv'])/1000:.1f}bn + investments €{a['lt_inv']/1000:.1f}bn + cheap-debt benefit and tax losses €{(a['debt_benefit']+a['tlcf_asset'])/1000:.2f}bn - debt incl. leases €{a['debt']/1000:.1f}bn - pensions/NCI €{(a['pension']+a['nci'])/1000:.1f}bn; {a['shares']:.1f}m diluted shares",

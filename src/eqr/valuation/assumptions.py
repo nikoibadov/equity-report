@@ -78,7 +78,7 @@ def build(ds: dict) -> Assumptions:
         "acq_terminal": A(0.003, "% rev", "Own estimate", "Ongoing bolt-on M&A (WalkMe, LeanIX, Reltio type)"),
         "oneoff_2026": A(49.0, "€m", "SAP outlook", "2026 restructuring (0-20) + Teradata litigation (29)"),
         "tax": A([0.29, 0.295, 0.295, 0.295, 0.295], "%", "SAP outlook / consensus", "2026 non-IFRS ETR ~29%; consensus 29.4-30.4% for 2027-30"),
-        "tax_terminal": A(0.30, "%", "German statutory", "Blended statutory rate (Germany ~30%)"),
+        "tax_terminal": A(0.2993, "%", "German statutory", "Combined statutory rate 29.93% (corporate tax + solidarity surcharge 15.825% + trade tax 14.105%)"),
         "da_pct": A([0.033, 0.032, 0.030, 0.030, 0.029], "% rev", "Consensus", "Consensus D&A €1.34bn/1.45bn/1.46bn/1.67bn/1.80bn"),
         "da_terminal": A(0.022, "% rev", "Own estimate", "Converges towards maintenance capex; hyperscaler-hosted cloud keeps the asset base light"),
         "capex_pct": A([0.020, 0.022, 0.022, 0.021, 0.021], "% rev", "Consensus", "Consensus capex €0.79bn/0.99bn/1.12bn/1.16bn/1.29bn; SAP runs most cloud on hyperscalers (cost of cloud), not own data centres"),
@@ -108,8 +108,8 @@ def build(ds: dict) -> Assumptions:
                           "Below-market debt: SAP's fixed bonds carry a 2.0% average coupon vs ~3.5-3.9% market yields, so they are worth less than "
                           "face value (e.g. 0.375% 2029 at ~92.5%). Debt stays in the bridge at notional; the PV of the interest saving is added "
                           "as a non-operating asset (lecture p35)"),
-        "tlcf_asset": A(round(ds["ir"]["tax_loss_carryforwards"]["total_fy2025"] * 0.30, 0), "€m", "SAP Integrated Report 2025",
-                        "Tax loss carryforwards €921m x 30% tax rate; SAP is solidly profitable, so the losses can be used (lecture p37). "
+        "tlcf_asset": A(round(ds["ir"]["tax_loss_carryforwards"]["total_fy2025"] * 0.2993, 0), "€m", "SAP Integrated Report 2025",
+                        "Tax loss carryforwards €921m x 29.93% tax rate; SAP is solidly profitable, so the losses can be used (lecture p37). "
                         "Upper bound: undiscounted and assumes full usability"),
         "debt": A(b["debt"], "€m", "SAP Q3-26 / CIQ", b.get("notes", {}).get("debt", "")),
         "pension": A(b["pension"], "€m", "CIQ Pension Details", b.get("notes", {}).get("pension", "")),

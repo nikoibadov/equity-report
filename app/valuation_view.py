@@ -548,23 +548,25 @@ def _generic_view(ticker: str, vdate: str):
             growth = [gc[i].number_input(f"Y{i+1}", value=round(p0["growth"][i] * 100, 1), step=0.5, format="%.1f", key=f"g{i}_{ticker}") for i in range(5)]
             c1, c2, c3, c4 = st.columns(4)
             mt = c1.number_input("Target EBIT margin % (Y5+)", value=round(p0["margin_target"] * 100, 1), step=0.5, format="%.1f")
-            tax = c1.number_input("Tax rate %", value=round(p0["tax"] * 100, 1), step=0.5, format="%.1f")
+            tax = c1.number_input("Effective tax % (FY1-FY5)", value=round(p0["tax"] * 100, 1), step=0.5, format="%.1f", help=p0["sources"].get("tax"))
             da = c2.number_input("D&A % revenue", value=round(p0["da_pct"] * 100, 1), step=0.1, format="%.1f")
             cx = c2.number_input("Capex % revenue", value=round(p0["capex_pct"] * 100, 1), step=0.1, format="%.1f")
             nwc = c3.number_input("NWC investment % of Δrevenue", value=round(p0["nwc_pct"] * 100, 1), step=1.0, format="%.1f")
             g = c3.number_input("Terminal growth %", value=round(p0["g"] * 100, 2), step=0.05, format="%.2f")
             rf = c4.number_input("Risk-free %", value=round(p0["rf"] * 100, 2), step=0.05, format="%.2f", help=p0["sources"]["rf"])
             beta = c4.number_input("Beta", value=round(p0["beta"], 2), step=0.02, format="%.2f", help=p0["sources"]["beta"])
-            c5, c6 = st.columns(2)
+            c5, c6, c7 = st.columns(3)
             erp = c5.number_input("ERP %", value=round(p0["erp"] * 100, 2), step=0.1, format="%.2f", help=p0["sources"]["erp"])
             kd = c6.number_input("Pre-tax cost of debt %", value=round(p0["kd"] * 100, 2), step=0.05, format="%.2f", help=p0["sources"]["kd"])
+            stat = c7.number_input("Statutory tax % (terminal, tax shield)", value=round(p0["tax_terminal"] * 100, 2), step=0.5, format="%.2f",
+                                   help=p0["sources"].get("tax_terminal"))
             opts = list(dict.fromkeys((sugg["symbol"].tolist() if len(sugg) else [])))
             name_of = sugg.set_index("symbol")["name"].to_dict() if len(sugg) else {}
             peers = st.multiselect("Peers (suggested from the global universe; type any Yahoo ticker to add)", opts,
                                    default=default_peers, format_func=lambda x: f"{x} · {name_of.get(x, '')}".rstrip(" ·"),
                                    accept_new_options=True)
             st.form_submit_button("Recalculate", type="primary", icon=":material/refresh:")
-    ov = {"growth": [x / 100 for x in growth], "margin_target": mt / 100, "tax": tax / 100, "tax_wacc": tax / 100,
+    ov = {"growth": [x / 100 for x in growth], "margin_target": mt / 100, "tax": tax / 100, "tax_terminal": stat / 100, "tax_wacc": stat / 100,
           "da_pct": da / 100, "capex_pct": cx / 100, "nwc_pct": nwc / 100, "g": g / 100, "rf": rf / 100, "beta": beta,
           "erp": erp / 100, "kd": kd / 100}
     ov_t = tuple(sorted((k, tuple(v) if isinstance(v, list) else v) for k, v in ov.items()))
@@ -590,9 +592,12 @@ def _generic_view(ticker: str, vdate: str):
         st.dataframe(pd.DataFrame(items)[["label", "low", "mid", "high"]].round(2), hide_index=True)
     with t2:
         f = d["forecast"].T
-        f.columns = [f"Y{c}" for c in f.columns]
+        f.columns = [f"FY{c}E" for c in f.columns]
+        ratio = ["growth", "margin", "tax_rate", "da_pct", "capex_pct"]
         st.subheader(f"FCFF build ({p['fin_ccy']} m)")
-        st.dataframe((f / np.where(f.index.isin(["growth", "margin"]), 1, 1e6)[:, None]).style.format(
+        st.caption(f"Base year FY{p['fy0']} revenue {p['rev0']/1e6:,.0f}m · balance sheet {p['bs_date']} · "
+                   f"{p['stub']:.2f} of FY{p['fy0'] + 1} still to come · rolled forward {p['roll_days']:.0f} days at Ke")
+        st.dataframe((f / np.where(f.index.isin(ratio), 1, 1e6)[:, None]).style.format(
             lambda v: f"{v*100:.1f}%" if abs(v) < 1.5 else f"{v:,.0f}"))
         st.dataframe(pd.DataFrame({"Source": p["sources"]}))
     with t3:
@@ -606,7 +611,12 @@ def _generic_view(ticker: str, vdate: str):
             st.dataframe(pd.DataFrame({v["label"]: {"Peers": v["n"], "Q1": v["q1"], "Median": v["median"], "Q3": v["q3"],
                                                      f"Price @median ({ccy})": v["p_med"]} for v in cp["stats"].values()}).T.round(2))
         if len(res["peers"]):
-            st.dataframe(res["peers"], hide_index=True, column_config={
+            pe = res["peers"].copy()
+            pe.insert(1, "local_code", [generic.exchange_of(x)[0] for x in pe["ticker"]])
+            pe.insert(2, "exchange", [generic.exchange_of(x)[1] for x in pe["ticker"]])
+            pe = pe[["name", "local_code", "exchange", "ticker"] + [c for c in pe.columns if c not in ("name", "local_code", "exchange", "ticker")]]
+            st.dataframe(pe, hide_index=True, column_config={
+                "name": "Company", "local_code": "Ticker", "exchange": "Exchange", "ticker": "Yahoo symbol",
                 "mcap_eur": st.column_config.NumberColumn("Mkt cap €", format="compact"),
                 "ev_sales_ntm": st.column_config.NumberColumn("EV/NTM sales", format="%.1fx"),
                 "ev_ebit_ntm": st.column_config.NumberColumn("EV/NTM EBIT", format="%.1fx"),
@@ -616,12 +626,23 @@ def _generic_view(ticker: str, vdate: str):
                 "rule40": st.column_config.NumberColumn("Rule of 40", format="%.1f")})
         _peer_finder(ticker)
     with t5:
-        buf = io.BytesIO()
-        with pd.ExcelWriter(buf, engine="openpyxl") as xw:
-            pd.DataFrame({"value": {k: str(v) for k, v in p.items() if k != "sources"}}).to_excel(xw, sheet_name="Inputs")
-            d["forecast"].to_excel(xw, sheet_name="Forecast")
-            res["grid_wacc_g"].to_excel(xw, sheet_name="WACC x g")
-            res["peers"].to_excel(xw, sheet_name="Peers", index=False)
-            pd.DataFrame(generic.football_items(res)).to_excel(xw, sheet_name="Football field", index=False)
-        st.download_button("Download valuation (xlsx)", buf.getvalue(), file_name=f"{ticker}_valuation.xlsx",
-                           icon=":material/download:", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        key = f"gxlsx_{ticker}_{vdate}_{hash((ov_t, tuple(peers)))}"
+        if st.button("Build Excel valuation package", icon=":material/table_view:", key=f"gbuild_{ticker}"):
+            from eqr.valuation import generic_book
+            with st.spinner("Writing and checking the workbook..."):
+                with tempfile.TemporaryDirectory() as tmp:
+                    x = generic_book.write(res, Path(tmp) / f"{ticker.replace('.', '_')}_Valuation.xlsx")
+                    try:
+                        ok, msg = generic_book.verify(x, res, scenarios=False)
+                    except ImportError:          # `formulas` not installed here; the test suite runs the same check
+                        ok, msg = None, ""
+                    st.session_state[key] = (x.read_bytes(), ok, msg)
+        if st.session_state.get(key):
+            data, ok, msg = st.session_state[key]
+            if ok is not None:
+                (st.success if ok else st.error)("Excel recalculation matches the Python engine." if ok else msg, icon=":material/fact_check:")
+            st.download_button("Download valuation workbook (xlsx)", data, file_name=f"{ticker.replace('.', '_')}_Valuation.xlsx",
+                               icon=":material/download:", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        st.caption("Same template as the SAP model: Cover, Summary, Assumptions with sources and a live bear/base/bull selector, WACC, "
+                   "Forecast, DCF, DDM, Checks, Scenarios, Sensitivity, Monte Carlo, Comps, Historicals, FCFF bridge, Sources & notes. "
+                   "Sheets without data for this company are left out; precedent transactions and segment analysis exist only in the SAP model.")
