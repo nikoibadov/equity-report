@@ -90,7 +90,7 @@ def _assumptions(wb, c: Ctx):
         ("Cost of capital inputs", [
             ("rf", "Risk-free rate (10y government bond)", "%", p["rf"], PCT2, S.get("rf", ""), "Long government yield in the currency of the cash flows, on the valuation date"),
             ("beta", "Levered beta", "x", p["beta"], "0.00", S.get("beta", ""), "Regression beta shrunk towards 1 (Blume)"),
-            ("erp", "Equity risk premium", "%", p["erp"], PCT2, S.get("erp", ""), "Same house view as the SAP model"),
+            ("erp", "Equity risk premium", "%", p["erp"], PCT2, S.get("erp", ""), "The extra return investors ask for holding shares instead of government bonds, for the market the cash flows are in"),
             ("kd", "Pre-tax cost of debt", "%", p["kd"], PCT2, S.get("kd", ""), "Risk-free rate plus a default spread for the implied rating"),
             ("tax_wacc", "Tax rate for the debt tax shield", "%", p["tax_wacc"], PCT2, S.get("tax_terminal", ""), "Marginal (statutory) rate"),
         ]),
@@ -241,7 +241,7 @@ def _wacc(wb, c: Ctx):
              + (f", R² {s['beta_r2']:.2f}" if s.get("beta_r2") else "") + "; Blume adjustment 0.67 x raw + 0.33"),
             ("Effective tax rate (explicit years)", p["tax"], p.get("sources", {}).get("tax", "")),
             ("Statutory tax rate (terminal and tax shield)", p["tax_terminal"], p.get("sources", {}).get("tax_terminal", "")),
-            ("Equity risk premium range", "4.2% - 6.5%", "Damodaran implied ERP (lower end) to the IDW/FAUB range (upper end); base 5.0% as in the SAP model"),
+            ("Equity risk premium range", "4.2% - 6.5%", "Damodaran implied US ERP (lower end) to the German IDW/FAUB range (upper end). Default: implied US premium for US-dollar companies, 5.0% house view otherwise"),
             ("Cost of debt build", p["kd"], p.get("sources", {}).get("kd", ""))]
     for i, (a, v, cmt) in enumerate(refs, start=r + 2):
         ws.cell(row=i, column=1, value=a)

@@ -122,6 +122,22 @@ def risk_free(currency: str, vdate: str | None = None) -> tuple[float, str]:
     return 0.035, f"Default 3.5% (no automatic 10y source for {currency}; edit)"
 
 
+def default_erp(currency: str | None) -> tuple[float, str]:
+    """Equity risk premium for the market the cash flows are in. US dollar: Damodaran's implied premium for the
+    S&P 500 (what US investors price in today). Euro and others: the 5.0% house view of the SAP model."""
+    if currency == "USD":
+        try:
+            from .loaders import web
+            d = web.damodaran()
+            return float(d["erp"]), (f"Damodaran implied US equity risk premium of {d['erp_date']} (S&P 500, market-implied). Used for US-dollar "
+                                     "companies; the 5.0% house view is calibrated to the German/euro market")
+        except Exception:  # noqa: BLE001
+            return 0.045, "4.5% placeholder for the US market (Damodaran's implied premium could not be fetched; typical range 4.2-4.8%); edit"
+    if currency == "EUR":
+        return 0.05, "House view 5.0% for the euro market (lower end of the German IDW/FAUB range of 5.0-6.5%), as in the SAP model"
+    return 0.05, f"5.0% mature-market house view (no market-specific source for {currency}); edit"
+
+
 # ---------------------------------------------------------------- data
 _ANNUAL = {
     "revenue": ("inc", ["Total Revenue"]), "gross_profit": ("inc", ["Gross Profit"]), "rnd": ("inc", ["Research And Development"]),
@@ -316,6 +332,7 @@ def default_inputs(s: dict) -> dict:
 
     # ---- cost of capital
     rf, rf_src = risk_free(fin_ccy, s.get("vdate"))
+    erp, erp_src = default_erp(fin_ccy)
     beta_raw = s.get("beta_raw") or 1.0
     beta = 0.67 * beta_raw + 0.33
     interest = abs((_latest(s.get("interest", {}), 1, up) or [0])[0] or 0)
@@ -343,13 +360,13 @@ def default_inputs(s: dict) -> dict:
         "tax": tax, "tax_terminal": tax_stat, "tax_wacc": tax_stat,
         "da_pct": da_pct, "da_terminal": da_pct, "capex_pct": cx_pct, "capex_terminal": float(cx_term),
         "nwc_pct": nwc_pct, "sbc_pct": sbc_pct, "sbc_addback": 0,
-        "g": g_term, "rf": rf, "beta": beta, "erp": 0.05, "kd": rf + spread,
+        "g": g_term, "rf": rf, "beta": beta, "erp": erp, "kd": rf + spread,
         "cash": cash, "lt_inv": lt_inv, "other_nonop": 0.0, "debt": debt, "pension": 0.0, "nci": nci, "pref": pref,
         "mcap_fin": mcap_q / fx, "dps0": dps0, "g_div": g_div,
         "d_growth": 0.0, "d_margin": 0.0,
         "sources": {
             "rf": rf_src, "beta": f"OLS 5y weekly vs {s.get('beta_index', '?')} (n={s.get('beta_n', 0)}), raw {beta_raw:.2f}, Blume-adjusted 0.67 x raw + 0.33",
-            "erp": "House view 5.0% (IDW/FAUB lower end; Damodaran implied ~4.4-4.6%)",
+            "erp": erp_src,
             "kd": f"Rf + synthetic-rating spread {spread*100:.2f}% (interest cover {cover:.1f}x -> {rating}, Damodaran table)",
             "growth": f"{g_src}; FY3-FY5 linear from FY2 growth (at most 25%) towards the midpoint of FY2 and terminal growth (at most 15% in FY5); "
                       "FY6-FY10 fade linearly to g",

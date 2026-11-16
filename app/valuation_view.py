@@ -476,7 +476,7 @@ def _sap_crosschecks(res):
             f"- Cheap old bonds: **€{br['debt_benefit']:.0f}m** (+€{br['debt_benefit_ps']:.2f} a share), in the base case.\n"
             f"- Tax loss carryforwards: **€{br['tlcf']:.0f}m** (+€{br['tlcf_ps']:.2f} a share), in the base case.\n"
             f"- Minorities at market value instead of book: €{br['nci_ps_at_market']:.2f} a share (footnote only).\n"
-            f"- WACC tax shield at the German marginal rate of {a['tax_wacc']*100:.0f}%.\n"
+            f"- WACC tax shield at the German marginal rate of {a['tax_wacc']*100:.2f}%.\n"
             f"- P/E without levered peers ({', '.join(q['ticker'] for q in pe['flagged']) or 'none'}): median {pe['median']:.1f}x "
             f"against {pe['median_all']:.1f}x for all core peers.")
     rf = x.get("refs")
