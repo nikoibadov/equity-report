@@ -1,0 +1,113 @@
+{
+ "ticker": "ADBE",
+ "info": {
+  "longName": "Adobe Inc.",
+  "shortName": "Adobe Inc.",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "country": "United States",
+  "longBusinessSummary": "Adobe Inc. operates as a technology company worldwide. The Digital Media segment offers products and services that enable individuals, teams, and enterprises to create, publish, and promote content. This segment serves photographers, video editors, graphic and experience designers, game developers, content creators, students, marketers, business owners, knowledge workers, and consumers. The Digital Experience segment provides an integrated platform; and products, services, and solutions that enable brands and businesses to create, manage, execute, measure, monetize, and optimize customer experiences from analytics to commerce. This segment serves marketers, advertisers, agencies, publishers, merchandisers, merchants, web analysts, data scientists, developers, and executives across the C-suite. The Publishing and Advertising segment offers e-learning, technical document publishing, web conferencing, document and forms platform, web application development, printing, and Adobe Advertising solutions. It also provides consulting, training, customer management, technical support, and learning services. The company offers its solutions to enterprise customers, and businesses and consumers; and licenses its products to end-user customers through app stores and website at adobe.com. It markets and distributes its products through distributors, retailers, software developers, mobile app stores, systems integrators, independent software vendors, value-added resellers, and original equipment and hardware manufacturers. The company also provides an online visibility management and content marketing software-as-a-service platform. The company has a strategic alliance with HUMAIN for the development of generative AI models and AI-powered applications. The company was formerly known as Adobe Systems Incorporated and changed its name to Adobe Inc. in October 2018. Adobe Inc. was founded in 1982 and is headquartered in San Jose, California.",
+  "currentPrice": 243.08,
+  "regularMarketPrice": 243.08,
+  "sharesOutstanding": 389200000,
+  "marketCap": 94606737408,
+  "enterpriseValue": 95751733248,
+  "totalRevenue": 25969999872,
+  "ebitda": 9916999680,
+  "operatingMargins": 0.36323002,
+  "grossMargins": 0.89252996,
+  "revenueGrowth": 0.129,
+  "totalCash": 5641999872,
+  "totalDebt": 6786999808,
+  "trailingPE": 13.572307,
+  "forwardPE": 8.869208,
+  "enterpriseToRevenue": 3.687,
+  "enterpriseToEbitda": 9.655,
+  "fiftyTwoWeekHigh": 362.71,
+  "fiftyTwoWeekLow": 190.12,
+  "targetMeanPrice": 266.9097,
+  "targetMedianPrice": 260.0,
+  "targetHighPrice": 373.0,
+  "targetLowPrice": 140.0,
+  "numberOfAnalystOpinions": 33,
+  "recommendationMean": 2.97436,
+  "lastFiscalYearEnd": 1764288000,
+  "nextFiscalYearEnd": 1795824000
+ },
+ "revenue": {
+  "2025-11-30": 23769000000.0,
+  "2024-11-30": 21505000000.0,
+  "2023-11-30": 19409000000.0,
+  "2022-11-30": 17606000000.0
+ },
+ "ebit": {
+  "2025-11-30": 8706000000.0,
+  "2024-11-30": 7741000000.0,
+  "2023-11-30": 6650000000.0,
+  "2022-11-30": 6098000000.0
+ },
+ "tax_rate": {
+  "2025-11-30": 0.18,
+  "2024-11-30": 0.2,
+  "2023-11-30": 0.2,
+  "2022-11-30": 0.21
+ },
+ "interest": {
+  "2025-11-30": 263000000.0,
+  "2024-11-30": 169000000.0,
+  "2023-11-30": 113000000.0,
+  "2022-11-30": 112000000.0
+ },
+ "da": {
+  "2025-11-30": 818000000.0,
+  "2024-11-30": 857000000.0,
+  "2023-11-30": 872000000.0,
+  "2022-11-30": 856000000.0,
+  "2021-11-30": null
+ },
+ "capex": {
+  "2025-11-30": -179000000.0,
+  "2024-11-30": -183000000.0,
+  "2023-11-30": -360000000.0,
+  "2022-11-30": -442000000.0,
+  "2021-11-30": null
+ },
+ "dwc": {
+  "2025-11-30": 605000000.0,
+  "2024-11-30": 144000000.0,
+  "2023-11-30": -355000000.0,
+  "2022-11-30": 336000000.0,
+  "2021-11-30": null
+ },
+ "sbc": {
+  "2025-11-30": 1942000000.0,
+  "2024-11-30": 1833000000.0,
+  "2023-11-30": 1718000000.0,
+  "2022-11-30": 1440000000.0,
+  "2021-11-30": null
+ },
+ "nci": {},
+ "rev_est": {
+  "0q": 6830578620.0,
+  "+1q": 7070108120.0,
+  "0y": 26607173550.0,
+  "+1y": 29036612500.0
+ },
+ "eps_est": {
+  "0q": 6.32884,
+  "+1q": 6.76551,
+  "0y": 24.47864,
+  "+1y": 27.40718
+ },
+ "beta_raw": 1.4046110424947,
+ "beta_index": "^GSPC",
+ "beta_n": 262,
+ "price_date": "2026-09-15",
+ "vdate": "2026-09-15",
+ "price_v": 257.760009765625,
+ "hi_v": 367.4599914550781,
+ "lo_v": 193.41000366210938,
+ "fetched": "2026-11-15"
+}

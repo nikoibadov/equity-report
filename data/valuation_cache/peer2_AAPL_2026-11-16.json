@@ -1,0 +1,13 @@
+{
+ "ticker": "AAPL",
+ "name": "Apple Inc.",
+ "country": "United States",
+ "industry": "Consumer Electronics",
+ "mcap_eur": 4663782625923.37,
+ "ev_sales_ntm": 9.761650828116165,
+ "ev_ebit_ntm": 29.571801621539574,
+ "pe_ntm": 36.844619261876375,
+ "g_ntm": 11.569243683978204,
+ "ebit_margin": 33.009997,
+ "rule40": 44.5792406839782
+}

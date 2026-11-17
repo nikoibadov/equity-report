@@ -1,0 +1,109 @@
+{
+ "ticker": "WDAY",
+ "info": {
+  "longName": "Workday, Inc.",
+  "shortName": "Workday, Inc.",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "country": "United States",
+  "longBusinessSummary": "Workday, Inc. provides enterprise cloud applications in the United States and internationally. The company offers a suite of financial management applications to maintain accounting information; manage financial processes, such as payables and receivables; identify real-time financial, operational, and management insights; perform financial consolidation; reduce time-to-close; promote internal control and auditability; and achieve consistency across finance operations. It also provides spend management solutions that help organizations to streamline supplier selection and contract management, build and execute sourcing events, such as requests for proposals, and manage indirect spend; expense management solutions to submit and approve expenses; and a suite of human capital management applications that enables HR teams to hire, onboard, pay, develop, reskill, and provide employee experiences. In addition, the company offers planning applications. Further, it provides supply chain and inventory solutions to healthcare organizations; solutions to manage the end-to-end student and faculty lifecycle; Workday Extend for customers and their developers to build custom applications. The company serves the professional and business services, financial services, healthcare, manufacturing, media, education, government, technology, media, retail, and hospitality industries. It sells its solutions through its direct sales organization. The company was formerly known as North Tahoe Power Tools, Inc. and changed its name to Workday, Inc. in July 2005. Workday, Inc. was incorporated in 2005 and is headquartered in Pleasanton, California.",
+  "currentPrice": 190.21,
+  "regularMarketPrice": 190.21,
+  "sharesOutstanding": 196000000,
+  "marketCap": 45840613376,
+  "enterpriseValue": 46209609728,
+  "totalRevenue": 10154999808,
+  "ebitda": 1586000000,
+  "operatingMargins": 0.11816,
+  "grossMargins": 0.75795,
+  "revenueGrowth": 0.128,
+  "totalCash": 3403000064,
+  "totalDebt": 3772000000,
+  "trailingPE": 38.73931,
+  "forwardPE": 14.363104,
+  "enterpriseToRevenue": 4.55,
+  "enterpriseToEbitda": 29.136,
+  "fiftyTwoWeekHigh": 236.8,
+  "fiftyTwoWeekLow": 110.36,
+  "targetMeanPrice": 209.25323,
+  "targetMedianPrice": 210.0,
+  "targetHighPrice": 275.0,
+  "targetLowPrice": 92.0,
+  "numberOfAnalystOpinions": 37,
+  "recommendationMean": 2.30952,
+  "lastFiscalYearEnd": 1769817600,
+  "nextFiscalYearEnd": 1801353600
+ },
+ "revenue": {
+  "2026-01-31": 9552000000.0,
+  "2025-01-31": 8446000000.0,
+  "2024-01-31": 7259000000.0,
+  "2023-01-31": 6216000000.0
+ },
+ "ebit": {
+  "2026-01-31": 1024000000.0,
+  "2025-01-31": 499000000.0,
+  "2024-01-31": 183000000.0,
+  "2023-01-31": -182000000.0
+ },
+ "tax_rate": {
+  "2026-01-31": 0.313,
+  "2025-01-31": 0.175549,
+  "2024-01-31": 0.2563,
+  "2023-01-31": 0.2577
+ },
+ "interest": {
+  "2026-01-31": 114000000.0,
+  "2025-01-31": 114000000.0,
+  "2024-01-31": 114000000.0,
+  "2023-01-31": 102000000.0
+ },
+ "da": {
+  "2026-01-31": 347000000.0,
+  "2025-01-31": 326000000.0,
+  "2024-01-31": 282000000.0,
+  "2023-01-31": 364000000.0,
+  "2022-01-31": null
+ },
+ "capex": {
+  "2026-01-31": -162000000.0,
+  "2025-01-31": -272000000.0,
+  "2024-01-31": -242000000.0,
+  "2023-01-31": -365000000.0,
+  "2022-01-31": null
+ },
+ "dwc": {
+  "2026-01-31": -329000000.0,
+  "2025-01-31": -218000000.0,
+  "2024-01-31": -34000000.0,
+  "2023-01-31": 48000000.0,
+  "2022-01-31": null
+ },
+ "sbc": {
+  "2026-01-31": 1626000000.0,
+  "2025-01-31": 1519000000.0,
+  "2024-01-31": 1416000000.0,
+  "2023-01-31": 1295000000.0,
+  "2022-01-31": null
+ },
+ "nci": {},
+ "rev_est": {
+  "0q": 2691535090.0,
+  "+1q": 2778376840.0,
+  "0y": 10666594190.0,
+  "+1y": 11780630910.0
+ },
+ "eps_est": {
+  "0q": 2.74495,
+  "+1q": 2.94782,
+  "0y": 11.08703,
+  "+1y": 13.24296
+ },
+ "beta_raw": 1.2147980309230775,
+ "beta_index": "^GSPC",
+ "beta_n": 261,
+ "price_date": "2026-11-09",
+ "fetched": "2026-11-10"
+}

@@ -1,0 +1,261 @@
+{
+ "ticker": "JPM",
+ "info": {
+  "longName": "JPMorgan Chase & Co.",
+  "shortName": "JP Morgan Chase & Co.",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Financial Services",
+  "industry": "Banks - Diversified",
+  "country": "United States",
+  "longBusinessSummary": "JPMorgan Chase & Co. operates as a bank and financial holding company in the United States, rest of North America, Europe, the Middle East, Africa, the Asia Pacific, Latin America, and the Caribbean. It operates in three segments: Consumer & Community Banking, Commercial & Investment Bank, and Asset & Wealth Management. The company offers deposit, investment and lending products, and cash management; mortgage origination and servicing activities; residential mortgages and home equity loans; and credit cards, payment solutions, travel services, merchant offers, lifestyle benefits, auto loans, and leases to consumers and small businesses through bank branches, ATMs, and digital and telephone banking. It also provides investment banking, market-making, financing, custody, and securities products and services; corporate strategy and structure advisory, equity and debt market capital-raising, and loan origination and syndication services; cash and derivative instruments, risk management solutions, prime brokerage, clearing, and research; and fund services, liquidity and trading services, and data solutions products for large corporations, financial institutions, merchants, start-ups, small and midsized companies, local governments, municipalities, nonprofits, and commercial real estate clients. In addition, the company offers multi-asset investment management solutions in equities, fixed income, alternatives, and money market funds to institutional clients and retail investors; retirement products and services, estate planning, lending, deposits, and investment management products to high-net-worth clients; and financial transaction processing. JPMorgan Chase & Co. was founded in 1799 and is headquartered in New York, New York.",
+  "currentPrice": 340.97,
+  "regularMarketPrice": 340.94,
+  "sharesOutstanding": 2655609509,
+  "impliedSharesOutstanding": 2655609509,
+  "marketCap": 905403564032,
+  "enterpriseValue": 684126437376,
+  "totalRevenue": 190732992512,
+  "ebitda": null,
+  "operatingMargins": 0.44787997,
+  "grossMargins": 0.0,
+  "revenueGrowth": 0.102,
+  "totalCash": 1591950966784,
+  "totalDebt": 1335691968512,
+  "trailingPE": 14.301174,
+  "forwardPE": 13.331999,
+  "enterpriseToRevenue": 3.587,
+  "enterpriseToEbitda": null,
+  "fiftyTwoWeekHigh": 366.5,
+  "fiftyTwoWeekLow": 279.1,
+  "targetMeanPrice": 373.47827,
+  "targetMedianPrice": 372.0,
+  "targetHighPrice": 425.0,
+  "targetLowPrice": 312.0,
+  "numberOfAnalystOpinions": 23,
+  "recommendationMean": 2.03846,
+  "lastFiscalYearEnd": 1767139200,
+  "nextFiscalYearEnd": 1798675200,
+  "mostRecentQuarter": 1790726400,
+  "dividendRate": 6.6,
+  "trailingAnnualDividendRate": 6.15,
+  "payoutRatio": 0.258,
+  "exchange": "NYQ",
+  "fullExchangeName": "NYSE"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-09-30": 326271000000.0,
+   "2026-06-30": 309811000000.0,
+   "2026-03-31": 312142000000.0,
+   "2025-12-31": 343338000000.0,
+   "2025-09-30": 303436000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "lt_inv": {
+   "2026-09-30": 1643759000000.0,
+   "2026-06-30": 1586680000000.0,
+   "2026-03-31": 1626063000000.0,
+   "2025-12-31": 1406543000000.0,
+   "2025-09-30": 1487283000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "debt": {
+   "2026-09-30": 531499000000.0,
+   "2026-06-30": 532953000000.0,
+   "2026-03-31": 516812000000.0,
+   "2025-12-31": 499982000000.0,
+   "2025-09-30": 496558000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "nci": {},
+  "pref": {
+   "2026-09-30": 21040000000.0,
+   "2026-06-30": 21040000000.0,
+   "2026-03-31": 20045000000.0,
+   "2025-12-31": 20045000000.0,
+   "2025-09-30": 20045000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  }
+ },
+ "ttm": {},
+ "rev_est": {
+  "0q": 51069960500.0,
+  "+1q": 54210231490.0,
+  "0y": 207754214680.0,
+  "+1y": 217270970830.0
+ },
+ "eps_est": {
+  "0q": 5.85966,
+  "+1q": 6.24327,
+  "0y": 23.91318,
+  "+1y": 25.57306
+ },
+ "beta_raw": 1.0069000774268253,
+ "beta_r2": 0.4318610824008685,
+ "beta_index": "^GSPC",
+ "beta_n": 262,
+ "price_date": "2026-11-16",
+ "vdate": "2026-11-16",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-16",
+ "revenue": {
+  "2025-12-31": 181847000000.0,
+  "2024-12-31": 169439000000.0,
+  "2023-12-31": 154952000000.0,
+  "2022-12-31": 127727000000.0
+ },
+ "gross_profit": {},
+ "rnd": {},
+ "ebit": {},
+ "pretax": {
+  "2025-12-31": 72595000000.0,
+  "2024-12-31": 75081000000.0,
+  "2023-12-31": 61612000000.0,
+  "2022-12-31": 46166000000.0
+ },
+ "tax_provision": {
+  "2025-12-31": 15547000000.0,
+  "2024-12-31": 16610000000.0,
+  "2023-12-31": 12060000000.0,
+  "2022-12-31": 8490000000.0
+ },
+ "net_income": {
+  "2025-12-31": 55681000000.0,
+  "2024-12-31": 56868000000.0,
+  "2023-12-31": 47760000000.0,
+  "2022-12-31": 35892000000.0
+ },
+ "eps_dil": {
+  "2025-12-31": 20.02,
+  "2024-12-31": 19.75,
+  "2023-12-31": 16.23,
+  "2022-12-31": 12.09
+ },
+ "shares_dil": {
+  "2025-12-31": 2781500000.0,
+  "2024-12-31": 2879000000.0,
+  "2023-12-31": 2943100000.0,
+  "2022-12-31": 2970000000.0
+ },
+ "tax_rate": {
+  "2025-12-31": 0.214161,
+  "2024-12-31": 0.221228,
+  "2023-12-31": 0.196,
+  "2022-12-31": 0.184
+ },
+ "interest": {
+  "2025-12-31": 97898000000.0,
+  "2024-12-31": 101350000000.0,
+  "2023-12-31": 81321000000.0,
+  "2022-12-31": 26097000000.0
+ },
+ "da": {
+  "2025-12-31": 8821000000.0,
+  "2024-12-31": 7938000000.0,
+  "2023-12-31": 7512000000.0,
+  "2022-12-31": 7051000000.0,
+  "2021-12-31": null
+ },
+ "capex": {},
+ "dwc": {
+  "2025-12-31": -218801000000.0,
+  "2024-12-31": -114220000000.0,
+  "2023-12-31": -56168000000.0,
+  "2022-12-31": 32686000000.0,
+  "2021-12-31": null
+ },
+ "sbc": {},
+ "ocf": {
+  "2025-12-31": -147782000000.0,
+  "2024-12-31": -42012000000.0,
+  "2023-12-31": 12974000000.0,
+  "2022-12-31": 107119000000.0,
+  "2021-12-31": null
+ },
+ "fcf": {
+  "2025-12-31": -147782000000.0,
+  "2024-12-31": -42012000000.0,
+  "2023-12-31": 12974000000.0,
+  "2022-12-31": 107119000000.0,
+  "2021-12-31": null
+ },
+ "dividends": {
+  "2025-12-31": -16625000000.0,
+  "2024-12-31": -14783000000.0,
+  "2023-12-31": -13463000000.0,
+  "2022-12-31": -13562000000.0,
+  "2021-12-31": null
+ },
+ "buybacks": {
+  "2025-12-31": -34591000000.0,
+  "2024-12-31": -28680000000.0,
+  "2023-12-31": -9824000000.0,
+  "2022-12-31": -10596000000.0,
+  "2021-12-31": null
+ },
+ "cash_taxes": {
+  "2025-12-31": 5309000000.0,
+  "2024-12-31": 11715000000.0,
+  "2023-12-31": 9908000000.0,
+  "2022-12-31": 4355000000.0,
+  "2021-12-31": null
+ },
+ "cash_sti": {
+  "2025-12-31": 343338000000.0,
+  "2024-12-31": 469317000000.0,
+  "2023-12-31": 624151000000.0,
+  "2022-12-31": 567234000000.0
+ },
+ "lt_inv": {
+  "2025-12-31": 1406543000000.0,
+  "2024-12-31": 1172872000000.0,
+  "2023-12-31": 973946000000.0,
+  "2022-12-31": 982116000000.0
+ },
+ "debt": {
+  "2025-12-31": 499982000000.0,
+  "2024-12-31": 454311000000.0,
+  "2023-12-31": 436537000000.0,
+  "2022-12-31": 339892000000.0
+ },
+ "equity": {
+  "2025-12-31": 362438000000.0,
+  "2024-12-31": 344758000000.0,
+  "2023-12-31": 327878000000.0,
+  "2022-12-31": 292332000000.0
+ },
+ "nci": {},
+ "pref": {
+  "2025-12-31": 20045000000.0,
+  "2024-12-31": 20050000000.0,
+  "2023-12-31": 27404000000.0,
+  "2022-12-31": 27404000000.0
+ },
+ "receivables": {
+  "2025-12-31": 111599000000.0,
+  "2024-12-31": 101223000000.0,
+  "2023-12-31": 107363000000.0,
+  "2022-12-31": 125189000000.0
+ },
+ "inventory": {},
+ "payables": {
+  "2025-12-31": 186658000000.0,
+  "2024-12-31": 153153000000.0,
+  "2023-12-31": 161960000000.0,
+  "2022-12-31": 188692000000.0
+ },
+ "deferred_rev": {},
+ "ppe": {
+  "2025-12-31": 36244000000.0,
+  "2024-12-31": 32223000000.0,
+  "2023-12-31": 30157000000.0,
+  "2022-12-31": 27734000000.0
+ }
+}

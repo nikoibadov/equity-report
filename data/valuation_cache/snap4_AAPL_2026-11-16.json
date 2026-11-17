@@ -1,0 +1,290 @@
+{
+ "ticker": "AAPL",
+ "info": {
+  "longName": "Apple Inc.",
+  "shortName": "Apple Inc.",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Technology",
+  "industry": "Consumer Electronics",
+  "country": "United States",
+  "longBusinessSummary": "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories. The company offers iPhone, a line of smartphones; Mac, a line of personal computers; iPad, a line of multi-purpose tablets; and wearables, home, and accessories, including Apple Watch, AirPods, Beats products, Apple Vision Pro, Apple TV 4K, HomePod, and Apple HomeView, as well as Apple branded and third-party accessories. It also provides advertising services comprising third-party licensing arrangements and own advertising platforms; AppleCare and cloud services; and payment services, including Apple Card and Apple Pay. In addition, the company operates App Store that allow customers to discover and download applications and digital content, such as books, music, video, games, and podcasts. Further, it provides digital content through subscription-based services, including Apple Arcade, a game service; Apple Fitness+, a personalized fitness service; Apple Music, which offers users a curated listening experience; Apple News+, a news and magazine service; and Apple TV, which offers original content and live sports. The company sells its products and resells third-party products through its retail and online stores, and direct sales force; its services through its various service platforms; and third-party cellular network carriers and other resellers. It serves consumer, small and mid-sized business, education, enterprise, and government markets. The company operates in North and South America, European countries, India, the Middle East, Africa, China mainland, Hong Kong, Taiwan, Japan, Australia, New Zealand, and rest of Asia. The company was formerly known as Apple Computer, Inc. and changed its name to Apple Inc. in January 2007. Apple Inc. was founded in 1976 and is headquartered in Cupertino, California.",
+  "currentPrice": 352.85,
+  "regularMarketPrice": 352.845,
+  "sharesOutstanding": 14532182000,
+  "impliedSharesOutstanding": 14532182000,
+  "marketCap": 5127607943168,
+  "enterpriseValue": 5215137300480,
+  "totalRevenue": 478833999872,
+  "ebitda": 171486003200,
+  "operatingMargins": 0.33009997,
+  "grossMargins": 0.48786,
+  "revenueGrowth": 0.117,
+  "totalCash": 56722001920,
+  "totalDebt": 94478999552,
+  "trailingPE": 39.29232,
+  "forwardPE": 33.37694,
+  "enterpriseToRevenue": 10.891,
+  "enterpriseToEbitda": 30.411,
+  "fiftyTwoWeekHigh": 360.83,
+  "fiftyTwoWeekLow": 243.42,
+  "targetMeanPrice": 345.6313,
+  "targetMedianPrice": 355.0,
+  "targetHighPrice": 425.0,
+  "targetLowPrice": 250.0,
+  "numberOfAnalystOpinions": 39,
+  "recommendationMean": 2.17778,
+  "lastFiscalYearEnd": 1790380800,
+  "nextFiscalYearEnd": 1821916800,
+  "mostRecentQuarter": 1790380800,
+  "dividendRate": 1.08,
+  "trailingAnnualDividendRate": 1.06,
+  "payoutRatio": 0.118,
+  "exchange": "NMS",
+  "fullExchangeName": "NasdaqGS"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-09-30": 56722000000.0,
+   "2026-06-30": 62399000000.0,
+   "2026-03-31": 68507000000.0,
+   "2025-12-31": 66907000000.0,
+   "2025-09-30": 54697000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "lt_inv": {
+   "2026-09-30": 80213000000.0,
+   "2026-06-30": 84118000000.0,
+   "2026-03-31": 78088000000.0,
+   "2025-12-31": 77888000000.0,
+   "2025-09-30": 77723000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "debt": {
+   "2026-09-30": 80111000000.0,
+   "2026-06-30": 84344000000.0,
+   "2026-03-31": 84711000000.0,
+   "2025-12-31": 90509000000.0,
+   "2025-09-30": 98657000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "nci": {},
+  "pref": {}
+ },
+ "rev_est": {
+  "0q": 156429989490.0,
+  "+1q": 124000418700.0,
+  "0y": 528252559340.0,
+  "+1y": 571042817750.0
+ },
+ "eps_est": {
+  "0q": 2.91173,
+  "+1q": 2.15037,
+  "0y": 9.42944,
+  "+1y": 10.59799
+ },
+ "beta_raw": 1.1372056076964943,
+ "beta_r2": 0.4521236015983596,
+ "beta_index": "^GSPC",
+ "beta_n": 262,
+ "price_date": "2026-11-16",
+ "vdate": "2026-11-16",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-16",
+ "revenue": {
+  "2026-09-30": 478834000000.0,
+  "2025-09-30": 416161000000.0,
+  "2024-09-30": 391035000000.0,
+  "2023-09-30": 383285000000.0,
+  "2022-09-30": null
+ },
+ "gross_profit": {
+  "2026-09-30": 233602000000.0,
+  "2025-09-30": 195201000000.0,
+  "2024-09-30": 180683000000.0,
+  "2023-09-30": 169148000000.0,
+  "2022-09-30": null
+ },
+ "rnd": {
+  "2026-09-30": 45765000000.0,
+  "2025-09-30": 34550000000.0,
+  "2024-09-30": 31370000000.0,
+  "2023-09-30": 29915000000.0,
+  "2022-09-30": null
+ },
+ "ebit": {
+  "2026-09-30": 158063000000.0,
+  "2025-09-30": 133050000000.0,
+  "2024-09-30": 123216000000.0,
+  "2023-09-30": 114301000000.0,
+  "2022-09-30": null
+ },
+ "pretax": {
+  "2026-09-30": 159237000000.0,
+  "2025-09-30": 132729000000.0,
+  "2024-09-30": 123485000000.0,
+  "2023-09-30": 113736000000.0,
+  "2022-09-30": null
+ },
+ "tax_provision": {
+  "2026-09-30": 27062000000.0,
+  "2025-09-30": 20719000000.0,
+  "2024-09-30": 29749000000.0,
+  "2023-09-30": 16741000000.0,
+  "2022-09-30": null
+ },
+ "net_income": {
+  "2026-09-30": 132175000000.0,
+  "2025-09-30": 112010000000.0,
+  "2024-09-30": 93736000000.0,
+  "2023-09-30": 96995000000.0,
+  "2022-09-30": null
+ },
+ "eps_dil": {
+  "2026-09-30": 8.98,
+  "2025-09-30": 7.46,
+  "2024-09-30": 6.08,
+  "2023-09-30": 6.13,
+  "2022-09-30": null
+ },
+ "shares_dil": {
+  "2026-09-30": 14720306000.0,
+  "2025-09-30": 15004697000.0,
+  "2024-09-30": 15408095000.0,
+  "2023-09-30": 15812547000.0,
+  "2022-09-30": null
+ },
+ "tax_rate": {
+  "2026-09-30": 0.17,
+  "2025-09-30": 0.156,
+  "2024-09-30": 0.241,
+  "2023-09-30": 0.147,
+  "2022-09-30": null
+ },
+ "interest": {
+  "2026-09-30": null,
+  "2025-09-30": null,
+  "2024-09-30": null,
+  "2023-09-30": 3933000000.0,
+  "2022-09-30": 2931000000.0
+ },
+ "da": {
+  "2026-09-30": 13423000000.0,
+  "2025-09-30": 11698000000.0,
+  "2024-09-30": 11445000000.0,
+  "2023-09-30": 11519000000.0,
+  "2022-09-30": null
+ },
+ "capex": {
+  "2026-09-30": -9041000000.0,
+  "2025-09-30": -12715000000.0,
+  "2024-09-30": -9447000000.0,
+  "2023-09-30": -10959000000.0,
+  "2022-09-30": null
+ },
+ "dwc": {
+  "2026-09-30": -14858000000.0,
+  "2025-09-30": -25000000000.0,
+  "2024-09-30": 3651000000.0,
+  "2023-09-30": -6577000000.0,
+  "2022-09-30": null
+ },
+ "sbc": {
+  "2026-09-30": 13789000000.0,
+  "2025-09-30": 12863000000.0,
+  "2024-09-30": 11688000000.0,
+  "2023-09-30": 10833000000.0,
+  "2022-09-30": null
+ },
+ "ocf": {
+  "2026-09-30": 145097000000.0,
+  "2025-09-30": 111482000000.0,
+  "2024-09-30": 118254000000.0,
+  "2023-09-30": 110543000000.0,
+  "2022-09-30": null
+ },
+ "fcf": {
+  "2026-09-30": 136056000000.0,
+  "2025-09-30": 98767000000.0,
+  "2024-09-30": 108807000000.0,
+  "2023-09-30": 99584000000.0,
+  "2022-09-30": null
+ },
+ "dividends": {
+  "2026-09-30": -15721000000.0,
+  "2025-09-30": -15421000000.0,
+  "2024-09-30": -15234000000.0,
+  "2023-09-30": -15025000000.0,
+  "2022-09-30": null
+ },
+ "buybacks": {
+  "2026-09-30": -86390000000.0,
+  "2025-09-30": -90711000000.0,
+  "2024-09-30": -94949000000.0,
+  "2023-09-30": -77550000000.0,
+  "2022-09-30": null
+ },
+ "cash_taxes": {
+  "2026-09-30": null,
+  "2025-09-30": 43369000000.0,
+  "2024-09-30": 26102000000.0,
+  "2023-09-30": 18679000000.0,
+  "2022-09-30": 19573000000.0
+ },
+ "cash_sti": {
+  "2026-09-30": 56722000000.0,
+  "2025-09-30": 54697000000.0,
+  "2024-09-30": 65171000000.0,
+  "2023-09-30": 61555000000.0,
+  "2022-09-30": null
+ },
+ "lt_inv": {
+  "2026-09-30": 80213000000.0,
+  "2025-09-30": 77723000000.0,
+  "2024-09-30": 91479000000.0,
+  "2023-09-30": 100544000000.0,
+  "2022-09-30": null
+ },
+ "debt": {
+  "2026-09-30": 80111000000.0,
+  "2025-09-30": 98657000000.0,
+  "2024-09-30": 106629000000.0,
+  "2023-09-30": 111088000000.0,
+  "2022-09-30": null
+ },
+ "equity": {
+  "2026-09-30": 112093000000.0,
+  "2025-09-30": 73733000000.0,
+  "2024-09-30": 56950000000.0,
+  "2023-09-30": 62146000000.0,
+  "2022-09-30": null
+ },
+ "nci": {},
+ "pref": {},
+ "receivables": {
+  "2026-09-30": 43817000000.0,
+  "2025-09-30": 39777000000.0,
+  "2024-09-30": 33410000000.0,
+  "2023-09-30": 29508000000.0,
+  "2022-09-30": null
+ },
+ "inventory": {
+  "2026-09-30": 14541000000.0,
+  "2025-09-30": 5718000000.0,
+  "2024-09-30": 7286000000.0,
+  "2023-09-30": 6331000000.0,
+  "2022-09-30": null
+ },
+ "payables": {
+  "2026-09-30": 82252000000.0,
+  "2025-09-30": 69860000000.0,
+  "2024-09-30": 68960000000.0,
+  "2023-09-30": 62611000000.0,
+  "2022-09-30": null
+ }
+}

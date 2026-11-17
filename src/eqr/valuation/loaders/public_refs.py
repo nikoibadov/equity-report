@@ -40,8 +40,11 @@ def cached(name: str, fn, cache: Path | None = None, valid=None):
         p.write_text(json.dumps(d, default=str, indent=1))
         return d
     except Exception:
-        prefix = re.sub(r"\d{4}-\d{2}-\d{2}$", "", safe)
-        older = sorted(q for q in cache.glob(f"{prefix}*.json") if re.fullmatch(re.escape(prefix) + r"\d{4}-\d{2}-\d{2}", q.stem))
+        # names end in one or two ISO dates (today, valuation date): match any earlier download of the same series
+        pat = re.compile(r"(_\d{4}-\d{2}-\d{2})+")
+        base = pat.sub("", safe) if pat.search(safe) else safe
+        prefix = base + "_"
+        older = sorted(q for q in cache.glob(f"{base}_*.json") if pat.fullmatch(q.stem[len(base):]))
         if not older:
             raise
         d = json.loads(older[-1].read_text())

@@ -1,0 +1,11 @@
+{
+ "erp_date": "November 1, 2026",
+ "erp": 0.0441,
+ "us_default_spread": 0.0022,
+ "a_plus_spread": 0.006999999999999999,
+ "fetched": "2026-11-14",
+ "urls": [
+  "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+  "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/ratings.html"
+ ]
+}
