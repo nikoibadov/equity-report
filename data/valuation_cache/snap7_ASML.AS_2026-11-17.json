@@ -1,0 +1,309 @@
+{
+ "ticker": "ASML.AS",
+ "info": {
+  "longName": "ASML Holding N.V.",
+  "shortName": "ASML HOLDING",
+  "currency": "EUR",
+  "financialCurrency": "EUR",
+  "sector": "Technology",
+  "industry": "Semiconductor Equipment & Materials",
+  "country": "Netherlands",
+  "longBusinessSummary": "ASML Holding N.V. provides lithography solutions for the development, production, marketing, sales, upgrading, and servicing of advanced semiconductor equipment systems. The company offers lithography, metrology, and inspection systems. It also provides extreme ultraviolet lithography systems; and deep ultraviolet lithography systems comprising immersion and dry lithography systems solutions to manufacture various range of semiconductor nodes and technologies. In addition, the company offers metrology and inspection systems, including YieldStar optical metrology systems, a diffraction-based wafer metrology platform to assess the quality of patterns on the wafers; and HMI electron beam solutions to locate and analyze individual chip defects. Further, it provides computational lithography solutions, and lithography systems and control software solutions; and refurbishes and upgrades lithography systems, as well as offers customer support and related services. Additionally, the company offers hardware, software, and services to chipmakers to produce the patterns of integrated circuits. It operates in Japan, South Korea, Singapore, Taiwan, China, rest of Asia, the Netherlands, rest of Europe, the Middle East, Africa, and the United States. The company was formerly known as ASM Lithography Holding N.V. and changed its name to ASML Holding N.V. in 2001. ASML Holding N.V. was founded in 1984 and is headquartered in Veldhoven, the Netherlands.",
+  "currentPrice": 1283.2,
+  "regularMarketPrice": 1283.2,
+  "sharesOutstanding": 385417742,
+  "impliedSharesOutstanding": 385417742,
+  "marketCap": 494568013824,
+  "enterpriseValue": 489786376192,
+  "totalRevenue": 39473500160,
+  "ebitda": 16181000192,
+  "operatingMargins": 0.38551998,
+  "grossMargins": 0.54337,
+  "revenueGrowth": 0.552,
+  "totalCash": 12735099904,
+  "totalDebt": 1963000064,
+  "trailingPE": 36.68382,
+  "forwardPE": 22.737991,
+  "enterpriseToRevenue": 12.408,
+  "enterpriseToEbitda": 30.269,
+  "fiftyTwoWeekHigh": 1741.0,
+  "fiftyTwoWeekLow": 822.2,
+  "targetMeanPrice": 2095.9395,
+  "targetMedianPrice": 2100.0,
+  "targetHighPrice": 2507.0,
+  "targetLowPrice": 1288.0,
+  "numberOfAnalystOpinions": 33,
+  "recommendationMean": 1.36585,
+  "lastFiscalYearEnd": 1767139200,
+  "nextFiscalYearEnd": 1798675200,
+  "mostRecentQuarter": 1790467200,
+  "dividendRate": 7.52,
+  "trailingAnnualDividendRate": 7.5,
+  "payoutRatio": 0.2225,
+  "exchange": "AMS",
+  "fullExchangeName": "Amsterdam"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-09-30": 12735100000.0,
+   "2026-06-30": 7581500000.0,
+   "2026-03-31": 8376300000.0,
+   "2025-12-31": 13321900000.0,
+   "2025-09-30": 5128200000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "lt_inv": {
+   "2026-09-30": 2239400000.0,
+   "2026-06-30": 1324900000.0,
+   "2026-03-31": 1322500000.0,
+   "2025-12-31": null,
+   "2025-09-30": null,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "debt": {
+   "2026-09-30": 1963000000.0,
+   "2026-06-30": 1984400000.0,
+   "2026-03-31": 2705600000.0,
+   "2025-12-31": 4390900000.0,
+   "2025-09-30": 2704700000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "nci": {},
+  "pref": {}
+ },
+ "ttm": {
+  "rev": 39473500000.0,
+  "ebit": 15217800000.0,
+  "end": "2026-09-30"
+ },
+ "rev_est": {
+  "0q": 14816055140.0,
+  "+1q": 13313561770.0,
+  "0y": 44490989200.0,
+  "+1y": 57389468110.0
+ },
+ "eps_est": {
+  "0q": 15.38838,
+  "+1q": 12.93818,
+  "0y": 41.41393,
+  "+1y": 56.43418
+ },
+ "beta_raw": 1.974223401793744,
+ "beta_r2": 0.5855610360060367,
+ "beta_index": "^AEX",
+ "beta_n": 262,
+ "price_date": "2026-11-17",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2025-12-31": 32667300000.0,
+  "2024-12-31": 28262900000.0,
+  "2023-12-31": 27558500000.0,
+  "2022-12-31": 21173400000.0,
+  "2021-12-31": null
+ },
+ "gross_profit": {
+  "2025-12-31": 17258000000.0,
+  "2024-12-31": 14492000000.0,
+  "2023-12-31": 14136100000.0,
+  "2022-12-31": 10700100000.0,
+  "2021-12-31": null
+ },
+ "rnd": {
+  "2025-12-31": 4698800000.0,
+  "2024-12-31": 4303700000.0,
+  "2023-12-31": 3980600000.0,
+  "2022-12-31": 3253500000.0,
+  "2021-12-31": null
+ },
+ "ebit": {
+  "2025-12-31": 11301400000.0,
+  "2024-12-31": 9022600000.0,
+  "2023-12-31": 9042300000.0,
+  "2022-12-31": 6500700000.0,
+  "2021-12-31": null
+ },
+ "pretax": {
+  "2025-12-31": 11406100000.0,
+  "2024-12-31": 9042400000.0,
+  "2023-12-31": 9083500000.0,
+  "2022-12-31": 6456100000.0,
+  "2021-12-31": null
+ },
+ "tax_provision": {
+  "2025-12-31": 2013400000.0,
+  "2024-12-31": 1680600000.0,
+  "2023-12-31": 1435800000.0,
+  "2022-12-31": 969900000.0,
+  "2021-12-31": null
+ },
+ "net_income": {
+  "2025-12-31": 9609400000.0,
+  "2024-12-31": 7571600000.0,
+  "2023-12-31": 7839000000.0,
+  "2022-12-31": 5624200000.0,
+  "2021-12-31": null
+ },
+ "eps_dil": {
+  "2025-12-31": 24.71,
+  "2024-12-31": 19.24,
+  "2023-12-31": 20.59,
+  "2022-12-31": 16.07,
+  "2021-12-31": null
+ },
+ "shares_dil": {
+  "2025-12-31": 388900000.0,
+  "2024-12-31": 393600000.0,
+  "2023-12-31": 394100000.0,
+  "2022-12-31": 398000000.0,
+  "2021-12-31": null
+ },
+ "tax_rate": {
+  "2025-12-31": 0.177,
+  "2024-12-31": 0.186,
+  "2023-12-31": 0.158,
+  "2022-12-31": 0.15023,
+  "2021-12-31": null
+ },
+ "interest": {
+  "2025-12-31": 118300000.0,
+  "2024-12-31": 162600000.0,
+  "2023-12-31": 152700000.0,
+  "2022-12-31": 60800000.0,
+  "2021-12-31": null
+ },
+ "da": {
+  "2025-12-31": 1025900000.0,
+  "2024-12-31": 918600000.0,
+  "2023-12-31": 739800000.0,
+  "2022-12-31": 583600000.0,
+  "2021-12-31": null
+ },
+ "capex": {
+  "2025-12-31": -1631200000.0,
+  "2024-12-31": -2083100000.0,
+  "2023-12-31": -2196200000.0,
+  "2022-12-31": -1319300000.0,
+  "2021-12-31": null
+ },
+ "dwc": {
+  "2025-12-31": 1026500000.0,
+  "2024-12-31": 2053300000.0,
+  "2023-12-31": -3663600000.0,
+  "2022-12-31": 2441200000.0,
+  "2021-12-31": null
+ },
+ "sbc": {
+  "2025-12-31": 202300000.0,
+  "2024-12-31": 172600000.0,
+  "2023-12-31": 134800000.0,
+  "2022-12-31": 68900000.0,
+  "2021-12-31": null
+ },
+ "ocf": {
+  "2025-12-31": 12658500000.0,
+  "2024-12-31": 11166200000.0,
+  "2023-12-31": 5443400000.0,
+  "2022-12-31": 8486800000.0,
+  "2021-12-31": null
+ },
+ "fcf": {
+  "2025-12-31": 11027300000.0,
+  "2024-12-31": 9083100000.0,
+  "2023-12-31": 3247200000.0,
+  "2022-12-31": 7167500000.0,
+  "2021-12-31": null
+ },
+ "dividends": {
+  "2025-12-31": -2550300000.0,
+  "2024-12-31": -2452900000.0,
+  "2023-12-31": -2348300000.0,
+  "2022-12-31": -2559800000.0,
+  "2021-12-31": null
+ },
+ "buybacks": {
+  "2025-12-31": -5950000000.0,
+  "2024-12-31": -500000000.0,
+  "2023-12-31": -1000000000.0,
+  "2022-12-31": -4639700000.0,
+  "2021-12-31": null
+ },
+ "cash_taxes": {
+  "2025-12-31": 1621400000.0,
+  "2024-12-31": 1098000000.0,
+  "2023-12-31": 2568300000.0,
+  "2022-12-31": 1734600000.0,
+  "2021-12-31": null
+ },
+ "cash_sti": {
+  "2025-12-31": 13321900000.0,
+  "2024-12-31": 12741300000.0,
+  "2023-12-31": 7010100000.0,
+  "2022-12-31": 7376000000.0,
+  "2021-12-31": null
+ },
+ "lt_inv": {
+  "2025-12-31": 2143300000.0,
+  "2024-12-31": 903000000.0,
+  "2023-12-31": 919600000.0,
+  "2022-12-31": 923600000.0,
+  "2021-12-31": null
+ },
+ "debt": {
+  "2025-12-31": 4390900000.0,
+  "2024-12-31": 4687600000.0,
+  "2023-12-31": 4631600000.0,
+  "2022-12-31": 4260400000.0,
+  "2021-12-31": null
+ },
+ "equity": {
+  "2025-12-31": 19612200000.0,
+  "2024-12-31": 18476800000.0,
+  "2023-12-31": 13452400000.0,
+  "2022-12-31": 8810800000.0,
+  "2021-12-31": null
+ },
+ "nci": {},
+ "pref": {},
+ "receivables": {
+  "2025-12-31": 3023000000.0,
+  "2024-12-31": 4477500000.0,
+  "2023-12-31": 4334100000.0,
+  "2022-12-31": 5323800000.0,
+  "2021-12-31": null
+ },
+ "inventory": {
+  "2025-12-31": 11429300000.0,
+  "2024-12-31": 10891500000.0,
+  "2023-12-31": 8850700000.0,
+  "2022-12-31": 7199700000.0,
+  "2021-12-31": null
+ },
+ "payables": {
+  "2025-12-31": 3521800000.0,
+  "2024-12-31": 3500400000.0,
+  "2023-12-31": 2347300000.0,
+  "2022-12-31": 2565200000.0,
+  "2021-12-31": null
+ },
+ "deferred_rev": {
+  "2025-12-31": 16006300000.0,
+  "2024-12-31": 12570800000.0,
+  "2023-12-31": 11441000000.0,
+  "2022-12-31": 12481000000.0,
+  "2021-12-31": null
+ },
+ "ppe": {
+  "2025-12-31": 8234800000.0,
+  "2024-12-31": 7234000000.0,
+  "2023-12-31": 5799800000.0,
+  "2022-12-31": 4136900000.0,
+  "2021-12-31": null
+ }
+}

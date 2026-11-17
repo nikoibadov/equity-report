@@ -255,7 +255,7 @@ def snapshot(ticker: str, vdate: str | None = None) -> dict:
         for k, (frame, names) in _ANNUAL.items():
             out[k] = row(frames[frame], names)
         return out
-    return _cache(f"snap6_{ticker}_{TODAY}{_vkey(vdate)}", f)
+    return _cache(f"snap7_{ticker}_{TODAY}{_vkey(vdate)}", f)
 
 
 def _latest(d: dict, n=3, upto: str | None = None):

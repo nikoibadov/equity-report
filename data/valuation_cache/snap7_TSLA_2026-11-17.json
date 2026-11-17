@@ -1,0 +1,319 @@
+{
+ "ticker": "TSLA",
+ "info": {
+  "longName": "Tesla, Inc.",
+  "shortName": "Tesla, Inc.",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Consumer Cyclical",
+  "industry": "Auto Manufacturers",
+  "country": "United States",
+  "longBusinessSummary": "Tesla, Inc. designs, develops, manufactures, leases, and sells electric vehicles, and energy generation and storage systems in the United States, China, and internationally. The company operates in two segments, Automotive; and Energy Generation and Storage. The company offers electric vehicles, as well as sells automotive regulatory credits; and non-warranty maintenance services and collision, automotive insurance services, as well as part sales and retail merchandise sale. It also provides sedans and sport utility vehicles through direct and used vehicle sales, a network of Tesla Superchargers, and in-app upgrades; purchase financing and leasing services; services for electric vehicles through its company-owned service locations and Tesla mobile service technicians; and vehicle limited warranties and extended service plans. In addition, the company engages in the design, manufacture, installation, sale, and leasing of solar energy generation and energy storage products, and related services to residential, commercial, and industrial customers and utilities through its website, stores, and galleries, as well as through a network of channel partners. Further, it provides services and repairs to its energy product customers, including under warranty and extended service plans; and various financing options to its residential customers; lithium-ion battery energy storage products, such as Powerwall and Megapack; energy generation products, including solar panels and solar roof; self-driving development and artificial intelligence software, vehicle control and infotainment software, and battery and powertrain. The company was formerly known as Tesla Motors, Inc. and changed its name to Tesla, Inc. in February 2017. Tesla, Inc. was incorporated in 2003 and is headquartered in Austin, Texas.",
+  "currentPrice": 379.74,
+  "regularMarketPrice": 379.74,
+  "sharesOutstanding": 3952757946,
+  "impliedSharesOutstanding": 3952757946,
+  "marketCap": 1501020291072,
+  "enterpriseValue": 1472618299392,
+  "totalRevenue": 103569997824,
+  "ebitda": 9838000128,
+  "operatingMargins": 0.03026,
+  "grossMargins": 0.19285999,
+  "revenueGrowth": -0.002,
+  "totalCash": 45447000064,
+  "totalDebt": 16444999680,
+  "trailingPE": 417.2967,
+  "forwardPE": 175.86906,
+  "enterpriseToRevenue": 14.219,
+  "enterpriseToEbitda": 149.687,
+  "fiftyTwoWeekHigh": 498.83,
+  "fiftyTwoWeekLow": 297.38,
+  "targetMeanPrice": 412.47626,
+  "targetMedianPrice": 436.0,
+  "targetHighPrice": 600.0,
+  "targetLowPrice": 128.11,
+  "numberOfAnalystOpinions": 40,
+  "recommendationMean": 2.29545,
+  "lastFiscalYearEnd": 1767139200,
+  "nextFiscalYearEnd": 1798675200,
+  "mostRecentQuarter": 1790726400,
+  "dividendRate": null,
+  "trailingAnnualDividendRate": 0.0,
+  "payoutRatio": 0.0,
+  "exchange": "NMS",
+  "fullExchangeName": "NasdaqGS"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-09-30": 45216000000.0,
+   "2026-06-30": 43524000000.0,
+   "2026-03-31": 44743000000.0,
+   "2025-12-31": 44059000000.0,
+   "2025-09-30": 41647000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "lt_inv": {
+   "2026-09-30": 962000000.0,
+   "2026-06-30": 674000000.0,
+   "2026-03-31": 786000000.0,
+   "2025-12-31": null,
+   "2025-09-30": 1315000000.0,
+   "2025-06-30": 1235000000.0,
+   "2025-03-31": null
+  },
+  "debt": {
+   "2026-09-30": 16445000000.0,
+   "2026-06-30": 16080000000.0,
+   "2026-03-31": 15890000000.0,
+   "2025-12-31": 14719000000.0,
+   "2025-09-30": 13788000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "nci": {
+   "2026-09-30": 600000000.0,
+   "2026-06-30": 661000000.0,
+   "2026-03-31": 686000000.0,
+   "2025-12-31": 728000000.0,
+   "2025-09-30": 746000000.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  },
+  "pref": {
+   "2026-09-30": 0.0,
+   "2026-06-30": 0.0,
+   "2026-03-31": 0.0,
+   "2025-12-31": 0.0,
+   "2025-09-30": 0.0,
+   "2025-06-30": null,
+   "2025-03-31": null
+  }
+ },
+ "ttm": {
+  "rev": 103570000000.0,
+  "ebit": 3628000000.0,
+  "end": "2026-09-30"
+ },
+ "rev_est": {
+  "0q": 29287236330.0,
+  "+1q": 26501696410.0,
+  "0y": 107861607250.0,
+  "+1y": 122408354400.0
+ },
+ "eps_est": {
+  "0q": 0.49897,
+  "+1q": 0.46,
+  "0y": 1.72424,
+  "+1y": 2.15922
+ },
+ "beta_raw": 1.9082731876238068,
+ "beta_r2": 0.30086886548024255,
+ "beta_index": "^GSPC",
+ "beta_n": 262,
+ "price_date": "2026-11-16",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2025-12-31": 94827000000.0,
+  "2024-12-31": 97690000000.0,
+  "2023-12-31": 96773000000.0,
+  "2022-12-31": 81462000000.0,
+  "2021-12-31": null
+ },
+ "gross_profit": {
+  "2025-12-31": 17094000000.0,
+  "2024-12-31": 17450000000.0,
+  "2023-12-31": 17660000000.0,
+  "2022-12-31": 20853000000.0,
+  "2021-12-31": null
+ },
+ "rnd": {
+  "2025-12-31": 6411000000.0,
+  "2024-12-31": 4540000000.0,
+  "2023-12-31": 3969000000.0,
+  "2022-12-31": 3075000000.0,
+  "2021-12-31": null
+ },
+ "ebit": {
+  "2025-12-31": 4849000000.0,
+  "2024-12-31": 7760000000.0,
+  "2023-12-31": 8891000000.0,
+  "2022-12-31": 13832000000.0,
+  "2021-12-31": null
+ },
+ "pretax": {
+  "2025-12-31": 5278000000.0,
+  "2024-12-31": 8990000000.0,
+  "2023-12-31": 9973000000.0,
+  "2022-12-31": 13719000000.0,
+  "2021-12-31": null
+ },
+ "tax_provision": {
+  "2025-12-31": 1423000000.0,
+  "2024-12-31": 1837000000.0,
+  "2023-12-31": -5001000000.0,
+  "2022-12-31": 1132000000.0,
+  "2021-12-31": null
+ },
+ "net_income": {
+  "2025-12-31": 3794000000.0,
+  "2024-12-31": 7130000000.0,
+  "2023-12-31": 14999000000.0,
+  "2022-12-31": 12583000000.0,
+  "2021-12-31": null
+ },
+ "eps_dil": {
+  "2025-12-31": 1.08,
+  "2024-12-31": 2.04,
+  "2023-12-31": 4.31,
+  "2022-12-31": 3.62,
+  "2021-12-31": null
+ },
+ "shares_dil": {
+  "2025-12-31": 3751000000.0,
+  "2024-12-31": 3216000000.0,
+  "2023-12-31": 3482750000.0,
+  "2022-12-31": 3475000000.0,
+  "2021-12-31": null
+ },
+ "tax_rate": {
+  "2025-12-31": 0.27,
+  "2024-12-31": 0.2,
+  "2023-12-31": 0.2577,
+  "2022-12-31": 0.08,
+  "2021-12-31": null
+ },
+ "interest": {
+  "2025-12-31": 338000000.0,
+  "2024-12-31": 350000000.0,
+  "2023-12-31": 156000000.0,
+  "2022-12-31": 191000000.0,
+  "2021-12-31": null
+ },
+ "da": {
+  "2025-12-31": 6148000000.0,
+  "2024-12-31": 5368000000.0,
+  "2023-12-31": 4667000000.0,
+  "2022-12-31": 3747000000.0,
+  "2021-12-31": null
+ },
+ "capex": {
+  "2025-12-31": -8527000000.0,
+  "2024-12-31": -11342000000.0,
+  "2023-12-31": -8899000000.0,
+  "2022-12-31": -7172000000.0,
+  "2021-12-31": null
+ },
+ "dwc": {
+  "2025-12-31": 642000000.0,
+  "2024-12-31": 81000000.0,
+  "2023-12-31": -2248000000.0,
+  "2022-12-31": -3712000000.0,
+  "2021-12-31": null
+ },
+ "sbc": {
+  "2025-12-31": 2825000000.0,
+  "2024-12-31": 1999000000.0,
+  "2023-12-31": 1812000000.0,
+  "2022-12-31": 1560000000.0,
+  "2021-12-31": null
+ },
+ "ocf": {
+  "2025-12-31": 14747000000.0,
+  "2024-12-31": 14923000000.0,
+  "2023-12-31": 13256000000.0,
+  "2022-12-31": 14724000000.0,
+  "2021-12-31": null
+ },
+ "fcf": {
+  "2025-12-31": 6220000000.0,
+  "2024-12-31": 3581000000.0,
+  "2023-12-31": 4357000000.0,
+  "2022-12-31": 7552000000.0,
+  "2021-12-31": null
+ },
+ "dividends": {},
+ "buybacks": {},
+ "cash_taxes": {
+  "2025-12-31": null,
+  "2024-12-31": 1331000000.0,
+  "2023-12-31": 1119000000.0,
+  "2022-12-31": 1203000000.0,
+  "2021-12-31": 561000000.0
+ },
+ "cash_sti": {
+  "2025-12-31": 44059000000.0,
+  "2024-12-31": 36563000000.0,
+  "2023-12-31": 29094000000.0,
+  "2022-12-31": 22185000000.0,
+  "2021-12-31": null
+ },
+ "lt_inv": {},
+ "debt": {
+  "2025-12-31": 14719000000.0,
+  "2024-12-31": 13623000000.0,
+  "2023-12-31": 9573000000.0,
+  "2022-12-31": 5748000000.0,
+  "2021-12-31": null
+ },
+ "equity": {
+  "2025-12-31": 82137000000.0,
+  "2024-12-31": 72913000000.0,
+  "2023-12-31": 62634000000.0,
+  "2022-12-31": 44704000000.0,
+  "2021-12-31": null
+ },
+ "nci": {
+  "2025-12-31": 728000000.0,
+  "2024-12-31": 767000000.0,
+  "2023-12-31": 975000000.0,
+  "2022-12-31": 1194000000.0,
+  "2021-12-31": null
+ },
+ "pref": {
+  "2025-12-31": 0.0,
+  "2024-12-31": 0.0,
+  "2023-12-31": 0.0,
+  "2022-12-31": 0.0,
+  "2021-12-31": null
+ },
+ "receivables": {
+  "2025-12-31": 4576000000.0,
+  "2024-12-31": 4418000000.0,
+  "2023-12-31": 3508000000.0,
+  "2022-12-31": 2952000000.0,
+  "2021-12-31": null
+ },
+ "inventory": {
+  "2025-12-31": 12392000000.0,
+  "2024-12-31": 12017000000.0,
+  "2023-12-31": 13626000000.0,
+  "2022-12-31": 12839000000.0,
+  "2021-12-31": null
+ },
+ "payables": {
+  "2025-12-31": 13371000000.0,
+  "2024-12-31": 12474000000.0,
+  "2023-12-31": 14431000000.0,
+  "2022-12-31": 15255000000.0,
+  "2021-12-31": null
+ },
+ "deferred_rev": {
+  "2025-12-31": 4735000000.0,
+  "2024-12-31": 4161000000.0,
+  "2023-12-31": 3740000000.0,
+  "2022-12-31": 2810000000.0,
+  "2021-12-31": null
+ },
+ "ppe": {
+  "2025-12-31": 56180000000.0,
+  "2024-12-31": 51506000000.0,
+  "2023-12-31": 45124000000.0,
+  "2022-12-31": 36635000000.0,
+  "2021-12-31": null
+ }
+}

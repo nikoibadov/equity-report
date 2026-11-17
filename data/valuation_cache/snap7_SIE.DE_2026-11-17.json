@@ -1,0 +1,301 @@
+{
+ "ticker": "SIE.DE",
+ "info": {
+  "longName": "Siemens Aktiengesellschaft",
+  "shortName": "SIEMENS AG                    N",
+  "currency": "EUR",
+  "financialCurrency": "EUR",
+  "sector": "Industrials",
+  "industry": "Specialty Industrial Machinery",
+  "country": "Germany",
+  "longBusinessSummary": "Siemens Aktiengesellschaft, a technology company, focuses in the areas of automation and digitalization across the world. It operates through Digital Industries, Smart Infrastructure, Mobility, Siemens Healthineers, and Siemens Financial Services (SFS) segments. The Digital Industries segment provides automation systems and software for factories, numerical control systems, servo motors, drives and inverters, and integrated automation systems for machine tools and production machines; process control systems, machine-to-machine communication products, sensors and radio frequency identification systems; production and product lifecycle management software, and simulation and testing of mechatronic system. The Smart Infrastructure segment offers products, systems, solutions, services, and software to support sustainable transition from fossil and renewable energy sources; sustainable buildings and communities; and buildings, electrification, and electrical products. The Mobility segment provides rail passenger and freight transportation, such as metro systems, trams and light rail, and commuter trains, as well as trains and passenger coaches; locomotives and solutions for automated transportation and leasing; products and solutions for rail automation and electrification; maintenance and digital services; and digital and cloud-based solutions, and related services. The Siemens Healthineers segment develops, manufactures, and sells various diagnostic and therapeutic products and services; and provides clinical consulting and training services. Its financial services segment offers debt and equity investments; leasing, lending, and working capital; structured, equipment, and project financing; and financial advisory services. It has a strategic collaboration with IFS to improve product lifecycle with industrial AI. The company was founded in 1847 and is headquartered in Munich, Germany.",
+  "currentPrice": 273.4,
+  "regularMarketPrice": 273.4,
+  "sharesOutstanding": 764214809,
+  "impliedSharesOutstanding": 764214809,
+  "marketCap": 208936321024,
+  "enterpriseValue": 251661402112,
+  "totalRevenue": 83371999232,
+  "ebitda": 14753000448,
+  "operatingMargins": 0.13487001,
+  "grossMargins": 0.39568,
+  "revenueGrowth": 0.105,
+  "totalCash": 12906000384,
+  "totalDebt": 47222001664,
+  "trailingPE": 25.479963,
+  "forwardPE": 18.730337,
+  "enterpriseToRevenue": 3.019,
+  "enterpriseToEbitda": 17.058,
+  "fiftyTwoWeekHigh": 291.7,
+  "fiftyTwoWeekLow": 198.0,
+  "targetMeanPrice": 308.7164,
+  "targetMedianPrice": 310.0,
+  "targetHighPrice": 345.0,
+  "targetLowPrice": 240.0,
+  "numberOfAnalystOpinions": 25,
+  "recommendationMean": 1.92,
+  "lastFiscalYearEnd": 1790726400,
+  "nextFiscalYearEnd": 1822262400,
+  "mostRecentQuarter": 1790726400,
+  "dividendRate": 5.35,
+  "trailingAnnualDividendRate": 5.5,
+  "payoutRatio": 0.4986,
+  "exchange": "GER",
+  "fullExchangeName": "XETRA"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-09-30": 23524000000.0,
+   "2026-06-30": 22813000000.0,
+   "2026-03-31": 21767000000.0,
+   "2025-12-31": 27714000000.0,
+   "2025-09-30": 16687000000.0,
+   "2025-03-31": null
+  },
+  "lt_inv": {
+   "2026-09-30": 27732000000.0,
+   "2026-06-30": 29983000000.0,
+   "2026-03-31": 27306000000.0,
+   "2025-12-31": 31430000000.0,
+   "2025-09-30": 10972000000.0,
+   "2025-03-31": null
+  },
+  "debt": {
+   "2026-09-30": 47222000000.0,
+   "2026-06-30": 49924000000.0,
+   "2026-03-31": 54161000000.0,
+   "2025-12-31": 56465000000.0,
+   "2025-09-30": 56015000000.0,
+   "2025-03-31": null
+  },
+  "nci": {
+   "2026-09-30": 7199000000.0,
+   "2026-06-30": 6898000000.0,
+   "2026-03-31": 6549000000.0,
+   "2025-12-31": 6539000000.0,
+   "2025-09-30": 6127000000.0,
+   "2025-03-31": null
+  },
+  "pref": {}
+ },
+ "ttm": {
+  "rev": 83372000000.0,
+  "ebit": 11243000000.0,
+  "end": "2026-09-30"
+ },
+ "rev_est": {
+  "0q": 17641753810.0,
+  "+1q": 19334683460.0,
+  "0y": 83087824270.0,
+  "+1y": 94678299980.0
+ },
+ "eps_est": {
+  "0q": 2.25924,
+  "+1q": 2.44045,
+  "0y": 12.39689,
+  "+1y": 14.59664
+ },
+ "beta_raw": 1.4931019506194045,
+ "beta_r2": 0.6959654391319127,
+ "beta_index": "^GDAXI",
+ "beta_n": 262,
+ "price_date": "2026-11-17",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2026-09-30": 83372000000.0,
+  "2025-09-30": 78914000000.0,
+  "2024-09-30": 75930000000.0,
+  "2023-09-30": 74882000000.0,
+  "2022-09-30": null
+ },
+ "gross_profit": {
+  "2026-09-30": 32988000000.0,
+  "2025-09-30": 30399000000.0,
+  "2024-09-30": 29823000000.0,
+  "2023-09-30": 29117000000.0,
+  "2022-09-30": null
+ },
+ "rnd": {
+  "2026-09-30": 6909000000.0,
+  "2025-09-30": 6559000000.0,
+  "2024-09-30": 6276000000.0,
+  "2023-09-30": 6113000000.0,
+  "2022-09-30": null
+ },
+ "ebit": {
+  "2026-09-30": 11243000000.0,
+  "2025-09-30": 9594000000.0,
+  "2024-09-30": 9498000000.0,
+  "2023-09-30": 9402000000.0,
+  "2022-09-30": null
+ },
+ "pretax": {
+  "2026-09-30": 12497000000.0,
+  "2025-09-30": 10830000000.0,
+  "2024-09-30": 11227000000.0,
+  "2023-09-30": 11126000000.0,
+  "2022-09-30": null
+ },
+ "tax_provision": {
+  "2026-09-30": 3098000000.0,
+  "2025-09-30": 2501000000.0,
+  "2024-09-30": 2320000000.0,
+  "2023-09-30": 2600000000.0,
+  "2022-09-30": null
+ },
+ "net_income": {
+  "2026-09-30": 8488000000.0,
+  "2025-09-30": 9620000000.0,
+  "2024-09-30": 8301000000.0,
+  "2023-09-30": 7949000000.0,
+  "2022-09-30": null
+ },
+ "eps_dil": {
+  "2026-09-30": null,
+  "2025-09-30": 12.11,
+  "2024-09-30": 10.38,
+  "2023-09-30": 9.91,
+  "2022-09-30": 4.59
+ },
+ "shares_dil": {
+  "2026-09-30": null,
+  "2025-09-30": 794384806.0,
+  "2024-09-30": 798915000.0,
+  "2023-09-30": 801342000.0,
+  "2022-09-30": 809680000.0
+ },
+ "tax_rate": {
+  "2026-09-30": 0.247899,
+  "2025-09-30": 0.230933,
+  "2024-09-30": 0.21,
+  "2023-09-30": 0.23,
+  "2022-09-30": null
+ },
+ "interest": {
+  "2026-09-30": 1592000000.0,
+  "2025-09-30": 1640000000.0,
+  "2024-09-30": 1785000000.0,
+  "2023-09-30": 1369000000.0,
+  "2022-09-30": null
+ },
+ "da": {
+  "2026-09-30": 3509000000.0,
+  "2025-09-30": 3389000000.0,
+  "2024-09-30": 3158000000.0,
+  "2023-09-30": 3544000000.0,
+  "2022-09-30": null
+ },
+ "capex": {
+  "2026-09-30": -2570000000.0,
+  "2025-09-30": -2445000000.0,
+  "2024-09-30": -2088000000.0,
+  "2023-09-30": -2146000000.0,
+  "2022-09-30": null
+ },
+ "dwc": {
+  "2026-09-30": 787000000.0,
+  "2025-09-30": 899000000.0,
+  "2024-09-30": 68000000.0,
+  "2023-09-30": 1040000000.0,
+  "2022-09-30": null
+ },
+ "sbc": {},
+ "ocf": {
+  "2026-09-30": 14666000000.0,
+  "2025-09-30": 13257000000.0,
+  "2024-09-30": 11665000000.0,
+  "2023-09-30": 12239000000.0,
+  "2022-09-30": null
+ },
+ "fcf": {
+  "2026-09-30": 12096000000.0,
+  "2025-09-30": 10812000000.0,
+  "2024-09-30": 9577000000.0,
+  "2023-09-30": 10093000000.0,
+  "2022-09-30": null
+ },
+ "dividends": {
+  "2026-09-30": -4165000000.0,
+  "2025-09-30": -4093000000.0,
+  "2024-09-30": -3709000000.0,
+  "2023-09-30": -3362000000.0,
+  "2022-09-30": null
+ },
+ "buybacks": {
+  "2026-09-30": -3751000000.0,
+  "2025-09-30": -2269000000.0,
+  "2024-09-30": -3765000000.0,
+  "2023-09-30": -1298000000.0,
+  "2022-09-30": null
+ },
+ "cash_taxes": {},
+ "cash_sti": {
+  "2026-09-30": 23524000000.0,
+  "2025-09-30": 16687000000.0,
+  "2024-09-30": 11458000000.0,
+  "2023-09-30": 12528000000.0,
+  "2022-09-30": null
+ },
+ "lt_inv": {
+  "2026-09-30": 27732000000.0,
+  "2025-09-30": 10972000000.0,
+  "2024-09-30": 6922000000.0,
+  "2023-09-30": 2120000000.0,
+  "2022-09-30": null
+ },
+ "debt": {
+  "2026-09-30": 47222000000.0,
+  "2025-09-30": 56015000000.0,
+  "2024-09-30": 47919000000.0,
+  "2023-09-30": 46596000000.0,
+  "2022-09-30": null
+ },
+ "equity": {
+  "2026-09-30": 69240000000.0,
+  "2025-09-30": 62244000000.0,
+  "2024-09-30": 51264000000.0,
+  "2023-09-30": 47782000000.0,
+  "2022-09-30": null
+ },
+ "nci": {
+  "2026-09-30": 7199000000.0,
+  "2025-09-30": 6127000000.0,
+  "2024-09-30": 4967000000.0,
+  "2023-09-30": 5270000000.0,
+  "2022-09-30": null
+ },
+ "pref": {},
+ "receivables": {
+  "2026-09-30": 18289000000.0,
+  "2025-09-30": 14540000000.0,
+  "2024-09-30": 14955000000.0,
+  "2023-09-30": 15454000000.0,
+  "2022-09-30": null
+ },
+ "inventory": {
+  "2026-09-30": 11687000000.0,
+  "2025-09-30": 10259000000.0,
+  "2024-09-30": 10651000000.0,
+  "2023-09-30": 11260000000.0,
+  "2022-09-30": null
+ },
+ "payables": {
+  "2026-09-30": 10418000000.0,
+  "2025-09-30": 9183000000.0,
+  "2024-09-30": 8843000000.0,
+  "2023-09-30": 10130000000.0,
+  "2022-09-30": null
+ },
+ "deferred_rev": {},
+ "ppe": {
+  "2026-09-30": 14379000000.0,
+  "2025-09-30": 13023000000.0,
+  "2024-09-30": 12242000000.0,
+  "2023-09-30": 11938000000.0,
+  "2022-09-30": null
+ }
+}

@@ -1,0 +1,297 @@
+{
+ "ticker": "META",
+ "info": {
+  "longName": "Meta Platforms, Inc.",
+  "shortName": "Meta Platforms, Inc.",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Communication Services",
+  "industry": "Internet Content & Information",
+  "country": "United States",
+  "longBusinessSummary": "Meta Platforms, Inc. engages in the development of products that enable people to connect and share with friends and family through mobile devices, personal computers, virtual reality (VR) headsets, and AI glasses in the United States, Canada, Europe, Asia-Pacific, and internationally. It operates through two segments, Family of Apps (FoA) and Reality Labs (RL). The FoA segment offers Facebook, which enables people to build community through feed, reels, stories, groups, marketplace, and other; Instagram that brings people closer through Instagram feed, stories, reels, live, and messaging; Messenger, a messaging application for people to connect with friends, family, communities, and businesses across platforms and devices through text, audio, and video calls; Meta AI, an assistant that's available across apps, as a stand-alone app, on AI glasses, and on the web; Threads, an application for text-based updates and public conversations; and WhatsApp, a messaging application that is used by people and businesses to communicate and transact. The RL segment provides virtual and augmented reality products, including consumer hardware, software, and content that help people feel connected, as well as Meta Quest devices that enable social experiences across gaming, fitness, entertainment, and more. The segment also includes wearables such as AI glasses like Ray Ban Meta and Oakley Meta glasses; and the Meta Ray Ban Display, which combines AI glasses with an integrated lens display and the Meta Neural Band, a wrist worn device using electromyography that lets people control their AI glasses through neuromuscular signals. Meta Platforms, Inc. has a collaboration with Microsoft Corporation, NVIDIA Corporation, Advanced Micro Devices, Inc., Broadcom Inc., and OpenAI, L.L.C. The company was formerly known as Facebook, Inc. and changed its name to Meta Platforms, Inc. in October 2021. The company was incorporated in 2004 and is headquartered in Menlo Park, California.",
+  "currentPrice": 626.41,
+  "regularMarketPrice": 626.41,
+  "sharesOutstanding": 2214472367,
+  "impliedSharesOutstanding": 2556241253,
+  "marketCap": 1601254981632,
+  "enterpriseValue": 1633648115712,
+  "totalRevenue": 241605001216,
+  "ebitda": 116190003200,
+  "operatingMargins": 0.37777,
+  "grossMargins": 0.81034,
+  "revenueGrowth": 0.261,
+  "totalCash": 82448998400,
+  "totalDebt": 114842001408,
+  "trailingPE": 21.371885,
+  "forwardPE": 17.558716,
+  "enterpriseToRevenue": 6.762,
+  "enterpriseToEbitda": 14.06,
+  "fiftyTwoWeekHigh": 779.82,
+  "fiftyTwoWeekLow": 520.26,
+  "targetMeanPrice": 849.5538,
+  "targetMedianPrice": 850.0,
+  "targetHighPrice": 1050.0,
+  "targetLowPrice": 650.0,
+  "numberOfAnalystOpinions": 58,
+  "recommendationMean": 1.41935,
+  "lastFiscalYearEnd": 1767139200,
+  "nextFiscalYearEnd": 1798675200,
+  "mostRecentQuarter": 1790726400,
+  "dividendRate": 2.1,
+  "trailingAnnualDividendRate": 2.1,
+  "payoutRatio": 0.0716,
+  "exchange": "NMS",
+  "fullExchangeName": "NasdaqGS"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-09-30": 82449000000.0,
+   "2026-06-30": 90260000000.0,
+   "2026-03-31": 81180000000.0,
+   "2025-12-31": 81592000000.0,
+   "2025-09-30": 44448000000.0
+  },
+  "lt_inv": {
+   "2026-09-30": 32624000000.0,
+   "2026-06-30": 30157000000.0,
+   "2026-03-31": 28410000000.0,
+   "2025-12-31": 27524000000.0,
+   "2025-09-30": 25074000000.0
+  },
+  "debt": {
+   "2026-09-30": 114842000000.0,
+   "2026-06-30": 112318000000.0,
+   "2026-03-31": 86769000000.0,
+   "2025-12-31": 83897000000.0,
+   "2025-09-30": 51060000000.0
+  },
+  "nci": {},
+  "pref": {}
+ },
+ "ttm": {
+  "rev": 241606000000.0,
+  "ebit": 79380000000.0,
+  "end": "2026-09-30"
+ },
+ "rev_est": {
+  "0q": 75131075520.0,
+  "+1q": 68542011150.0,
+  "0y": 256853051780.0,
+  "+1y": 312953453690.0
+ },
+ "eps_est": {
+  "0q": 8.33113,
+  "+1q": 7.6519,
+  "0y": 29.07348,
+  "+1y": 33.90065
+ },
+ "beta_raw": 1.3964659800609533,
+ "beta_r2": 0.2744555992475988,
+ "beta_index": "^GSPC",
+ "beta_n": 262,
+ "price_date": "2026-11-16",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2025-12-31": 200966000000.0,
+  "2024-12-31": 164501000000.0,
+  "2023-12-31": 134902000000.0,
+  "2022-12-31": 116609000000.0,
+  "2021-12-31": null
+ },
+ "gross_profit": {
+  "2025-12-31": 164791000000.0,
+  "2024-12-31": 134340000000.0,
+  "2023-12-31": 108943000000.0,
+  "2022-12-31": 91360000000.0,
+  "2021-12-31": null
+ },
+ "rnd": {
+  "2025-12-31": 57372000000.0,
+  "2024-12-31": 43873000000.0,
+  "2023-12-31": 38483000000.0,
+  "2022-12-31": 35338000000.0,
+  "2021-12-31": null
+ },
+ "ebit": {
+  "2025-12-31": 83276000000.0,
+  "2024-12-31": 69380000000.0,
+  "2023-12-31": 46751000000.0,
+  "2022-12-31": 28944000000.0,
+  "2021-12-31": null
+ },
+ "pretax": {
+  "2025-12-31": 85932000000.0,
+  "2024-12-31": 70663000000.0,
+  "2023-12-31": 47428000000.0,
+  "2022-12-31": 28819000000.0,
+  "2021-12-31": null
+ },
+ "tax_provision": {
+  "2025-12-31": 25474000000.0,
+  "2024-12-31": 8303000000.0,
+  "2023-12-31": 8330000000.0,
+  "2022-12-31": 5619000000.0,
+  "2021-12-31": null
+ },
+ "net_income": {
+  "2025-12-31": 60458000000.0,
+  "2024-12-31": 62360000000.0,
+  "2023-12-31": 39098000000.0,
+  "2022-12-31": 23200000000.0,
+  "2021-12-31": null
+ },
+ "eps_dil": {
+  "2025-12-31": 23.49,
+  "2024-12-31": 23.86,
+  "2023-12-31": 14.87,
+  "2022-12-31": 8.59,
+  "2021-12-31": null
+ },
+ "shares_dil": {
+  "2025-12-31": 2574000000.0,
+  "2024-12-31": 2614000000.0,
+  "2023-12-31": 2629000000.0,
+  "2022-12-31": 2702000000.0,
+  "2021-12-31": null
+ },
+ "tax_rate": {
+  "2025-12-31": 0.296444,
+  "2024-12-31": 0.117501,
+  "2023-12-31": 0.176,
+  "2022-12-31": 0.195,
+  "2021-12-31": null
+ },
+ "interest": {
+  "2025-12-31": 1165000000.0,
+  "2024-12-31": 715000000.0,
+  "2023-12-31": 446000000.0,
+  "2022-12-31": 185000000.0,
+  "2021-12-31": null
+ },
+ "da": {
+  "2025-12-31": 18616000000.0,
+  "2024-12-31": 15498000000.0,
+  "2023-12-31": 11178000000.0,
+  "2022-12-31": 8686000000.0,
+  "2021-12-31": null
+ },
+ "capex": {
+  "2025-12-31": -69691000000.0,
+  "2024-12-31": -37256000000.0,
+  "2023-12-31": -27045000000.0,
+  "2022-12-31": -31186000000.0,
+  "2021-12-31": null
+ },
+ "dwc": {
+  "2025-12-31": -885000000.0,
+  "2024-12-31": 1048000000.0,
+  "2023-12-31": 3836000000.0,
+  "2022-12-31": 5683000000.0,
+  "2021-12-31": null
+ },
+ "sbc": {
+  "2025-12-31": 20427000000.0,
+  "2024-12-31": 16690000000.0,
+  "2023-12-31": 14027000000.0,
+  "2022-12-31": 11992000000.0,
+  "2021-12-31": null
+ },
+ "ocf": {
+  "2025-12-31": 115800000000.0,
+  "2024-12-31": 91328000000.0,
+  "2023-12-31": 71113000000.0,
+  "2022-12-31": 50475000000.0,
+  "2021-12-31": null
+ },
+ "fcf": {
+  "2025-12-31": 46109000000.0,
+  "2024-12-31": 54072000000.0,
+  "2023-12-31": 44068000000.0,
+  "2022-12-31": 19289000000.0,
+  "2021-12-31": null
+ },
+ "dividends": {
+  "2025-12-31": -5324000000.0,
+  "2024-12-31": -5072000000.0,
+  "2023-12-31": 0.0,
+  "2022-12-31": 0.0,
+  "2021-12-31": null
+ },
+ "buybacks": {
+  "2025-12-31": -26248000000.0,
+  "2024-12-31": -30125000000.0,
+  "2023-12-31": -19774000000.0,
+  "2022-12-31": -27956000000.0,
+  "2021-12-31": null
+ },
+ "cash_taxes": {
+  "2025-12-31": 7578000000.0,
+  "2024-12-31": 10554000000.0,
+  "2023-12-31": 6607000000.0,
+  "2022-12-31": 6407000000.0,
+  "2021-12-31": null
+ },
+ "cash_sti": {
+  "2025-12-31": 81592000000.0,
+  "2024-12-31": 77815000000.0,
+  "2023-12-31": 65403000000.0,
+  "2022-12-31": 40738000000.0,
+  "2021-12-31": null
+ },
+ "lt_inv": {
+  "2025-12-31": 27524000000.0,
+  "2024-12-31": 6070000000.0,
+  "2023-12-31": 6141000000.0,
+  "2022-12-31": 6201000000.0,
+  "2021-12-31": null
+ },
+ "debt": {
+  "2025-12-31": 83897000000.0,
+  "2024-12-31": 49060000000.0,
+  "2023-12-31": 37234000000.0,
+  "2022-12-31": 26591000000.0,
+  "2021-12-31": null
+ },
+ "equity": {
+  "2025-12-31": 217243000000.0,
+  "2024-12-31": 182637000000.0,
+  "2023-12-31": 153168000000.0,
+  "2022-12-31": 125713000000.0,
+  "2021-12-31": null
+ },
+ "nci": {},
+ "pref": {},
+ "receivables": {
+  "2025-12-31": 19769000000.0,
+  "2024-12-31": 16994000000.0,
+  "2023-12-31": 16169000000.0,
+  "2022-12-31": 13466000000.0,
+  "2021-12-31": null
+ },
+ "inventory": {},
+ "payables": {
+  "2025-12-31": 8894000000.0,
+  "2024-12-31": 7687000000.0,
+  "2023-12-31": 4849000000.0,
+  "2022-12-31": 4990000000.0,
+  "2021-12-31": null
+ },
+ "deferred_rev": {
+  "2025-12-31": null,
+  "2024-12-31": null,
+  "2023-12-31": null,
+  "2022-12-31": null,
+  "2021-12-31": 561000000.0
+ },
+ "ppe": {
+  "2025-12-31": 196804000000.0,
+  "2024-12-31": 136268000000.0,
+  "2023-12-31": 109881000000.0,
+  "2022-12-31": 92191000000.0,
+  "2021-12-31": null
+ }
+}

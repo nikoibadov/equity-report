@@ -1,0 +1,283 @@
+{
+ "ticker": "ADBE",
+ "info": {
+  "longName": "Adobe Inc.",
+  "shortName": "Adobe Inc.",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "country": "United States",
+  "longBusinessSummary": "Adobe Inc. operates as a technology company worldwide. The Digital Media segment offers products and services that enable individuals, teams, and enterprises to create, publish, and promote content. This segment serves photographers, video editors, graphic and experience designers, game developers, content creators, students, marketers, business owners, knowledge workers, and consumers. The Digital Experience segment provides an integrated platform; and products, services, and solutions that enable brands and businesses to create, manage, execute, measure, monetize, and optimize customer experiences from analytics to commerce. This segment serves marketers, advertisers, agencies, publishers, merchandisers, merchants, web analysts, data scientists, developers, and executives across the C-suite. The Publishing and Advertising segment offers e-learning, technical document publishing, web conferencing, document and forms platform, web application development, printing, and Adobe Advertising solutions. It also provides consulting, training, customer management, technical support, and learning services. The company offers its solutions to enterprise customers, and businesses and consumers; and licenses its products to end-user customers through app stores and website at adobe.com. It markets and distributes its products through distributors, retailers, software developers, mobile app stores, systems integrators, independent software vendors, value-added resellers, and original equipment and hardware manufacturers. The company also provides an online visibility management and content marketing software-as-a-service platform. The company has a strategic alliance with HUMAIN for the development of generative AI models and AI-powered applications. The company was formerly known as Adobe Systems Incorporated and changed its name to Adobe Inc. in October 2018. Adobe Inc. was founded in 1982 and is headquartered in San Jose, California.",
+  "currentPrice": 246.0,
+  "regularMarketPrice": 246.0,
+  "sharesOutstanding": 389200000,
+  "impliedSharesOutstanding": 389200000,
+  "marketCap": 95743197184,
+  "enterpriseValue": 96888201216,
+  "totalRevenue": 25969999872,
+  "ebitda": 9916999680,
+  "operatingMargins": 0.36323002,
+  "grossMargins": 0.89252996,
+  "revenueGrowth": 0.129,
+  "totalCash": 5641999872,
+  "totalDebt": 6786999808,
+  "trailingPE": 13.735344,
+  "forwardPE": 8.97575,
+  "enterpriseToRevenue": 3.731,
+  "enterpriseToEbitda": 9.77,
+  "fiftyTwoWeekHigh": 362.71,
+  "fiftyTwoWeekLow": 190.12,
+  "targetMeanPrice": 266.9097,
+  "targetMedianPrice": 260.0,
+  "targetHighPrice": 373.0,
+  "targetLowPrice": 140.0,
+  "numberOfAnalystOpinions": 33,
+  "recommendationMean": 2.97436,
+  "lastFiscalYearEnd": 1764288000,
+  "nextFiscalYearEnd": 1795824000,
+  "mostRecentQuarter": 1787875200,
+  "dividendRate": null,
+  "trailingAnnualDividendRate": 0.0,
+  "payoutRatio": 0.0,
+  "exchange": "NMS",
+  "fullExchangeName": "NasdaqGS"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-08-31": 5639000000.0,
+   "2026-05-31": 5626000000.0,
+   "2026-02-28": 6890000000.0,
+   "2025-11-30": 6595000000.0,
+   "2025-08-31": 5940000000.0,
+   "2025-05-31": null
+  },
+  "lt_inv": {},
+  "debt": {
+   "2026-08-31": 6762000000.0,
+   "2026-05-31": 7065000000.0,
+   "2026-02-28": 6656000000.0,
+   "2025-11-30": 6648000000.0,
+   "2025-08-31": 6636000000.0,
+   "2025-05-31": null
+  },
+  "nci": {},
+  "pref": {
+   "2026-08-31": 0.0,
+   "2026-05-31": 0.0,
+   "2026-02-28": 0.0,
+   "2025-11-30": 0.0,
+   "2025-08-31": 0.0,
+   "2025-05-31": null
+  }
+ },
+ "ttm": {
+  "rev": 25970000000.0,
+  "ebit": 9271000000.0,
+  "end": "2026-08-31"
+ },
+ "rev_est": {
+  "0q": 6830578620.0,
+  "+1q": 7070108120.0,
+  "0y": 26607173550.0,
+  "+1y": 29036612500.0
+ },
+ "eps_est": {
+  "0q": 6.32884,
+  "+1q": 6.76551,
+  "0y": 24.47864,
+  "+1y": 27.40718
+ },
+ "beta_raw": 1.3705774226310379,
+ "beta_r2": 0.32852665302013345,
+ "beta_index": "^GSPC",
+ "beta_n": 262,
+ "price_date": "2026-11-16",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2025-11-30": 23769000000.0,
+  "2024-11-30": 21505000000.0,
+  "2023-11-30": 19409000000.0,
+  "2022-11-30": 17606000000.0
+ },
+ "gross_profit": {
+  "2025-11-30": 21218000000.0,
+  "2024-11-30": 19147000000.0,
+  "2023-11-30": 17055000000.0,
+  "2022-11-30": 15441000000.0
+ },
+ "rnd": {
+  "2025-11-30": 4294000000.0,
+  "2024-11-30": 3944000000.0,
+  "2023-11-30": 3473000000.0,
+  "2022-11-30": 2987000000.0
+ },
+ "ebit": {
+  "2025-11-30": 8706000000.0,
+  "2024-11-30": 7741000000.0,
+  "2023-11-30": 6650000000.0,
+  "2022-11-30": 6098000000.0
+ },
+ "pretax": {
+  "2025-11-30": 8734000000.0,
+  "2024-11-30": 6931000000.0,
+  "2023-11-30": 6799000000.0,
+  "2022-11-30": 6008000000.0
+ },
+ "tax_provision": {
+  "2025-11-30": 1604000000.0,
+  "2024-11-30": 1371000000.0,
+  "2023-11-30": 1371000000.0,
+  "2022-11-30": 1252000000.0
+ },
+ "net_income": {
+  "2025-11-30": 7130000000.0,
+  "2024-11-30": 5560000000.0,
+  "2023-11-30": 5428000000.0,
+  "2022-11-30": 4756000000.0
+ },
+ "eps_dil": {
+  "2025-11-30": 16.7,
+  "2024-11-30": 12.36,
+  "2023-11-30": 11.82,
+  "2022-11-30": 10.1
+ },
+ "shares_dil": {
+  "2025-11-30": 427000000.0,
+  "2024-11-30": 450000000.0,
+  "2023-11-30": 459000000.0,
+  "2022-11-30": 471000000.0
+ },
+ "tax_rate": {
+  "2025-11-30": 0.18,
+  "2024-11-30": 0.2,
+  "2023-11-30": 0.2,
+  "2022-11-30": 0.21
+ },
+ "interest": {
+  "2025-11-30": 263000000.0,
+  "2024-11-30": 169000000.0,
+  "2023-11-30": 113000000.0,
+  "2022-11-30": 112000000.0
+ },
+ "da": {
+  "2025-11-30": 818000000.0,
+  "2024-11-30": 857000000.0,
+  "2023-11-30": 872000000.0,
+  "2022-11-30": 856000000.0,
+  "2021-11-30": null
+ },
+ "capex": {
+  "2025-11-30": -179000000.0,
+  "2024-11-30": -183000000.0,
+  "2023-11-30": -360000000.0,
+  "2022-11-30": -442000000.0,
+  "2021-11-30": null
+ },
+ "dwc": {
+  "2025-11-30": 605000000.0,
+  "2024-11-30": 144000000.0,
+  "2023-11-30": -355000000.0,
+  "2022-11-30": 336000000.0,
+  "2021-11-30": null
+ },
+ "sbc": {
+  "2025-11-30": 1942000000.0,
+  "2024-11-30": 1833000000.0,
+  "2023-11-30": 1718000000.0,
+  "2022-11-30": 1440000000.0,
+  "2021-11-30": null
+ },
+ "ocf": {
+  "2025-11-30": 10031000000.0,
+  "2024-11-30": 8056000000.0,
+  "2023-11-30": 7302000000.0,
+  "2022-11-30": 7838000000.0,
+  "2021-11-30": null
+ },
+ "fcf": {
+  "2025-11-30": 9852000000.0,
+  "2024-11-30": 7873000000.0,
+  "2023-11-30": 6942000000.0,
+  "2022-11-30": 7396000000.0,
+  "2021-11-30": null
+ },
+ "dividends": {},
+ "buybacks": {
+  "2025-11-30": -11281000000.0,
+  "2024-11-30": -9500000000.0,
+  "2023-11-30": -4400000000.0,
+  "2022-11-30": -6550000000.0,
+  "2021-11-30": null
+ },
+ "cash_taxes": {
+  "2025-11-30": 2219000000.0,
+  "2024-11-30": 1727000000.0,
+  "2023-11-30": 1854000000.0,
+  "2022-11-30": 778000000.0,
+  "2021-11-30": null
+ },
+ "cash_sti": {
+  "2025-11-30": 6595000000.0,
+  "2024-11-30": 7886000000.0,
+  "2023-11-30": 7842000000.0,
+  "2022-11-30": 6096000000.0,
+  "2021-11-30": null
+ },
+ "lt_inv": {},
+ "debt": {
+  "2025-11-30": 6648000000.0,
+  "2024-11-30": 6056000000.0,
+  "2023-11-30": 4080000000.0,
+  "2022-11-30": 4633000000.0,
+  "2021-11-30": null
+ },
+ "equity": {
+  "2025-11-30": 11623000000.0,
+  "2024-11-30": 14105000000.0,
+  "2023-11-30": 16518000000.0,
+  "2022-11-30": 14051000000.0,
+  "2021-11-30": null
+ },
+ "nci": {},
+ "pref": {
+  "2025-11-30": 0.0,
+  "2024-11-30": 0.0,
+  "2023-11-30": 0.0,
+  "2022-11-30": 0.0,
+  "2021-11-30": null
+ },
+ "receivables": {
+  "2025-11-30": 2344000000.0,
+  "2024-11-30": 2072000000.0,
+  "2023-11-30": 2224000000.0,
+  "2022-11-30": 2065000000.0,
+  "2021-11-30": null
+ },
+ "inventory": {},
+ "payables": {
+  "2025-11-30": 417000000.0,
+  "2024-11-30": 361000000.0,
+  "2023-11-30": 314000000.0,
+  "2022-11-30": 379000000.0,
+  "2021-11-30": null
+ },
+ "deferred_rev": {
+  "2025-11-30": 6905000000.0,
+  "2024-11-30": 6131000000.0,
+  "2023-11-30": 5837000000.0,
+  "2022-11-30": 5297000000.0,
+  "2021-11-30": null
+ },
+ "ppe": {
+  "2025-11-30": 2185000000.0,
+  "2024-11-30": 2217000000.0,
+  "2023-11-30": 2388000000.0,
+  "2022-11-30": 2315000000.0,
+  "2021-11-30": null
+ }
+}

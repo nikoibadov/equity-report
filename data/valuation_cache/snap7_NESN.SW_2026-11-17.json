@@ -1,0 +1,291 @@
+{
+ "ticker": "NESN.SW",
+ "info": {
+  "longName": "Nestl\u00e9 S.A.",
+  "shortName": "NESTLE N",
+  "currency": "CHF",
+  "financialCurrency": "CHF",
+  "sector": "Consumer Defensive",
+  "industry": "Packaged Foods",
+  "country": "Switzerland",
+  "longBusinessSummary": "Nestl\u00e9 S.A., together with its subsidiaries, manufactures and distributes food and beverage, and nutritional science products in the United States, Brazil, Mexico, Greater China, the Philippines, India, the United Kingdom, France, Germany, Switzerland, and internationally. The company offers cereals, chocolate and confectionery, coffee, culinary, chilled and frozen food, dairy, drinks, food service, ice cream, nutrition and health, petcare, water, plant-based portfolio, and recipe products. It sells its products under the Nesquik Cereal, Fitness, Cheerios, Lion Cereals, Cini Minis, KitKat Cereal, Chocapic, Koko Krunch, Shreddies, Shredded Wheat Original, Corn Flakes, Trix Cereal, Aero, Baci Perugina, KitKat, Milkybar, Smarties, Cailler, Quality Street, Garoto, Nestl\u00e9 Toll House, Munch, Damak, Hsu Fu Chi, Sahne Nuss, Nestl\u00e9 Sustainably Sourced Cocoa, Blue Bottle Coffee, Nescaf\u00e9, Nescaf\u00e9 Dolce Gusto, Nespresso, Starbucks Coffee At Home, DiGiorno, Garden Gourmet, Maggi, Thomy, Stouffer's, Hot Pockets, Lean Cuisine, Life Cuisine, Buitoni, Nestl\u00e9 carnation, Nestl\u00e9 Coffee Mate, and Nestea brands. The company also offers its products under the Roastelier by Nescaf\u00e9, Plant-based and so good!, Milo, Chef, Maggi Professional, La Lechera, Minor's, Antica Gelateria Del Corso, Drumstick, Extr\u00eame, H\u00e4agen-Dazs, Maxibon, M\u00f6venpick, Nancare, Gerber, Cerelac, Nestum, Alfar\u00e9 HMO, Ath\u00e9ra HMO, Alfamino HMO, Bear Brand, Nido, Orgain, Nestl\u00e9 Vital, Garden of Life, Pure Encapsulations, Solgar, Compleat, Impact, Peptamen, Vitaflo, Resource, Cat Chow, Dentalife, Dog Chow, Fancy Feast, Felix, Friskies, Gourmet, Purina, Purina ONE, Purina Pro Plan, Purina Pro Plan Veterinary Diets, Acqua Panna, Nestl\u00e9 Pure Life, Perrier, S.Pellegrino, Sanpellegrino, Buxton, Erikli, Levissima, Vittel, Contrex, HENNIEZ, H\u00e9par, La Vie, Naleczowianka, and Essentia brands. The company was founded in 1866 and is headquartered in Vevey, Switzerland. Aimmune Therapeutics, Inc. operates as a subsidiary of Nestl\u00e9 S.A.",
+  "currentPrice": 86.91,
+  "regularMarketPrice": 86.91,
+  "sharesOutstanding": 2572220000,
+  "impliedSharesOutstanding": 2572220000,
+  "marketCap": 223551635456,
+  "enterpriseValue": 283717763072,
+  "totalRevenue": 88775000064,
+  "ebitda": 16458999808,
+  "operatingMargins": 0.15484,
+  "grossMargins": 0.45701998,
+  "revenueGrowth": -0.025,
+  "totalCash": 6134000128,
+  "totalDebt": 62845001728,
+  "trailingPE": 30.072664,
+  "forwardPE": 18.179651,
+  "enterpriseToRevenue": 3.196,
+  "enterpriseToEbitda": 17.238,
+  "fiftyTwoWeekHigh": 88.43,
+  "fiftyTwoWeekLow": 70.29,
+  "targetMeanPrice": 89.03636,
+  "targetMedianPrice": 89.0,
+  "targetHighPrice": 100.0,
+  "targetLowPrice": 72.0,
+  "numberOfAnalystOpinions": 22,
+  "recommendationMean": 2.18182,
+  "lastFiscalYearEnd": 1767139200,
+  "nextFiscalYearEnd": 1798675200,
+  "mostRecentQuarter": 1782777600,
+  "dividendRate": 3.1,
+  "trailingAnnualDividendRate": 3.1,
+  "payoutRatio": 1.0727,
+  "exchange": "EBS",
+  "fullExchangeName": "Swiss"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-06-30": 6134000000.0,
+   "2025-12-31": 5930000000.0,
+   "2025-06-30": 5515000000.0
+  },
+  "lt_inv": {
+   "2026-06-30": 3677000000.0,
+   "2025-12-31": 3641000000.0,
+   "2025-06-30": 3564000000.0
+  },
+  "debt": {
+   "2026-06-30": 62845000000.0,
+   "2025-12-31": 57852000000.0,
+   "2025-06-30": 65604000000.0
+  },
+  "nci": {
+   "2026-06-30": 274000000.0,
+   "2025-12-31": 248000000.0,
+   "2025-06-30": 221000000.0
+  },
+  "pref": {}
+ },
+ "ttm": {},
+ "rev_est": {
+  "0q": 23604333330.0,
+  "+1q": 0.0,
+  "0y": 90407522650.0,
+  "+1y": 92961557990.0
+ },
+ "eps_est": {
+  "0q": NaN,
+  "+1q": NaN,
+  "0y": 4.5229,
+  "+1y": 4.77574
+ },
+ "beta_raw": 0.7862390537375396,
+ "beta_r2": 0.35530406133046716,
+ "beta_index": "^SSMI",
+ "beta_n": 262,
+ "price_date": "2026-11-17",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2025-12-31": 89885000000.0,
+  "2024-12-31": 91720000000.0,
+  "2023-12-31": 93351000000.0,
+  "2022-12-31": 94780000000.0,
+  "2021-12-31": null
+ },
+ "gross_profit": {
+  "2025-12-31": 41191000000.0,
+  "2024-12-31": 43050000000.0,
+  "2023-12-31": 43023000000.0,
+  "2022-12-31": 43035000000.0,
+  "2021-12-31": null
+ },
+ "rnd": {
+  "2025-12-31": 1613000000.0,
+  "2024-12-31": 1667000000.0,
+  "2023-12-31": 1656000000.0,
+  "2022-12-31": 1696000000.0,
+  "2021-12-31": null
+ },
+ "ebit": {
+  "2025-12-31": 13981000000.0,
+  "2024-12-31": 15613000000.0,
+  "2023-12-31": 15671000000.0,
+  "2022-12-31": 15668000000.0,
+  "2021-12-31": null
+ },
+ "pretax": {
+  "2025-12-31": 10751000000.0,
+  "2024-12-31": 13239000000.0,
+  "2023-12-31": 12703000000.0,
+  "2022-12-31": 11286000000.0,
+  "2021-12-31": null
+ },
+ "tax_provision": {
+  "2025-12-31": 2640000000.0,
+  "2024-12-31": 3314000000.0,
+  "2023-12-31": 2314000000.0,
+  "2022-12-31": 2730000000.0,
+  "2021-12-31": null
+ },
+ "net_income": {
+  "2025-12-31": 9033000000.0,
+  "2024-12-31": 10884000000.0,
+  "2023-12-31": 11209000000.0,
+  "2022-12-31": 9270000000.0,
+  "2021-12-31": null
+ },
+ "eps_dil": {
+  "2025-12-31": 3.51,
+  "2024-12-31": 4.19,
+  "2023-12-31": 4.23,
+  "2022-12-31": 3.42,
+  "2021-12-31": null
+ },
+ "shares_dil": {
+  "2025-12-31": 2576000000.0,
+  "2024-12-31": 2599000000.0,
+  "2023-12-31": 2648000000.0,
+  "2022-12-31": 2709000000.0,
+  "2021-12-31": null
+ },
+ "tax_rate": {
+  "2025-12-31": 0.246,
+  "2024-12-31": 0.25,
+  "2023-12-31": 0.182,
+  "2022-12-31": 0.212,
+  "2021-12-31": null
+ },
+ "interest": {
+  "2025-12-31": 1823000000.0,
+  "2024-12-31": 1841000000.0,
+  "2023-12-31": 1643000000.0,
+  "2022-12-31": 1249000000.0,
+  "2021-12-31": null
+ },
+ "da": {
+  "2025-12-31": 3633000000.0,
+  "2024-12-31": 3582000000.0,
+  "2023-12-31": 3458000000.0,
+  "2022-12-31": 3541000000.0,
+  "2021-12-31": null
+ },
+ "capex": {
+  "2025-12-31": -4911000000.0,
+  "2024-12-31": -5963000000.0,
+  "2023-12-31": -6203000000.0,
+  "2022-12-31": -5361000000.0,
+  "2021-12-31": null
+ },
+ "dwc": {
+  "2025-12-31": -319000000.0,
+  "2024-12-31": 874000000.0,
+  "2023-12-31": 709000000.0,
+  "2022-12-31": -3647000000.0,
+  "2021-12-31": null
+ },
+ "sbc": {
+  "2025-12-31": 134000000.0,
+  "2024-12-31": 116000000.0,
+  "2023-12-31": 142000000.0,
+  "2022-12-31": 128000000.0,
+  "2021-12-31": null
+ },
+ "ocf": {
+  "2025-12-31": 15904000000.0,
+  "2024-12-31": 16675000000.0,
+  "2023-12-31": 15941000000.0,
+  "2022-12-31": 11907000000.0,
+  "2021-12-31": null
+ },
+ "fcf": {
+  "2025-12-31": 10993000000.0,
+  "2024-12-31": 10712000000.0,
+  "2023-12-31": 9738000000.0,
+  "2022-12-31": 6546000000.0,
+  "2021-12-31": null
+ },
+ "dividends": {
+  "2025-12-31": -7849000000.0,
+  "2024-12-31": -7816000000.0,
+  "2023-12-31": -7829000000.0,
+  "2022-12-31": -7618000000.0,
+  "2021-12-31": null
+ },
+ "buybacks": {
+  "2025-12-31": -213000000.0,
+  "2024-12-31": -4678000000.0,
+  "2023-12-31": -5234000000.0,
+  "2022-12-31": null,
+  "2021-12-31": null
+ },
+ "cash_taxes": {},
+ "cash_sti": {
+  "2025-12-31": 5930000000.0,
+  "2024-12-31": 7571000000.0,
+  "2023-12-31": 5851000000.0,
+  "2022-12-31": 6687000000.0,
+  "2021-12-31": null
+ },
+ "lt_inv": {
+  "2025-12-31": 3641000000.0,
+  "2024-12-31": 3650000000.0,
+  "2023-12-31": 2947000000.0,
+  "2022-12-31": 3253000000.0,
+  "2021-12-31": null
+ },
+ "debt": {
+  "2025-12-31": 57852000000.0,
+  "2024-12-31": 63560000000.0,
+  "2023-12-31": 55241000000.0,
+  "2022-12-31": 54312000000.0,
+  "2021-12-31": null
+ },
+ "equity": {
+  "2025-12-31": 32810000000.0,
+  "2024-12-31": 35917000000.0,
+  "2023-12-31": 35742000000.0,
+  "2022-12-31": 41982000000.0,
+  "2021-12-31": null
+ },
+ "nci": {
+  "2025-12-31": 248000000.0,
+  "2024-12-31": 776000000.0,
+  "2023-12-31": 645000000.0,
+  "2022-12-31": 810000000.0,
+  "2021-12-31": null
+ },
+ "pref": {},
+ "receivables": {
+  "2025-12-31": 8749000000.0,
+  "2024-12-31": 9419000000.0,
+  "2023-12-31": 9001000000.0,
+  "2022-12-31": 8831000000.0,
+  "2021-12-31": null
+ },
+ "inventory": {
+  "2025-12-31": 12813000000.0,
+  "2024-12-31": 13260000000.0,
+  "2023-12-31": 11896000000.0,
+  "2022-12-31": 15019000000.0,
+  "2021-12-31": null
+ },
+ "payables": {
+  "2025-12-31": 16097000000.0,
+  "2024-12-31": 16685000000.0,
+  "2023-12-31": 14195000000.0,
+  "2022-12-31": 15798000000.0,
+  "2021-12-31": null
+ },
+ "deferred_rev": {},
+ "ppe": {
+  "2025-12-31": 32549000000.0,
+  "2024-12-31": 33706000000.0,
+  "2023-12-31": 30467000000.0,
+  "2022-12-31": 30141000000.0,
+  "2021-12-31": null
+ }
+}

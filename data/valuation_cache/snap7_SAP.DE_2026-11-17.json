@@ -1,0 +1,296 @@
+{
+ "ticker": "SAP.DE",
+ "info": {
+  "longName": "SAP SE",
+  "shortName": "SAP SE                        I",
+  "currency": "EUR",
+  "financialCurrency": "EUR",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "country": "Germany",
+  "longBusinessSummary": "SAP SE, together with its subsidiaries, provides enterprise application and business solutions worldwide. It offers SAP Business AI; SAP S/4HANA that provides software capabilities for finance, risk and project management, procurement, manufacturing, supply chain and asset management, and research and development; SAP SuccessFactors solutions for human resources, including HR, time, payroll, talent and employee experience management, and analytics and planning; and spend management solutions that covers direct and indirect spend, travel and expense, and external workforce management. The company also provides SAP customer experience solutions; SAP Business Technology platform that enables customers and partners to build, integrate, and automate applications; and SAP Business Network, a business-to-business collaboration platform that helps digitalize key business processes across the supply chain and enables communication between trading partners. In addition, it offers SAP Signavio to help customers to discover, analyze, and understand business process operations; industry solutions that provide customers and partners with industry-specific solutions; and SAP LeanIX to visualize enterprise architecture, assess interdependencies and the potential impact of IT modernization, and manage the transition toward the target landscape. Further, the company provides WalkMe to execute workflows; SAP Enable Now, which offers e-learning content embedded in SAP workflows; Taulia solutions for working capital management; and sustainability solutions and services. Additionally, it provides services and support solutions. The company has a strategic collaboration with Fresenius SE & Co. KGaA and Avelios Medical GmbH for the development of a cloud-native, hospital information system that enables digitalization of clinical and administrative processes with AI integration. SAP SE was founded in 1972 and is headquartered in Walldorf, Germany.",
+  "currentPrice": 205.75,
+  "regularMarketPrice": 205.75,
+  "sharesOutstanding": 1154204232,
+  "impliedSharesOutstanding": 1154204232,
+  "marketCap": 237477527552,
+  "enterpriseValue": 245513994240,
+  "totalRevenue": 39387000832,
+  "ebitda": 12254000128,
+  "operatingMargins": 0.29121,
+  "grossMargins": 0.73583,
+  "revenueGrowth": 0.132,
+  "totalCash": 10997000192,
+  "totalDebt": 10588000256,
+  "trailingPE": 29.775688,
+  "forwardPE": 24.245674,
+  "enterpriseToRevenue": 6.233,
+  "enterpriseToEbitda": 20.035,
+  "fiftyTwoWeekHigh": 219.65,
+  "fiftyTwoWeekLow": 127.5,
+  "targetMeanPrice": 243.54222,
+  "targetMedianPrice": 240.0,
+  "targetHighPrice": 290.0,
+  "targetLowPrice": 198.84,
+  "numberOfAnalystOpinions": 27,
+  "recommendationMean": 1.55172,
+  "lastFiscalYearEnd": 1767139200,
+  "nextFiscalYearEnd": 1798675200,
+  "mostRecentQuarter": 1790726400,
+  "dividendRate": 2.5,
+  "trailingAnnualDividendRate": 2.5,
+  "payoutRatio": 0.36180001,
+  "exchange": "GER",
+  "fullExchangeName": "XETRA"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-09-30": 10997000000.0,
+   "2026-06-30": 11625000000.0,
+   "2026-03-31": 10045000000.0,
+   "2025-12-31": 9772000000.0,
+   "2025-09-30": 9934000000.0,
+   "2025-06-30": null
+  },
+  "lt_inv": {
+   "2026-09-30": 8300000000.0,
+   "2026-06-30": 8123000000.0,
+   "2026-03-31": 7634000000.0,
+   "2025-12-31": 6580000000.0,
+   "2025-09-30": 7058000000.0,
+   "2025-06-30": null
+  },
+  "debt": {
+   "2026-09-30": 10588000000.0,
+   "2026-06-30": 10507000000.0,
+   "2026-03-31": 7862000000.0,
+   "2025-12-31": 7476000000.0,
+   "2025-09-30": 9121000000.0,
+   "2025-06-30": null
+  },
+  "nci": {
+   "2026-09-30": 513000000.0,
+   "2026-06-30": 505000000.0,
+   "2026-03-31": 505000000.0,
+   "2025-12-31": 488000000.0,
+   "2025-09-30": 434000000.0,
+   "2025-06-30": null
+  },
+  "pref": {}
+ },
+ "ttm": {
+  "rev": 39387000000.0,
+  "ebit": 10673000000.0,
+  "end": "2026-09-30"
+ },
+ "rev_est": {
+  "0q": 10763979580.0,
+  "+1q": 10661550000.0,
+  "0y": 40451769760.0,
+  "+1y": 45310008320.0
+ },
+ "eps_est": {
+  "0q": 1.98039,
+  "+1q": 1.9875,
+  "0y": 7.16315,
+  "+1y": 8.48605
+ },
+ "beta_raw": 0.96522265940327,
+ "beta_r2": 0.32385360657101625,
+ "beta_index": "^GDAXI",
+ "beta_n": 262,
+ "price_date": "2026-11-17",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2025-12-31": 36800000000.0,
+  "2024-12-31": 34176000000.0,
+  "2023-12-31": 31207000000.0,
+  "2022-12-31": 29519000000.0
+ },
+ "gross_profit": {
+  "2025-12-31": 26814000000.0,
+  "2024-12-31": 24932000000.0,
+  "2023-12-31": 22534000000.0,
+  "2022-12-31": 21482000000.0
+ },
+ "rnd": {
+  "2025-12-31": 6633000000.0,
+  "2024-12-31": 6514000000.0,
+  "2023-12-31": 6324000000.0,
+  "2022-12-31": 6080000000.0
+ },
+ "ebit": {
+  "2025-12-31": 9620000000.0,
+  "2024-12-31": 7808000000.0,
+  "2023-12-31": 6014000000.0,
+  "2022-12-31": 6051000000.0
+ },
+ "pretax": {
+  "2025-12-31": 10270000000.0,
+  "2024-12-31": 4764000000.0,
+  "2023-12-31": 5341000000.0,
+  "2022-12-31": 4513000000.0
+ },
+ "tax_provision": {
+  "2025-12-31": 2944000000.0,
+  "2024-12-31": 1614000000.0,
+  "2023-12-31": 1741000000.0,
+  "2022-12-31": 1446000000.0
+ },
+ "net_income": {
+  "2025-12-31": 7161000000.0,
+  "2024-12-31": 3124000000.0,
+  "2023-12-31": 6139000000.0,
+  "2022-12-31": 2284000000.0
+ },
+ "eps_dil": {
+  "2025-12-31": 6.1,
+  "2024-12-31": 2.65,
+  "2023-12-31": 5.17,
+  "2022-12-31": 1.95
+ },
+ "shares_dil": {
+  "2025-12-31": 1175000000.0,
+  "2024-12-31": 1180000000.0,
+  "2023-12-31": 1180000000.0,
+  "2022-12-31": 1175000000.0
+ },
+ "tax_rate": {
+  "2025-12-31": 0.287,
+  "2024-12-31": 0.339,
+  "2023-12-31": 0.325969,
+  "2022-12-31": 0.320408
+ },
+ "interest": {
+  "2025-12-31": 492000000.0,
+  "2024-12-31": 545000000.0,
+  "2023-12-31": 639000000.0,
+  "2022-12-31": 398000000.0
+ },
+ "da": {
+  "2025-12-31": 1311000000.0,
+  "2024-12-31": 1280000000.0,
+  "2023-12-31": 1373000000.0,
+  "2022-12-31": 1569000000.0,
+  "2021-12-31": null
+ },
+ "capex": {
+  "2025-12-31": -739000000.0,
+  "2024-12-31": -797000000.0,
+  "2023-12-31": -785000000.0,
+  "2022-12-31": -877000000.0,
+  "2021-12-31": null
+ },
+ "dwc": {
+  "2025-12-31": -664000000.0,
+  "2024-12-31": 623000000.0,
+  "2023-12-31": -27000000.0,
+  "2022-12-31": -143000000.0,
+  "2021-12-31": null
+ },
+ "sbc": {
+  "2025-12-31": 1695000000.0,
+  "2024-12-31": 2385000000.0,
+  "2023-12-31": 2220000000.0,
+  "2022-12-31": 1431000000.0,
+  "2021-12-31": null
+ },
+ "ocf": {
+  "2025-12-31": 9156000000.0,
+  "2024-12-31": 5207000000.0,
+  "2023-12-31": 6246000000.0,
+  "2022-12-31": 5647000000.0,
+  "2021-12-31": null
+ },
+ "fcf": {
+  "2025-12-31": 8417000000.0,
+  "2024-12-31": 4410000000.0,
+  "2023-12-31": 5461000000.0,
+  "2022-12-31": 4770000000.0,
+  "2021-12-31": null
+ },
+ "dividends": {
+  "2025-12-31": -2743000000.0,
+  "2024-12-31": -2565000000.0,
+  "2023-12-31": -2395000000.0,
+  "2022-12-31": -2865000000.0,
+  "2021-12-31": null
+ },
+ "buybacks": {
+  "2025-12-31": -1937000000.0,
+  "2024-12-31": -2106000000.0,
+  "2023-12-31": -949000000.0,
+  "2022-12-31": -1500000000.0,
+  "2021-12-31": null
+ },
+ "cash_taxes": {},
+ "cash_sti": {
+  "2025-12-31": 9772000000.0,
+  "2024-12-31": 11238000000.0,
+  "2023-12-31": 11468000000.0,
+  "2022-12-31": 9861000000.0,
+  "2021-12-31": null
+ },
+ "lt_inv": {
+  "2025-12-31": 6580000000.0,
+  "2024-12-31": 6404000000.0,
+  "2023-12-31": 5114000000.0,
+  "2022-12-31": 5143000000.0,
+  "2021-12-31": null
+ },
+ "debt": {
+  "2025-12-31": 7476000000.0,
+  "2024-12-31": 10651000000.0,
+  "2023-12-31": 8791000000.0,
+  "2022-12-31": 13085000000.0,
+  "2021-12-31": null
+ },
+ "equity": {
+  "2025-12-31": 44586000000.0,
+  "2024-12-31": 45438000000.0,
+  "2023-12-31": 43157000000.0,
+  "2022-12-31": 40186000000.0,
+  "2021-12-31": null
+ },
+ "nci": {
+  "2025-12-31": 488000000.0,
+  "2024-12-31": 368000000.0,
+  "2023-12-31": 249000000.0,
+  "2022-12-31": 2662000000.0,
+  "2021-12-31": null
+ },
+ "pref": {},
+ "receivables": {
+  "2025-12-31": 5790000000.0,
+  "2024-12-31": 6231000000.0,
+  "2023-12-31": 5892000000.0,
+  "2022-12-31": 5782000000.0,
+  "2021-12-31": null
+ },
+ "inventory": {},
+ "payables": {
+  "2025-12-31": 2431000000.0,
+  "2024-12-31": 1988000000.0,
+  "2023-12-31": 1783000000.0,
+  "2022-12-31": 2146000000.0,
+  "2021-12-31": null
+ },
+ "deferred_rev": {
+  "2025-12-31": 6581000000.0,
+  "2024-12-31": 5978000000.0,
+  "2023-12-31": 4975000000.0,
+  "2022-12-31": 5309000000.0,
+  "2021-12-31": null
+ },
+ "ppe": {
+  "2025-12-31": 4497000000.0,
+  "2024-12-31": 4493000000.0,
+  "2023-12-31": 4276000000.0,
+  "2022-12-31": 4934000000.0,
+  "2021-12-31": null
+ }
+}

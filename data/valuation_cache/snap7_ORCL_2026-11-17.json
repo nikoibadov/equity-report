@@ -1,0 +1,317 @@
+{
+ "ticker": "ORCL",
+ "info": {
+  "longName": "Oracle Corporation",
+  "shortName": "Oracle Corporation",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "country": "United States",
+  "longBusinessSummary": "Oracle Corporation offers products and services that build, run and support enterprise information technology frameworks worldwide. Its Oracle cloud software as a service offering includes various cloud software applications, including Oracle Fusion cloud enterprise resource planning ERP, Oracle Fusion cloud enterprise performance management EPM, Oracle Fusion cloud supply chain and manufacturing management SCM, Oracle Fusion cloud human capital management HCM, and NetSuite applications suite, Oracle Health applications, as well as Oracle Fusion Sales, Service, and Marketing. The company also offers cloud-based industry solutions for various industries; Oracle cloud license and on-premise license; and Oracle license support services. In addition, it provides cloud and license business' infrastructure technologies, such as the Oracle Database and MySQL Database; Java, a software development language; and middleware, including development tools and others. The company's cloud and license business' infrastructure technologies also comprise cloud-based compute, storage, and networking capabilities; and Oracle autonomous database, as well as AI, Internet-of-Things, machine learning, digital assistant, and blockchain. Further, it provides hardware products and other hardware-related software offerings, including Oracle engineered systems, enterprise servers, storage solutions, industry-specific hardware, virtualization software, operating systems, management software, and related hardware support services, and consulting and advanced customer services. It markets and sells its cloud, license, hardware, support, and services offerings directly to businesses in various industries, government agencies, and educational institutions, as well as through indirect channels. Oracle Corporation has a strategic alliance with Metron, Inc. The company was founded in 1977 and is headquartered in Austin, Texas.",
+  "currentPrice": 119.09,
+  "regularMarketPrice": 119.09,
+  "sharesOutstanding": 3117708046,
+  "impliedSharesOutstanding": 3117708046,
+  "marketCap": 371287851008,
+  "enterpriseValue": 497540726784,
+  "totalRevenue": 71776002048,
+  "ebitda": 34432999424,
+  "operatingMargins": 0.34272,
+  "grossMargins": 0.63957,
+  "revenueGrowth": 0.296,
+  "totalCash": 37077000192,
+  "totalDebt": 169142992896,
+  "trailingPE": 18.666143,
+  "forwardPE": 10.768789,
+  "enterpriseToRevenue": 6.932,
+  "enterpriseToEbitda": 14.45,
+  "fiftyTwoWeekHigh": 250.25,
+  "fiftyTwoWeekLow": 109.21,
+  "targetMeanPrice": 236.184,
+  "targetMedianPrice": 225.0,
+  "targetHighPrice": 400.0,
+  "targetLowPrice": 110.0,
+  "numberOfAnalystOpinions": 40,
+  "recommendationMean": 1.5,
+  "lastFiscalYearEnd": 1780185600,
+  "nextFiscalYearEnd": 1811721600,
+  "mostRecentQuarter": 1788134400,
+  "dividendRate": 2.0,
+  "trailingAnnualDividendRate": 2.0,
+  "payoutRatio": 0.31350002,
+  "exchange": "NYQ",
+  "fullExchangeName": "NYSE"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-08-31": 37077000000.0,
+   "2026-05-31": 31894000000.0,
+   "2026-02-28": 39132000000.0,
+   "2025-11-30": 19766000000.0,
+   "2025-08-31": 11005000000.0,
+   "2025-05-31": null,
+   "2025-02-28": null
+  },
+  "lt_inv": {},
+  "debt": {
+   "2026-08-31": 155931000000.0,
+   "2026-05-31": 156189000000.0,
+   "2026-02-28": 153117000000.0,
+   "2025-11-30": 124386000000.0,
+   "2025-08-31": 105409000000.0,
+   "2025-05-31": null,
+   "2025-02-28": null
+  },
+  "nci": {
+   "2026-08-31": 424000000.0,
+   "2026-05-31": 548000000.0,
+   "2026-02-28": 556000000.0,
+   "2025-11-30": 506000000.0,
+   "2025-08-31": 512000000.0,
+   "2025-05-31": null,
+   "2025-02-28": null
+  },
+  "pref": {
+   "2026-08-31": 4954000000.0,
+   "2026-05-31": 4954000000.0,
+   "2026-02-28": 4954000000.0,
+   "2025-11-30": null,
+   "2025-08-31": null,
+   "2025-05-31": null,
+   "2025-02-28": null
+  }
+ },
+ "ttm": {
+  "rev": 71777000000.0,
+  "ebit": 24572000000.0,
+  "end": "2026-08-31"
+ },
+ "rev_est": {
+  "0q": 21325430780.0,
+  "+1q": 23366715390.0,
+  "0y": 90462327150.0,
+  "+1y": 131818007890.0
+ },
+ "eps_est": {
+  "0q": 1.89,
+  "+1q": 2.02081,
+  "0y": 8.15047,
+  "+1y": 11.05881
+ },
+ "beta_raw": 1.3973840427276427,
+ "beta_r2": 0.27270370510157976,
+ "beta_index": "^GSPC",
+ "beta_n": 262,
+ "price_date": "2026-11-16",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2026-05-31": 67357000000.0,
+  "2025-05-31": 57399000000.0,
+  "2024-05-31": 52961000000.0,
+  "2023-05-31": 49954000000.0,
+  "2022-05-31": null
+ },
+ "gross_profit": {
+  "2026-05-31": 44336000000.0,
+  "2025-05-31": 40472000000.0,
+  "2024-05-31": 37818000000.0,
+  "2023-05-31": 36390000000.0,
+  "2022-05-31": null
+ },
+ "rnd": {
+  "2026-05-31": 10272000000.0,
+  "2025-05-31": 9860000000.0,
+  "2024-05-31": 8915000000.0,
+  "2023-05-31": 8623000000.0,
+  "2022-05-31": null
+ },
+ "ebit": {
+  "2026-05-31": 22444000000.0,
+  "2025-05-31": 18052000000.0,
+  "2024-05-31": 16071000000.0,
+  "2023-05-31": 13773000000.0,
+  "2022-05-31": null
+ },
+ "pretax": {
+  "2026-05-31": 19554000000.0,
+  "2025-05-31": 14160000000.0,
+  "2024-05-31": 11741000000.0,
+  "2023-05-31": 9126000000.0,
+  "2022-05-31": null
+ },
+ "tax_provision": {
+  "2026-05-31": 2467000000.0,
+  "2025-05-31": 1717000000.0,
+  "2024-05-31": 1274000000.0,
+  "2023-05-31": 623000000.0,
+  "2022-05-31": null
+ },
+ "net_income": {
+  "2026-05-31": 16984000000.0,
+  "2025-05-31": 12443000000.0,
+  "2024-05-31": 10467000000.0,
+  "2023-05-31": 8503000000.0,
+  "2022-05-31": null
+ },
+ "eps_dil": {
+  "2026-05-31": 5.83,
+  "2025-05-31": 4.34,
+  "2024-05-31": 3.71,
+  "2023-05-31": 3.07,
+  "2022-05-31": null
+ },
+ "shares_dil": {
+  "2026-05-31": 2914000000.0,
+  "2025-05-31": 2866000000.0,
+  "2024-05-31": 2823000000.0,
+  "2023-05-31": 2766000000.0,
+  "2022-05-31": null
+ },
+ "tax_rate": {
+  "2026-05-31": 0.126163,
+  "2025-05-31": 0.121257,
+  "2024-05-31": 0.109,
+  "2023-05-31": 0.068,
+  "2022-05-31": null
+ },
+ "interest": {
+  "2026-05-31": 4599000000.0,
+  "2025-05-31": 3578000000.0,
+  "2024-05-31": 3514000000.0,
+  "2023-05-31": 3505000000.0,
+  "2022-05-31": null
+ },
+ "da": {
+  "2026-05-31": 9294000000.0,
+  "2025-05-31": 6174000000.0,
+  "2024-05-31": 6139000000.0,
+  "2023-05-31": 6108000000.0,
+  "2022-05-31": null
+ },
+ "capex": {
+  "2026-05-31": -55663000000.0,
+  "2025-05-31": -21215000000.0,
+  "2024-05-31": -6866000000.0,
+  "2023-05-31": -8695000000.0,
+  "2022-05-31": null
+ },
+ "dwc": {
+  "2026-05-31": 4135000000.0,
+  "2025-05-31": -1500000000.0,
+  "2024-05-31": -488000000.0,
+  "2023-05-31": 513000000.0,
+  "2022-05-31": null
+ },
+ "sbc": {
+  "2026-05-31": 4811000000.0,
+  "2025-05-31": 4674000000.0,
+  "2024-05-31": 3974000000.0,
+  "2023-05-31": 3547000000.0,
+  "2022-05-31": null
+ },
+ "ocf": {
+  "2026-05-31": 31977000000.0,
+  "2025-05-31": 20821000000.0,
+  "2024-05-31": 18673000000.0,
+  "2023-05-31": 17165000000.0,
+  "2022-05-31": null
+ },
+ "fcf": {
+  "2026-05-31": -23686000000.0,
+  "2025-05-31": -394000000.0,
+  "2024-05-31": 11807000000.0,
+  "2023-05-31": 8470000000.0,
+  "2022-05-31": null
+ },
+ "dividends": {
+  "2026-05-31": -5787000000.0,
+  "2025-05-31": -4743000000.0,
+  "2024-05-31": -4391000000.0,
+  "2023-05-31": -3668000000.0,
+  "2022-05-31": null
+ },
+ "buybacks": {
+  "2026-05-31": -206000000.0,
+  "2025-05-31": -1500000000.0,
+  "2024-05-31": -3242000000.0,
+  "2023-05-31": -2503000000.0,
+  "2022-05-31": null
+ },
+ "cash_taxes": {
+  "2026-05-31": 3704000000.0,
+  "2025-05-31": 4020000000.0,
+  "2024-05-31": 3560000000.0,
+  "2023-05-31": 3009000000.0,
+  "2022-05-31": null
+ },
+ "cash_sti": {
+  "2026-05-31": 31894000000.0,
+  "2025-05-31": 11203000000.0,
+  "2024-05-31": 10661000000.0,
+  "2023-05-31": 10187000000.0,
+  "2022-05-31": null
+ },
+ "lt_inv": {},
+ "debt": {
+  "2026-05-31": 156189000000.0,
+  "2025-05-31": 104104000000.0,
+  "2024-05-31": 93124000000.0,
+  "2023-05-31": 90481000000.0,
+  "2022-05-31": null
+ },
+ "equity": {
+  "2026-05-31": 42508000000.0,
+  "2025-05-31": 20451000000.0,
+  "2024-05-31": 8704000000.0,
+  "2023-05-31": 1073000000.0,
+  "2022-05-31": null
+ },
+ "nci": {
+  "2026-05-31": 548000000.0,
+  "2025-05-31": 518000000.0,
+  "2024-05-31": 535000000.0,
+  "2023-05-31": 483000000.0,
+  "2022-05-31": null
+ },
+ "pref": {
+  "2026-05-31": 4954000000.0,
+  "2025-05-31": null,
+  "2024-05-31": null,
+  "2023-05-31": null,
+  "2022-05-31": null
+ },
+ "receivables": {
+  "2026-05-31": 10385000000.0,
+  "2025-05-31": 8558000000.0,
+  "2024-05-31": 7874000000.0,
+  "2023-05-31": 6915000000.0,
+  "2022-05-31": null
+ },
+ "inventory": {},
+ "payables": {
+  "2026-05-31": 10977000000.0,
+  "2025-05-31": 5113000000.0,
+  "2024-05-31": 2357000000.0,
+  "2023-05-31": 1204000000.0,
+  "2022-05-31": null
+ },
+ "deferred_rev": {
+  "2026-05-31": 9916000000.0,
+  "2025-05-31": 9387000000.0,
+  "2024-05-31": 9313000000.0,
+  "2023-05-31": 8970000000.0,
+  "2022-05-31": null
+ },
+ "ppe": {
+  "2026-05-31": 129647000000.0,
+  "2025-05-31": 56667000000.0,
+  "2024-05-31": 21536000000.0,
+  "2023-05-31": 17069000000.0,
+  "2022-05-31": null
+ }
+}

@@ -1,0 +1,319 @@
+{
+ "ticker": "NVDA",
+ "info": {
+  "longName": "NVIDIA Corporation",
+  "shortName": "NVIDIA Corporation",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "country": "United States",
+  "longBusinessSummary": "NVIDIA Corporation operates as a data center scale AI infrastructure company in the United States, Taiwan, China, Hong Kong, Europe, and internationally. It operates through Compute & Networking, and Graphics segments. The Compute & Networking segment provides data center accelerated computing and networking platforms and artificial intelligence solutions and software, and automotive platforms and autonomous and electric vehicle solutions, including software. The Graphics segment offers GeForce GPUs for gaming and PCs; Quadro/NVIDIA RTX GPUs for enterprise workstation graphics. The company's products are used in gaming, professional visualization, data center, and automotive markets. It sells its products to original equipment manufacturers, original device manufacturers, system integrators and distributors, independent software vendors, cloud service providers, add-in board manufacturers, distributors, automotive manufacturers and tier-1 automotive suppliers, and other ecosystem participants. It has a collaboration with Cisco to develop Ultra-Dense Small Form Factor Pluggable (USFP), a high-density optical module pluggable transceiver. It has a collaboration with ChipAgents to develop Build-A-Chip-Bench, a benchmark for AI agents carrying chip design tasks and The Company has a strategic alliance with MediaTek to build the next generations of AI computing platforms. NVIDIA Corporation was incorporated in 1993 and is headquartered in Santa Clara, California.",
+  "currentPrice": 156.14,
+  "regularMarketPrice": 156.14,
+  "sharesOutstanding": 24147000000,
+  "impliedSharesOutstanding": 24147000000,
+  "marketCap": 3770312556544,
+  "enterpriseValue": 3739364884480,
+  "totalRevenue": 302970011648,
+  "ebitda": 201266003968,
+  "operatingMargins": 0.65213996,
+  "grossMargins": 0.74674004,
+  "revenueGrowth": 1.059,
+  "totalCash": 62469001216,
+  "totalDebt": 38860001280,
+  "trailingPE": 19.73957,
+  "forwardPE": 9.841883,
+  "enterpriseToRevenue": 12.342,
+  "enterpriseToEbitda": 18.579,
+  "fiftyTwoWeekHigh": 243.37,
+  "fiftyTwoWeekLow": 148.8,
+  "targetMeanPrice": 267.6463,
+  "targetMedianPrice": 255.0,
+  "targetHighPrice": 515.0,
+  "targetLowPrice": 130.0,
+  "numberOfAnalystOpinions": 54,
+  "recommendationMean": 1.69355,
+  "lastFiscalYearEnd": 1769299200,
+  "nextFiscalYearEnd": 1800835200,
+  "mostRecentQuarter": 1785024000,
+  "dividendRate": 1.0,
+  "trailingAnnualDividendRate": 0.28,
+  "payoutRatio": 0.0354,
+  "exchange": "NMS",
+  "fullExchangeName": "NasdaqGS"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-07-31": 62469000000.0,
+   "2026-04-30": 80572000000.0,
+   "2026-01-31": 62556000000.0,
+   "2025-10-31": 60608000000.0,
+   "2025-07-31": 53991000000.0,
+   "2025-04-30": null
+  },
+  "lt_inv": {
+   "2026-07-31": 51157000000.0,
+   "2026-04-30": 43364000000.0,
+   "2026-01-31": 22251000000.0,
+   "2025-10-31": 8187000000.0,
+   "2025-07-31": 3799000000.0,
+   "2025-04-30": null
+  },
+  "debt": {
+   "2026-07-31": 38351000000.0,
+   "2026-04-30": 12348000000.0,
+   "2026-01-31": 11040000000.0,
+   "2025-10-31": 10481000000.0,
+   "2025-07-31": 10598000000.0,
+   "2025-04-30": null
+  },
+  "nci": {},
+  "pref": {
+   "2026-07-31": 0.0,
+   "2026-04-30": 0.0,
+   "2026-01-31": 0.0,
+   "2025-10-31": 0.0,
+   "2025-07-31": 0.0,
+   "2025-04-30": null
+  }
+ },
+ "ttm": {
+  "rev": 302969000000.0,
+  "ebit": 197579000000.0,
+  "end": "2026-07-31"
+ },
+ "rev_est": {
+  "0q": 108710527430.0,
+  "+1q": 124886883170.0,
+  "0y": 411950120350.0,
+  "+1y": 688736903510.0
+ },
+ "eps_est": {
+  "0q": 2.47071,
+  "+1q": 2.75848,
+  "0y": 9.32908,
+  "+1y": 15.84302
+ },
+ "beta_raw": 2.023562703457305,
+ "beta_r2": 0.4751604238707388,
+ "beta_index": "^GSPC",
+ "beta_n": 262,
+ "price_date": "2026-11-16",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2026-01-31": 215938000000.0,
+  "2025-01-31": 130497000000.0,
+  "2024-01-31": 60922000000.0,
+  "2023-01-31": 26974000000.0,
+  "2022-01-31": null
+ },
+ "gross_profit": {
+  "2026-01-31": 153463000000.0,
+  "2025-01-31": 97858000000.0,
+  "2024-01-31": 44301000000.0,
+  "2023-01-31": 15356000000.0,
+  "2022-01-31": null
+ },
+ "rnd": {
+  "2026-01-31": 18497000000.0,
+  "2025-01-31": 12914000000.0,
+  "2024-01-31": 8675000000.0,
+  "2023-01-31": 7339000000.0,
+  "2022-01-31": null
+ },
+ "ebit": {
+  "2026-01-31": 130387000000.0,
+  "2025-01-31": 81453000000.0,
+  "2024-01-31": 32972000000.0,
+  "2023-01-31": 5577000000.0,
+  "2022-01-31": null
+ },
+ "pretax": {
+  "2026-01-31": 141450000000.0,
+  "2025-01-31": 84026000000.0,
+  "2024-01-31": 33818000000.0,
+  "2023-01-31": 4181000000.0,
+  "2022-01-31": null
+ },
+ "tax_provision": {
+  "2026-01-31": 21383000000.0,
+  "2025-01-31": 11146000000.0,
+  "2024-01-31": 4058000000.0,
+  "2023-01-31": -187000000.0,
+  "2022-01-31": null
+ },
+ "net_income": {
+  "2026-01-31": 120067000000.0,
+  "2025-01-31": 72880000000.0,
+  "2024-01-31": 29760000000.0,
+  "2023-01-31": 4368000000.0,
+  "2022-01-31": null
+ },
+ "eps_dil": {
+  "2026-01-31": 4.9,
+  "2025-01-31": 2.94,
+  "2024-01-31": 1.19,
+  "2023-01-31": 0.174,
+  "2022-01-31": null
+ },
+ "shares_dil": {
+  "2026-01-31": 24514000000.0,
+  "2025-01-31": 24804000000.0,
+  "2024-01-31": 24940000000.0,
+  "2023-01-31": 25070000000.0,
+  "2022-01-31": null
+ },
+ "tax_rate": {
+  "2026-01-31": 0.15117,
+  "2025-01-31": 0.132649,
+  "2024-01-31": 0.12,
+  "2023-01-31": 0.2577,
+  "2022-01-31": null
+ },
+ "interest": {
+  "2026-01-31": 259000000.0,
+  "2025-01-31": 247000000.0,
+  "2024-01-31": 257000000.0,
+  "2023-01-31": 262000000.0,
+  "2022-01-31": null
+ },
+ "da": {
+  "2026-01-31": 2843000000.0,
+  "2025-01-31": 1864000000.0,
+  "2024-01-31": 1508000000.0,
+  "2023-01-31": 1543000000.0,
+  "2022-01-31": null
+ },
+ "capex": {
+  "2026-01-31": -6042000000.0,
+  "2025-01-31": -3236000000.0,
+  "2024-01-31": -1069000000.0,
+  "2023-01-31": -1833000000.0,
+  "2022-01-31": null
+ },
+ "dwc": {
+  "2026-01-31": -15949000000.0,
+  "2025-01-31": -9383000000.0,
+  "2024-01-31": -3722000000.0,
+  "2023-01-31": -2207000000.0,
+  "2022-01-31": null
+ },
+ "sbc": {
+  "2026-01-31": 6386000000.0,
+  "2025-01-31": 4737000000.0,
+  "2024-01-31": 3549000000.0,
+  "2023-01-31": 2709000000.0,
+  "2022-01-31": null
+ },
+ "ocf": {
+  "2026-01-31": 102718000000.0,
+  "2025-01-31": 64089000000.0,
+  "2024-01-31": 28090000000.0,
+  "2023-01-31": 5641000000.0,
+  "2022-01-31": null
+ },
+ "fcf": {
+  "2026-01-31": 96676000000.0,
+  "2025-01-31": 60853000000.0,
+  "2024-01-31": 27021000000.0,
+  "2023-01-31": 3808000000.0,
+  "2022-01-31": null
+ },
+ "dividends": {
+  "2026-01-31": -974000000.0,
+  "2025-01-31": -834000000.0,
+  "2024-01-31": -395000000.0,
+  "2023-01-31": -398000000.0,
+  "2022-01-31": null
+ },
+ "buybacks": {
+  "2026-01-31": -40086000000.0,
+  "2025-01-31": -33706000000.0,
+  "2024-01-31": -9533000000.0,
+  "2023-01-31": -10039000000.0,
+  "2022-01-31": null
+ },
+ "cash_taxes": {
+  "2026-01-31": 20288000000.0,
+  "2025-01-31": 15118000000.0,
+  "2024-01-31": 6549000000.0,
+  "2023-01-31": 1404000000.0,
+  "2022-01-31": null
+ },
+ "cash_sti": {
+  "2026-01-31": 62556000000.0,
+  "2025-01-31": 43210000000.0,
+  "2024-01-31": 25984000000.0,
+  "2023-01-31": 13296000000.0,
+  "2022-01-31": null
+ },
+ "lt_inv": {
+  "2026-01-31": 22251000000.0,
+  "2025-01-31": 3387000000.0,
+  "2024-01-31": 1321000000.0,
+  "2023-01-31": null,
+  "2022-01-31": null
+ },
+ "debt": {
+  "2026-01-31": 11040000000.0,
+  "2025-01-31": 9982000000.0,
+  "2024-01-31": 11056000000.0,
+  "2023-01-31": 12031000000.0,
+  "2022-01-31": null
+ },
+ "equity": {
+  "2026-01-31": 157293000000.0,
+  "2025-01-31": 79327000000.0,
+  "2024-01-31": 42978000000.0,
+  "2023-01-31": 22101000000.0,
+  "2022-01-31": null
+ },
+ "nci": {},
+ "pref": {
+  "2026-01-31": 0.0,
+  "2025-01-31": 0.0,
+  "2024-01-31": 0.0,
+  "2023-01-31": 0.0,
+  "2022-01-31": null
+ },
+ "receivables": {
+  "2026-01-31": 38466000000.0,
+  "2025-01-31": 23065000000.0,
+  "2024-01-31": 9999000000.0,
+  "2023-01-31": 3827000000.0,
+  "2022-01-31": null
+ },
+ "inventory": {
+  "2026-01-31": 21403000000.0,
+  "2025-01-31": 10080000000.0,
+  "2024-01-31": 5282000000.0,
+  "2023-01-31": 5159000000.0,
+  "2022-01-31": null
+ },
+ "payables": {
+  "2026-01-31": 9812000000.0,
+  "2025-01-31": 6310000000.0,
+  "2024-01-31": 2699000000.0,
+  "2023-01-31": 1193000000.0,
+  "2022-01-31": null
+ },
+ "deferred_rev": {
+  "2026-01-31": 1379000000.0,
+  "2025-01-31": 837000000.0,
+  "2024-01-31": 764000000.0,
+  "2023-01-31": 354000000.0,
+  "2022-01-31": null
+ },
+ "ppe": {
+  "2026-01-31": 13250000000.0,
+  "2025-01-31": 8076000000.0,
+  "2024-01-31": 5260000000.0,
+  "2023-01-31": 4845000000.0,
+  "2022-01-31": null
+ }
+}

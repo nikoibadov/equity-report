@@ -1,0 +1,284 @@
+{
+ "ticker": "AMZN",
+ "info": {
+  "longName": "Amazon.com, Inc.",
+  "shortName": "Amazon.com, Inc.",
+  "currency": "USD",
+  "financialCurrency": "USD",
+  "sector": "Consumer Cyclical",
+  "industry": "Internet Retail",
+  "country": "United States",
+  "longBusinessSummary": "Amazon.com, Inc. engages in the retail sale of consumer products, advertising, and subscriptions service through online and physical stores in North America and internationally. The company operates through three segments: North America, International, and Amazon Web Services (AWS). It also manufactures and sells electronic devices, including Kindle, fire tablets, fire TVs, echo, ring, blink, and eero; and develops and produces media content. In addition, the company offers programs that enable sellers to sell their products in its stores; and programs that allow authors, independent publishers, musicians, filmmakers, Twitch streamers, skill and app developers, and others to publish and sell content. Further, it provides compute, storage, Artificial intelligence, database, analytics, machine learning, and other services, as well as advertising services through programs, such as sponsored ads, display, and video advertising. Additionally, the company offers Amazon Prime, a membership program. The company's products offered through its stores include merchandise and content purchased for resale and products offered by third-party sellers. It serves consumers, sellers, developers, enterprises, content creators, advertisers, and employees. The company was incorporated in 1994 and is headquartered in Seattle, Washington.",
+  "currentPrice": 257.75,
+  "regularMarketPrice": 257.75,
+  "sharesOutstanding": 10813138306,
+  "impliedSharesOutstanding": 10813138306,
+  "marketCap": 2787086172160,
+  "enterpriseValue": 2977701298176,
+  "totalRevenue": 797455024128,
+  "ebitda": 183719002112,
+  "operatingMargins": 0.13087,
+  "grossMargins": 0.51374,
+  "revenueGrowth": 0.121,
+  "totalCash": 114226003968,
+  "totalDebt": 304840998912,
+  "trailingPE": 20.836702,
+  "forwardPE": 23.590345,
+  "enterpriseToRevenue": 3.734,
+  "enterpriseToEbitda": 16.208,
+  "fiftyTwoWeekHigh": 287.2,
+  "fiftyTwoWeekLow": 196.0,
+  "targetMeanPrice": 326.29034,
+  "targetMedianPrice": 328.0,
+  "targetHighPrice": 405.0,
+  "targetLowPrice": 230.0,
+  "numberOfAnalystOpinions": 60,
+  "recommendationMean": 1.32258,
+  "lastFiscalYearEnd": 1767139200,
+  "nextFiscalYearEnd": 1798675200,
+  "mostRecentQuarter": 1790726400,
+  "dividendRate": null,
+  "trailingAnnualDividendRate": 0.0,
+  "payoutRatio": 0.0,
+  "exchange": "NMS",
+  "fullExchangeName": "NasdaqGS"
+ },
+ "q": {
+  "cash_sti": {
+   "2026-09-30": 114226000000.0,
+   "2026-03-31": 143089000000.0,
+   "2025-12-31": 123029000000.0,
+   "2025-09-30": 94197000000.0,
+   "2025-06-30": 93180000000.0,
+   "2025-03-31": null
+  },
+  "lt_inv": {},
+  "debt": {
+   "2026-09-30": 271949000000.0,
+   "2026-03-31": 209888000000.0,
+   "2025-12-31": 152987000000.0,
+   "2025-09-30": 135419000000.0,
+   "2025-06-30": 133939000000.0,
+   "2025-03-31": null
+  },
+  "nci": {},
+  "pref": {
+   "2026-09-30": 0.0,
+   "2026-03-31": 0.0,
+   "2025-12-31": 0.0,
+   "2025-09-30": 0.0,
+   "2025-06-30": 0.0,
+   "2025-03-31": null
+  }
+ },
+ "ttm": {
+  "rev": 777018000000.0,
+  "ebit": 94327000000.0,
+  "end": "2026-09-30"
+ },
+ "rev_est": {
+  "0q": 244883332160.0,
+  "+1q": 210079549030.0,
+  "0y": 829172414440.0,
+  "+1y": 959560313720.0
+ },
+ "eps_est": {
+  "0q": 2.39573,
+  "+1q": 2.29698,
+  "0y": 12.8017,
+  "+1y": 10.68502
+ },
+ "beta_raw": 1.4411505963302753,
+ "beta_r2": 0.46945990782659097,
+ "beta_index": "^GSPC",
+ "beta_n": 262,
+ "price_date": "2026-11-16",
+ "vdate": "2026-11-17",
+ "price_v": null,
+ "hi_v": null,
+ "lo_v": null,
+ "fetched": "2026-11-17",
+ "revenue": {
+  "2025-12-31": 716924000000.0,
+  "2024-12-31": 637959000000.0,
+  "2023-12-31": 574785000000.0,
+  "2022-12-31": 513983000000.0
+ },
+ "gross_profit": {
+  "2025-12-31": 360510000000.0,
+  "2024-12-31": 311671000000.0,
+  "2023-12-31": 270046000000.0,
+  "2022-12-31": 225152000000.0
+ },
+ "rnd": {},
+ "ebit": {
+  "2025-12-31": 79975000000.0,
+  "2024-12-31": 68593000000.0,
+  "2023-12-31": 36852000000.0,
+  "2022-12-31": 12248000000.0
+ },
+ "pretax": {
+  "2025-12-31": 97311000000.0,
+  "2024-12-31": 68614000000.0,
+  "2023-12-31": 37557000000.0,
+  "2022-12-31": -5936000000.0
+ },
+ "tax_provision": {
+  "2025-12-31": 19087000000.0,
+  "2024-12-31": 9265000000.0,
+  "2023-12-31": 7120000000.0,
+  "2022-12-31": -3217000000.0
+ },
+ "net_income": {
+  "2025-12-31": 77670000000.0,
+  "2024-12-31": 59248000000.0,
+  "2023-12-31": 30425000000.0,
+  "2022-12-31": -2722000000.0
+ },
+ "eps_dil": {
+  "2025-12-31": 7.17,
+  "2024-12-31": 5.53,
+  "2023-12-31": 2.9,
+  "2022-12-31": -0.27
+ },
+ "shares_dil": {
+  "2025-12-31": 10827000000.0,
+  "2024-12-31": 10721000000.0,
+  "2023-12-31": 10492000000.0,
+  "2022-12-31": 10189000000.0
+ },
+ "tax_rate": {
+  "2025-12-31": 0.196144,
+  "2024-12-31": 0.135031,
+  "2023-12-31": 0.189579,
+  "2022-12-31": 0.2581
+ },
+ "interest": {
+  "2025-12-31": 2274000000.0,
+  "2024-12-31": 2406000000.0,
+  "2023-12-31": 3182000000.0,
+  "2022-12-31": 2367000000.0
+ },
+ "da": {
+  "2025-12-31": 65756000000.0,
+  "2024-12-31": 52795000000.0,
+  "2023-12-31": 48663000000.0,
+  "2022-12-31": 41921000000.0,
+  "2021-12-31": null
+ },
+ "capex": {
+  "2025-12-31": -131819000000.0,
+  "2024-12-31": -82999000000.0,
+  "2023-12-31": -52729000000.0,
+  "2022-12-31": -63645000000.0,
+  "2021-12-31": null
+ },
+ "dwc": {
+  "2025-12-31": -19969000000.0,
+  "2024-12-31": -15541000000.0,
+  "2023-12-31": -11541000000.0,
+  "2022-12-31": -20886000000.0,
+  "2021-12-31": null
+ },
+ "sbc": {
+  "2025-12-31": 19467000000.0,
+  "2024-12-31": 22011000000.0,
+  "2023-12-31": 24023000000.0,
+  "2022-12-31": 19621000000.0,
+  "2021-12-31": null
+ },
+ "ocf": {
+  "2025-12-31": 139514000000.0,
+  "2024-12-31": 115877000000.0,
+  "2023-12-31": 84946000000.0,
+  "2022-12-31": 46752000000.0,
+  "2021-12-31": null
+ },
+ "fcf": {
+  "2025-12-31": 7695000000.0,
+  "2024-12-31": 32878000000.0,
+  "2023-12-31": 32217000000.0,
+  "2022-12-31": -16893000000.0,
+  "2021-12-31": null
+ },
+ "dividends": {},
+ "buybacks": {
+  "2025-12-31": null,
+  "2024-12-31": 0.0,
+  "2023-12-31": 0.0,
+  "2022-12-31": -6000000000.0,
+  "2021-12-31": 0.0
+ },
+ "cash_taxes": {
+  "2025-12-31": 8295000000.0,
+  "2024-12-31": 12308000000.0,
+  "2023-12-31": 11179000000.0,
+  "2022-12-31": 6035000000.0,
+  "2021-12-31": null
+ },
+ "cash_sti": {
+  "2025-12-31": 123029000000.0,
+  "2024-12-31": 101202000000.0,
+  "2023-12-31": 86780000000.0,
+  "2022-12-31": 70026000000.0,
+  "2021-12-31": null
+ },
+ "lt_inv": {},
+ "debt": {
+  "2025-12-31": 152987000000.0,
+  "2024-12-31": 130900000000.0,
+  "2023-12-31": 135611000000.0,
+  "2022-12-31": 140118000000.0,
+  "2021-12-31": null
+ },
+ "equity": {
+  "2025-12-31": 411065000000.0,
+  "2024-12-31": 285970000000.0,
+  "2023-12-31": 201875000000.0,
+  "2022-12-31": 146043000000.0,
+  "2021-12-31": null
+ },
+ "nci": {},
+ "pref": {
+  "2025-12-31": 0.0,
+  "2024-12-31": 0.0,
+  "2023-12-31": 0.0,
+  "2022-12-31": 0.0,
+  "2021-12-31": null
+ },
+ "receivables": {
+  "2025-12-31": 67729000000.0,
+  "2024-12-31": 55451000000.0,
+  "2023-12-31": 52253000000.0,
+  "2022-12-31": 42360000000.0,
+  "2021-12-31": null
+ },
+ "inventory": {
+  "2025-12-31": 38325000000.0,
+  "2024-12-31": 34214000000.0,
+  "2023-12-31": 33318000000.0,
+  "2022-12-31": 34405000000.0,
+  "2021-12-31": null
+ },
+ "payables": {
+  "2025-12-31": 121909000000.0,
+  "2024-12-31": 94363000000.0,
+  "2023-12-31": 84981000000.0,
+  "2022-12-31": 79600000000.0,
+  "2021-12-31": null
+ },
+ "deferred_rev": {
+  "2025-12-31": 20576000000.0,
+  "2024-12-31": 18103000000.0,
+  "2023-12-31": 15227000000.0,
+  "2022-12-31": 13227000000.0,
+  "2021-12-31": null
+ },
+ "ppe": {
+  "2025-12-31": 443079000000.0,
+  "2024-12-31": 328806000000.0,
+  "2023-12-31": 276690000000.0,
+  "2022-12-31": 252838000000.0,
+  "2021-12-31": null
+ }
+}
