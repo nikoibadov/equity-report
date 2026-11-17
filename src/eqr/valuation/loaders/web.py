@@ -104,6 +104,22 @@ def sec_facts() -> dict:
     }
 
 
+def _shares_out(t, i, price) -> float:
+    """Shares outstanding with fallbacks: Yahoo sometimes omits `sharesOutstanding` (seen from cloud servers)."""
+    for k in ("sharesOutstanding", "impliedSharesOutstanding"):
+        if i.get(k):
+            return float(i[k])
+    if i.get("marketCap") and price:
+        return float(i["marketCap"]) / float(price)
+    try:
+        sh = t.get_shares_full(start=(pd.Timestamp(TODAY) - pd.Timedelta(days=200)).strftime("%Y-%m-%d"))
+        if sh is not None and len(sh.dropna()):
+            return float(sh.dropna().iloc[-1])
+    except Exception:  # noqa: BLE001
+        pass
+    return 1_150_000_000.0   # last resort: Q3 2026 weighted-average basic shares from SAP investor relations (sap_ir.yaml)
+
+
 def _yf_sap() -> dict:
     import yfinance as yf
 
@@ -119,7 +135,7 @@ def _yf_sap() -> dict:
         return {
             # Yahoo's history can list the newest day without a close: see common.latest_close
             "price": price, "price_date": price_date,
-            "hi52": i.get("fiftyTwoWeekHigh"), "lo52": i.get("fiftyTwoWeekLow"), "shares_out": i.get("sharesOutstanding") / 1e6,
+            "hi52": i.get("fiftyTwoWeekHigh"), "lo52": i.get("fiftyTwoWeekLow"), "shares_out": _shares_out(t, i, price) / 1e6,
             "tgt_mean": i.get("targetMeanPrice"), "tgt_median": i.get("targetMedianPrice"), "tgt_high": i.get("targetHighPrice"),
             "tgt_low": i.get("targetLowPrice"), "tgt_n": i.get("numberOfAnalystOpinions"), "rec": i.get("recommendationMean"),
             "rev_est": {k: float(v) / 1e6 for k, v in re_["avg"].items()}, "eps_est": {k: float(v) for k, v in ee["avg"].items()},
@@ -191,7 +207,7 @@ def peers() -> pd.DataFrame:
                 ev = ev_ttm_sales * rev_ttm                        # in financial currency
                 op_m = i.get("operatingMargins")
                 # Yahoo's marketCap covers all share classes; sharesOutstanding only the listed class (Workday: -19%)
-                mcap_q = float(i.get("marketCap") or 0) or price * float(i.get("sharesOutstanding") or 0)
+                mcap_q = float(i.get("marketCap") or 0) or price * _shares_out(yf.Ticker(sym), i, price)
                 mcap_fin = mcap_q * (fx.get(fin_ccy, 1) / fx.get("GBP" if q_ccy == "GBp" else q_ccy, 1))
                 to_eur = 1 / fx.get(fin_ccy, 1)
                 out.append({
