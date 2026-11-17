@@ -211,6 +211,9 @@ def render(root: Path):
             _generic_view(ticker, vdate)
     except Exception as e:  # noqa: BLE001
         st.error(f"{type(e).__name__}: {e}", title=f"Could not value {ticker}")
+        import traceback
+        with st.expander("Technical details"):
+            st.code(traceback.format_exc(), language="text")
 
 
 # ------------------------------------------------------------------ SAP segment model
