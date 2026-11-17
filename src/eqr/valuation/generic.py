@@ -167,7 +167,7 @@ def snapshot(ticker: str, vdate: str | None = None) -> dict:
     def f():
         t = yf.Ticker(ticker)
         i = t.info
-        if not i or i.get("quoteType") not in ("EQUITY", None):
+        if i and i.get("quoteType") not in ("EQUITY", None):
             raise ValueError(f"{ticker} is not an equity")
         frames = {"inc": t.income_stmt, "cf": t.cashflow, "bs": t.balance_sheet}
         qbs = t.quarterly_balance_sheet
@@ -200,6 +200,39 @@ def snapshot(ticker: str, vdate: str | None = None) -> dict:
         b = float(np.cov(y, x)[0, 1] / np.var(x, ddof=1)) if len(x) > 30 else None
         r2 = float(np.corrcoef(x, y)[0, 1] ** 2) if len(x) > 30 else None
         hist = t.history(start=(vd - dt.timedelta(days=365)).isoformat(), end=(vd + dt.timedelta(days=1)).isoformat())["Close"].dropna()
+        # Yahoo sometimes returns a near-empty `info` (seen from cloud servers): fill the essentials from fast_info / history
+        i = dict(i or {})
+        try:
+            fi = t.fast_info
+            fill = {"currency": "currency", "sharesOutstanding": "shares", "marketCap": "market_cap",
+                    "regularMarketPrice": "last_price", "fiftyTwoWeekHigh": "year_high", "fiftyTwoWeekLow": "year_low"}
+            for k, fk in fill.items():
+                if i.get(k) in (None, 0):
+                    try:
+                        v = fi[fk]
+                        if v is not None and not (isinstance(v, float) and np.isnan(v)):
+                            i[k] = v
+                    except Exception:  # noqa: BLE001
+                        pass
+        except Exception:  # noqa: BLE001
+            pass
+        if len(hist):
+            i.setdefault("regularMarketPrice", None)
+            if not (i.get("currentPrice") or i.get("regularMarketPrice")):
+                i["regularMarketPrice"] = float(hist.iloc[-1])
+            if not i.get("fiftyTwoWeekHigh"):
+                i["fiftyTwoWeekHigh"] = float(hist.max())
+            if not i.get("fiftyTwoWeekLow"):
+                i["fiftyTwoWeekLow"] = float(hist.min())
+        if not i.get("sharesOutstanding") and i.get("marketCap") and (i.get("currentPrice") or i.get("regularMarketPrice")):
+            i["sharesOutstanding"] = float(i["marketCap"]) / float(i.get("currentPrice") or i.get("regularMarketPrice"))
+        if not i.get("sharesOutstanding"):
+            try:
+                sh = t.get_shares_full(start=(vd - dt.timedelta(days=400)).isoformat())
+                if sh is not None and len(sh.dropna()):
+                    i["sharesOutstanding"] = float(sh.dropna().iloc[-1])
+            except Exception:  # noqa: BLE001
+                pass
         out = {
             "ticker": ticker, "info": {k: i.get(k) for k in (
                 "longName", "shortName", "currency", "financialCurrency", "sector", "industry", "country", "longBusinessSummary",
@@ -222,7 +255,7 @@ def snapshot(ticker: str, vdate: str | None = None) -> dict:
         for k, (frame, names) in _ANNUAL.items():
             out[k] = row(frames[frame], names)
         return out
-    return _cache(f"snap5_{ticker}_{TODAY}{_vkey(vdate)}", f)
+    return _cache(f"snap6_{ticker}_{TODAY}{_vkey(vdate)}", f)
 
 
 def _latest(d: dict, n=3, upto: str | None = None):
